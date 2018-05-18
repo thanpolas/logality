@@ -1,9 +1,11 @@
 /**
- * @fileOverview Test correction of error stack.
+ * @fileOverview Test logging a JS error with error stack.
  */
 
-const logality = require('../..');
+const Logality = require('../..');
 
-test('Will properly figure out invoking function module on error', () => {
+describe('Error Stack Testing', () => {
+  test('Will properly figure out invoking function module on error', () => {
 
+  });
 });
