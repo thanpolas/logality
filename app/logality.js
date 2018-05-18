@@ -25,12 +25,16 @@ const ALLOWED_LEVELS = [
   'emergency',
 ];
 
+/** @type {string} Get the Current Working Directory of the app */
+const CWD = process.cwd();
+
 /**
  * Initialize the logging service, configures pino.
  *
  * @param {Object} opts Set of options to configure Logality:
  *   @param {string} appName The application name to log.
  *   @param {string} hostname The application's hostname to log.
+ *   @param {Function} wstream Writable stream to output logs to, default stdout.
  */
 const Logality = module.exports = function (opts = {}) {
   // Force instantiation
@@ -45,6 +49,7 @@ const Logality = module.exports = function (opts = {}) {
   this._opts = {
     appName: opts.appName || 'Logality',
     hostname: opts.hostname || 'localhost',
+    wstream: opts.wstream || null,
   };
 
 
@@ -55,7 +60,7 @@ const Logality = module.exports = function (opts = {}) {
       const dt = new Date();
       return `, "dt": "${dt.toISOString()}"`;
     },
-  });
+  }, this._opts.wstream);
 
   // Add new log levels
   this._pinoLogger.addLevel('notice', 35);
@@ -107,7 +112,7 @@ Logality.prototype.get = function () {
   const filePath = this._getFilePath();
 
   // Do a partial application on log and return it.
-  return this.log.bind(null, filePath);
+  return this.log.bind(this, filePath);
 };
 
 /**
@@ -151,6 +156,10 @@ Logality.prototype.log = function (filePath, level, message, context) {
     this._assignRequest(logContext, context.req);
   }
 
+  if (context && context.custom) {
+    logContext.context.custom = context.custom;
+  }
+
   this._pinoLogger[level](logContext);
 };
 
@@ -163,9 +172,19 @@ Logality.prototype.log = function (filePath, level, message, context) {
 Logality.prototype._assignSystem = function (logContext) {
   logContext.context.system = {
     hostname: this._opts.hostname,
-    pid: process.pid,
-    process_nane: process.argv[0],
+    pid: this._getPid(),
+    process_name: process.argv[0],
   };
+};
+
+/**
+ * Returns the current process id, made a method for easier stubing while testing.
+ *
+ * @return {number} The pid.
+ * @private
+ */
+Logality.prototype._getPid = function () {
+  return process.pid;
 };
 
 /**
@@ -204,7 +223,9 @@ Logality.prototype._getFilePath = function () {
     const finalSplit = startSplit[1].split(':');
     const invokerPath = finalSplit[0];
 
-    const filePath = invokerPath.substr(this._opts.cwd.length);
+    // invokerPath now stores the full path, we need to extract the
+    // relative path of the app which is the "root folder" of the app.
+    const filePath = invokerPath.substr(CWD.length);
 
     return filePath;
   }
