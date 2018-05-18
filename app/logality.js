@@ -33,7 +33,7 @@ class Logality {
    *   @param {string} appName The application name to log.
    *   @param {string} hostname The application's hostname to log.
    */
-  constructor (opts) {
+  constructor(opts) {
     // Force instantiation
     if (!(this instanceof Logality)) {
       return new Logality(opts);
@@ -181,7 +181,7 @@ class Logality {
       email: user.email,
       type: null, // User type
     };
-  };
+  }
 
   /**
    * Get the relative filepath to the invoking module.
@@ -276,5 +276,7 @@ class Logality {
       query_string: JSON.stringify(req.query),
       scheme: req.secure ? 'https' : 'http',
     };
-  };
+  }
 }
+
+module.exports = Logality;
