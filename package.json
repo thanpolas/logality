@@ -21,7 +21,7 @@
     "node": ">=10.1.x"
   },
   "scripts": {
-    "test": "eslint app/**"
+    "test": "eslint app/** && jest"
   },
   "dependencies": {
     "pino": "^4.16.1"
