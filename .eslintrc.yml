@@ -12,4 +12,5 @@ rules:
   no-underscore-dangle: 0
   prefer-arrow-callback: 0
   no-use-before-define: 0
+  class-methods-use-this: 0
 
