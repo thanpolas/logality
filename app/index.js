@@ -1,7 +1,7 @@
 /**
- * Awesome Lib
- * Awesomesauce and sausages
- * https://github.com/alacrity-law/awesome
+ * Logala
+ * Alacrity custom logger for Node.js
+ * https://github.com/alacrity-law/logala
  *
  * Copyright © Alacrity Law Limited
  * All rights reserved.

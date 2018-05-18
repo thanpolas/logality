@@ -1,13 +1,13 @@
-# Awesome Lib name
+# Logala
 
-> The awesome lib description
+> Alacrity custom logger for Node.js
 
 ## Install
 
 Install the module using NPM:
 
 ```
-npm install @alacrity/awesome-lib --save
+npm install @alacrity/logala --save
 ```
 
 ## Documentation
