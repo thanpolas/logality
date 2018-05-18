@@ -1,7 +1,7 @@
 /**
- * Logala
+ * Logality
  * Alacrity custom logger for Node.js
- * https://github.com/alacrity-law/logala
+ * https://github.com/alacrity-law/logality
  *
  * Copyright © Alacrity Law Limited
  * All rights reserved.
@@ -14,8 +14,6 @@
 
 const pino = require('pino');
 
-const logala = module.exports = {};
-
 const ALLOWED_LEVELS = [
   'debug',
   'info',
@@ -27,27 +25,27 @@ const ALLOWED_LEVELS = [
   'emergency',
 ];
 
-class Logala {
+class Logality {
   /**
    * Initialize the logging service, configures pino.
    *
-   * @param {Object} opts Set of options to configure logala:
+   * @param {Object} opts Set of options to configure Logality:
    *   @param {string} appName The application name to log.
    *   @param {string} hostname The application's hostname to log.
    */
   constructor (opts) {
     // Force instantiation
-    if (!(this instanceof Logala)) {
-      return new Logala(opts);
+    if (!(this instanceof Logality)) {
+      return new Logality(opts);
     }
 
     /** @type {?pino} pino library instance */
     this._pinoLogger = null;
 
-    /** @type {Object} Logala configuration */
+    /** @type {Object} Logality configuration */
     this._opts = {
-      appName = opts.appName || 'logala',
-      hostname = opts.hostname || 'localhost',
+      appName: opts.appName || 'Logality',
+      hostname: opts.hostname || 'localhost',
     };
 
 
@@ -105,7 +103,7 @@ class Logala {
    *
    * @return {Logala} A logalla logger.
    */
-  get () {
+  get() {
     const filePath = this._getFilePath();
 
     // Do a partial application on log and return it.
@@ -120,8 +118,8 @@ class Logala {
    * @param {string} message Human readable log message.
    * @param {Object|null} context Extra data to log.
    */
-  log (filePath, level, message, context) {
-    if (allowedLevels.indexOf(level) === -1) {
+  log(filePath, level, message, context) {
+    if (ALLOWED_LEVELS.indexOf(level) === -1) {
       throw new Error('Invalid log level');
     }
 
@@ -154,7 +152,7 @@ class Logala {
     }
 
     this._pinoLogger[level](logContext);
-  };
+  }
 
   /**
    * Assign system-wide details.
@@ -162,13 +160,13 @@ class Logala {
    * @param {Object} logContext The log record context.
    * @private
    */
-  _assignSystem (logContext) {
+  _assignSystem(logContext) {
     logContext.context.system = {
       hostname: this._opts.hostname,
       pid: process.pid,
       process_nane: process.argv[0],
     };
-  };
+  }
 
   /**
    * Assigns log-schema properties to the logContext for the given UDO.
@@ -177,7 +175,7 @@ class Logala {
    * @param {Object} user The UDO.
    * @private
    */
-  _assignUser (logContext, user) {
+  _assignUser(logContext, user) {
     logContext.context.user = {
       id: user.id,
       email: user.email,
@@ -191,7 +189,7 @@ class Logala {
    * @return {string} Relative filepath of callee.
    * @private
    */
-  _getFilePath () {
+  _getFilePath() {
     try {
       throw new Error();
     } catch (ex) {
@@ -210,7 +208,7 @@ class Logala {
 
       return filePath;
     }
-  };
+  }
 
   /**
    * Assigns a JS native Error Object into log-schema.
@@ -219,7 +217,7 @@ class Logala {
    * @param {Error} error Javascript Error Object.
    * @private
    */
-  _assignError (logContext, error) {
+  _assignError(logContext, error) {
     logContext.event.error = {
       name: error.name,
       message: error.message,
@@ -260,7 +258,7 @@ class Logala {
 
       logContext.event.error.backtrace.push(traceLogItem);
     });
-  };
+  }
 
   /**
    * Assign Express Request values and properties.
@@ -269,7 +267,7 @@ class Logala {
    * @param {Express.req} req Express Request Object.
    * @private
    */
-  _assignRequest (logContext, req) {
+  _assignRequest(logContext, req) {
     logContext.event.http_request = {
       headers: req.header,
       host: req.hostname,

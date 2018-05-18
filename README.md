@@ -1,4 +1,4 @@
-# Logala
+# Logality
 
 > Alacrity custom logger for Node.js
 
@@ -7,7 +7,7 @@
 Install the module using NPM:
 
 ```
-npm install @alacrity/logala --save
+npm install @alacrity/logality --save
 ```
 
 ## Documentation
