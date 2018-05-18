@@ -23,7 +23,9 @@
   "scripts": {
     "test": "eslint app/**"
   },
-  "dependencies": {},
+  "dependencies": {
+    "pino": "^4.16.1"
+  },
   "devDependencies": {
     "eslint": "^4.18.2",
     "eslint-config-airbnb-base": "^12.1.0",
