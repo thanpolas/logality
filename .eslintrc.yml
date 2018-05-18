@@ -14,3 +14,19 @@ rules:
   no-use-before-define: 0
   class-methods-use-this: 0
 
+globals:
+  # Testing
+  suite: true
+  test: true
+  describe: true
+  it: true
+  setup: true
+  before: true
+  beforeEach: true
+  after: true
+  afterEach: true
+  teardown: true
+  assert: true
+  fit: true
+  fdescribe: true
+  expect: true
