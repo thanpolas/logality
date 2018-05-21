@@ -32,7 +32,7 @@ const ALLOWED_LEVELS = [
 const CWD = process.cwd();
 
 /**
- * Initialize the logging service, configures pino.
+ * Initialize the logging service
  *
  * @param {Object} opts Set of options to configure Logality:
  *   @param {string} appName The application name to log.
@@ -43,9 +43,6 @@ const Logality = module.exports = function (opts = {}) {
   if (!(this instanceof Logality)) {
     return new Logality(opts);
   }
-
-  /** @type {?pino} pino library instance */
-  this._pinoLogger = null;
 
   /** @type {Object} Logality configuration */
   this._opts = {
