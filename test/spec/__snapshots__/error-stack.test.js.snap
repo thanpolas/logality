@@ -13,7 +13,7 @@ Object {
     "system": Object {
       "hostname": "localhost",
       "pid": 36255,
-      "process_name": "/Users/thanpolas/.nvm/versions/node/v10.1.0/bin/node",
+      "process_name": "node .",
     },
   },
   "dt": "2018-05-18T16:25:57.815Z",
@@ -23,7 +23,7 @@ Object {
         Object {
           "file": "/Users/thanpolas/Projects/work/alacrity/logality/test/spec/error-stack.test.js",
           "function": "Object.done",
-          "line": "42:13",
+          "line": "22:13",
         },
         Object {
           "file": "/Users/thanpolas/Projects/work/alacrity/logality/node_modules/jest-jasmine2/build/queue_runner.js",
@@ -44,11 +44,6 @@ Object {
           "file": "/Users/thanpolas/Projects/work/alacrity/logality/node_modules/jest-jasmine2/build/queue_runner.js",
           "function": "promise.then",
           "line": "73:82",
-        },
-        Object {
-          "file": "internal/process/next_tick.js",
-          "function": "process._tickCallback",
-          "line": "68:7",
         },
       ],
       "message": "An error did not occur",

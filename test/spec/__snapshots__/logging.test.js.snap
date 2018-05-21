@@ -17,7 +17,7 @@ Object {
     "system": Object {
       "hostname": "localhost",
       "pid": 36255,
-      "process_name": "/Users/thanpolas/.nvm/versions/node/v10.1.0/bin/node",
+      "process_name": "node .",
     },
   },
   "dt": "2018-05-18T16:25:57.815Z",
@@ -41,7 +41,7 @@ Object {
     "system": Object {
       "hostname": "localhost",
       "pid": 36255,
-      "process_name": "/Users/thanpolas/.nvm/versions/node/v10.1.0/bin/node",
+      "process_name": "node .",
     },
   },
   "dt": "2018-05-18T16:25:57.815Z",

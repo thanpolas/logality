@@ -13,7 +13,7 @@ Object {
     "system": Object {
       "hostname": "localhost",
       "pid": 36255,
-      "process_name": "/Users/thanpolas/.nvm/versions/node/v10.1.0/bin/node",
+      "process_name": "node .",
     },
     "user": Object {
       "email": "one@go.com",
@@ -42,7 +42,7 @@ Object {
     "system": Object {
       "hostname": "localhost",
       "pid": 36255,
-      "process_name": "/Users/thanpolas/.nvm/versions/node/v10.1.0/bin/node",
+      "process_name": "node .",
     },
     "user": Object {
       "email": "two@go.com",
