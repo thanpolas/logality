@@ -169,7 +169,7 @@ Logality.prototype._assignSystem = function (logContext) {
   logContext.context.system = {
     hostname: this._hostname,
     pid: this._getPid(),
-    process_name: process.argv[0],
+    process_name: this._getProcessName(),
   };
 };
 
@@ -181,6 +181,17 @@ Logality.prototype._assignSystem = function (logContext) {
  */
 Logality.prototype._getPid = function () {
   return process.pid;
+};
+
+/**
+ * Returns the process name as invoked by the cli, made a method for
+ * easier stubing while testing.
+ *
+ * @return {string} The process name as invoked by the cli.
+ * @private
+ */
+Logality.prototype._getProcessName = function () {
+  return process.argv[0];
 };
 
 /**
