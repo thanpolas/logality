@@ -24,7 +24,6 @@ describe('Normal Logging', () => {
   test('Will log expected JSON properties', (done) => {
     const logality = new Logality({
       appName: 'testLogality',
-      hostname: '127.0.0.1',
       wstream: sink((chunk) => {
         expect(chunk).toMatchSnapshot();
         done();
@@ -39,7 +38,6 @@ describe('Normal Logging', () => {
   test('Will log an object in context', (done) => {
     const logality = new Logality({
       appName: 'testLogality',
-      hostname: '127.0.0.1',
       wstream: sink((chunk) => {
         expect(chunk).toMatchSnapshot();
         done();

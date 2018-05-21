@@ -25,7 +25,6 @@ describe('Error Stack Testing', () => {
   test('Will properly figure out invoking function module on error', (done) => {
     const logality = new Logality({
       appName: 'testLogality',
-      hostname: '127.0.0.1',
       wstream: sink((chunk) => {
         expect(chunk).toMatchSnapshot();
         done();
