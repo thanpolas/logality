@@ -24,7 +24,7 @@
     "test": "eslint app/** && jest"
   },
   "dependencies": {
-    "pino": "^4.16.1"
+    "stack-trace": "0.0.10"
   },
   "devDependencies": {
     "chai": "^4.1.2",
