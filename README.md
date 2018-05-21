@@ -2,6 +2,8 @@
 
 > JSON Logger based on [Simple Log Event Schema][log-schema]
 
+[![CircleCI](https://circleci.com/gh/alacrity-law/logality.svg?style=svg)](https://circleci.com/gh/alacrity-law/logality)
+
 ## Install
 
 Install the module using NPM:
