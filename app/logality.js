@@ -10,6 +10,8 @@ const os = require('os');
 
 const stackTrace = require('stack-trace');
 
+const serializers = require('./serializers');
+
 /**
  * @fileOverview bootstrap and master exporting module.
  */
@@ -187,11 +189,7 @@ Logality.prototype._getPid = function () {
  * @private
  */
 Logality.prototype._assignUser = function (logContext, user) {
-  logContext.context.user = {
-    id: user.id,
-    email: user.email,
-    type: null, // User type
-  };
+  logContext.context.user = serializers.user(user);
 };
 
 /**
