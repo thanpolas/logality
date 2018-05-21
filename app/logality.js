@@ -64,18 +64,14 @@ Logality.prototype.get = function () {
   const filePath = this._getFilePath();
 
   // Do a partial application on log and return it.
-  return this.log.bind(this, filePath);
-};
+  const partialedLog = this.log.bind(this, filePath);
 
-/**
- * Return an ISO8601 formated date.
- *
- * @return {string}
- * @private
- */
-Logality.prototype._getDt = function () {
-  const dt = new Date();
-  return dt.toISOString();
+  // Attach log levels as methods
+  ALLOWED_LEVELS.forEach((level) => {
+    partialedLog[level] = this.log.bind(this, filePath, level);
+  });
+
+  return partialedLog;
 };
 
 /**
@@ -126,6 +122,17 @@ Logality.prototype.log = function (filePath, level, message, context) {
   }
 
   this._write(logContext);
+};
+
+/**
+ * Return an ISO8601 formated date.
+ *
+ * @return {string}
+ * @private
+ */
+Logality.prototype._getDt = function () {
+  const dt = new Date();
+  return dt.toISOString();
 };
 
 /**
