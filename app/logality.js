@@ -13,15 +13,17 @@ const stackTrace = require('stack-trace');
 /**
  * @fileOverview bootstrap and master exporting module.
  */
+
+/** @constant {Array.<string>} ALLOWED_LEVELS All levels, sequence MATTERS */
 const ALLOWED_LEVELS = [
-  'debug',
-  'info',
-  'notice',
-  'warn',
-  'error',
-  'critical',
-  'alert',
-  'emergency',
+  'emergency', // Syslog level 0
+  'alert', // Syslog level 1
+  'critical', // Syslog level 2
+  'error', // Syslog level 3
+  'warn', // Syslog level 4
+  'notice', // Syslog level 5
+  'info', // Syslog level 6
+  'debug', // Syslog level 7
 ];
 
 /** @type {string} Get the Current Working Directory of the app */
@@ -87,12 +89,14 @@ Logality.prototype.get = function () {
  * @param {Object|null} context Extra data to log.
  */
 Logality.prototype.log = function (filePath, level, message, context) {
-  if (ALLOWED_LEVELS.indexOf(level) === -1) {
+  const levelSeverity = ALLOWED_LEVELS.indexOf(level);
+  if (levelSeverity === -1) {
     throw new Error('Invalid log level');
   }
 
   const logContext = {
     level,
+    severity: levelSeverity,
     dt: this._getDt(),
     message,
     context: {
