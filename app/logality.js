@@ -6,6 +6,8 @@
  * Copyright © Alacrity Law Limited
  * All rights reserved.
  */
+const os = require('os');
+
 const stackTrace = require('stack-trace');
 
 /**
@@ -30,7 +32,6 @@ const CWD = process.cwd();
  *
  * @param {Object} opts Set of options to configure Logality:
  *   @param {string} appName The application name to log.
- *   @param {string} hostname The application's hostname to log.
  *   @param {Function} wstream Writable stream to output logs to, default stdout.
  */
 const Logality = module.exports = function (opts = {}) {
@@ -45,9 +46,12 @@ const Logality = module.exports = function (opts = {}) {
   /** @type {Object} Logality configuration */
   this._opts = {
     appName: opts.appName || 'Logality',
-    hostname: opts.hostname || 'localhost',
   };
 
+  /** @type {string} Cache the hostname */
+  this._hostname = os.hostname();
+
+  /** @type {Stream} The output writable stream */
   this._stream = opts.wstream || process.stdout;
 };
 
@@ -155,7 +159,7 @@ Logality.prototype._write = function (logContext) {
  */
 Logality.prototype._assignSystem = function (logContext) {
   logContext.context.system = {
-    hostname: this._opts.hostname,
+    hostname: this._hostname,
     pid: this._getPid(),
     process_name: process.argv[0],
   };
