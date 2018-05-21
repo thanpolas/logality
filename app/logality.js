@@ -7,13 +7,9 @@
  * All rights reserved.
  */
 
-
 /**
  * @fileOverview bootstrap and master exporting module.
  */
-
-const pino = require('pino');
-
 const ALLOWED_LEVELS = [
   'debug',
   'info',
@@ -49,54 +45,9 @@ const Logality = module.exports = function (opts = {}) {
   this._opts = {
     appName: opts.appName || 'Logality',
     hostname: opts.hostname || 'localhost',
-    wstream: opts.wstream || null,
   };
 
-
-  // Instantiate pino
-  this._pinoLogger = pino({
-    // convert timestamp to ISO8061
-    timestamp() {
-      const dt = new Date();
-      return `, "dt": "${dt.toISOString()}"`;
-    },
-  }, this._opts.wstream);
-
-  // Add new log levels
-  this._pinoLogger.addLevel('notice', 35);
-  this._pinoLogger.addLevel('critical', 61);
-  this._pinoLogger.addLevel('alert', 70);
-  this._pinoLogger.addLevel('emergency', 80);
-
-
-  //
-  // hack pino event output.
-  //
-  // By default pino will output "level" as an integer and there is no way
-  // to change that, with this hack we alter the
-  // "log level string cache" that pino uses to produce the level output
-  Object.defineProperty(this._pinoLogger, '_lscache', {
-    value: {
-      10: '{"level": "trace"',
-      20: '{"level": "debug"',
-      30: '{"level": "info"',
-      35: '{"level": "notice"',
-      40: '{"level": "warn"',
-      50: '{"level": "error"',
-      60: '{"level": "fatal"',
-      61: '{"level": "critical"',
-      70: '{"level": "alert"',
-      80: '{"level": "emergency"',
-    },
-  });
-
-  // similarly, overwrite the "end" string that gets appended on all logs
-  // and adds the: "v": 1 string which we do not need.
-  this._pinoLogger.end = '}\n';
-
-  // Reset the pino "chindings" which contain duplicated info about
-  // "pid" and "hostname"
-  this._pinoLogger.chindings = '';
+  this._stream = opts.wstream || process.stdout;
 };
 
 /**
@@ -116,6 +67,17 @@ Logality.prototype.get = function () {
 };
 
 /**
+ * Return an ISO8601 formated date.
+ *
+ * @return {string}
+ * @private
+ */
+Logality.prototype._getDt = function () {
+  const dt = new Date();
+  return dt.toISOString();
+};
+
+/**
  * The main logging method.
  *
  * @param {string} filePath The path to the logging module.
@@ -129,6 +91,8 @@ Logality.prototype.log = function (filePath, level, message, context) {
   }
 
   const logContext = {
+    level,
+    dt: this._getDt(),
     message,
     context: {
       runtime: {
@@ -160,7 +124,19 @@ Logality.prototype.log = function (filePath, level, message, context) {
     logContext.context.custom = context.custom;
   }
 
-  this._pinoLogger[level](logContext);
+  this._write(logContext);
+};
+
+/**
+ * Write log to selected output.
+ *
+ * @param {Object} logContext The log context to write.
+ * @private
+ */
+Logality.prototype._write = function (logContext) {
+  let strLogContext = JSON.stringify(logContext);
+  strLogContext += '\n';
+  this._stream.write(strLogContext);
 };
 
 /**
