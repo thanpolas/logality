@@ -15,7 +15,7 @@ Object {
       "file_name": "/test/spec/logging.test.js",
     },
     "system": Object {
-      "hostname": "127.0.0.1",
+      "hostname": "localhost",
       "pid": 36255,
       "process_name": "/Users/thanpolas/.nvm/versions/node/v10.1.0/bin/node",
     },
@@ -24,6 +24,7 @@ Object {
   "event": Object {},
   "level": "info",
   "message": "hello world",
+  "severity": 6,
 }
 `;
 
@@ -38,7 +39,7 @@ Object {
       "file_name": "/test/spec/logging.test.js",
     },
     "system": Object {
-      "hostname": "127.0.0.1",
+      "hostname": "localhost",
       "pid": 36255,
       "process_name": "/Users/thanpolas/.nvm/versions/node/v10.1.0/bin/node",
     },
@@ -47,5 +48,6 @@ Object {
   "event": Object {},
   "level": "info",
   "message": "hello world",
+  "severity": 6,
 }
 `;
