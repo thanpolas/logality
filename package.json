@@ -1,5 +1,5 @@
 {
-  "name": "@alacrity/logality",
+  "name": "logality",
   "version": "0.0.0",
   "main": "./app/logality",
   "description": "Alacrity custom logger for Node.js",
