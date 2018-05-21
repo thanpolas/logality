@@ -52,6 +52,11 @@ const Logality = module.exports = function (opts = {}) {
     appName: opts.appName || 'Logality',
   };
 
+  /** @type {Object} Logality serializers */
+  this._serializers = {
+    user: (opts.serializers && opts.serializers.user) || serializers.user,
+  };
+
   /** @type {string} Cache the hostname */
   this._hostname = os.hostname();
 
@@ -189,7 +194,7 @@ Logality.prototype._getPid = function () {
  * @private
  */
 Logality.prototype._assignUser = function (logContext, user) {
-  logContext.context.user = serializers.user(user);
+  logContext.context.user = this._serializers.user(user);
 };
 
 /**
