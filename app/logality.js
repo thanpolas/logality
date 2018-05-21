@@ -6,6 +6,7 @@
  * Copyright © Alacrity Law Limited
  * All rights reserved.
  */
+const stackTrace = require('stack-trace');
 
 /**
  * @fileOverview bootstrap and master exporting module.
@@ -221,36 +222,17 @@ Logality.prototype._assignError = function (logContext, error) {
     backtrace: [],
   };
 
-  // go through the stack
   if (!error.stack) {
     return;
   }
 
-  error.stack.split('\n').forEach(function (stackLine, index) {
-    // ignore first line
-    if (index === 0) {
-      return;
-    }
-    // split each stack trace line into parts based on space
-    const stackParts = stackLine.trim().split(' ');
-    if (!stackParts[1]) {
-      return;
-    }
+  const trace = stackTrace.parse(error);
 
-    // Check for edge cases were function name is not set
-    if (!stackParts[2]) {
-      logContext.event.error.backtrace.push(stackParts[1]);
-      return;
-    }
-
-    // remove leading and trailing parentheses
-    const fileRaw = stackParts[2].substr(1, stackParts[2].length - 2);
-    const fileParts = fileRaw.split(':');
-
+  trace.forEach(function (traceLine) {
     const traceLogItem = {
-      file: fileParts[0],
-      function: stackParts[1],
-      line: `${fileParts[1]}:${fileParts[2]}`, // combine line and charpos
+      file: traceLine.getFileName(),
+      function: traceLine.getFunctionName(),
+      line: `${traceLine.getLineNumber()}:${traceLine.getColumnNumber()}`,
     };
 
     logContext.event.error.backtrace.push(traceLogItem);
