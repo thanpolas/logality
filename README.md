@@ -177,8 +177,12 @@ data objects.
 - **v1.0.0**, *21 May 2018* :: JSON Log Schema Version: 4.1.0
     - Big Bang
 
+## Authors
+
+* [Thanasis Polychronakis](https://github.com/thanpolas)
+
 ## License
 
-Copyright Alacrity Law Limited. All rights reserved.
+Copyright Alacrity Law Limited. [Licensed under the MIT license](/LICENSE)
 
 [log-schema]: https://github.com/timberio/log-event-json-schema

@@ -16,7 +16,7 @@
     "type": "git",
     "url": "https://github.com/alacrity-law/logality"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": ">=10.1.x"
   },
