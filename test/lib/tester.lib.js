@@ -2,8 +2,13 @@
  * @fileOverview Main testing helper lib.
  *
  */
+const os = require('os');
+
 const writeStream = require('flush-write-stream');
 const split = require('split2');
+const sinon = require('sinon');
+
+const Logality = require('../..');
 
 const tester = module.exports = {};
 
@@ -29,6 +34,34 @@ tester.sink = function (func) {
   const result = split(JSON.parse);
   result.pipe(writeStream.obj(func));
   return result;
+};
+
+/**
+ * Stub Logality so it can be properly tested with snapshots.
+ *
+ */
+tester.stubLogality = function () {
+  let dateStub;
+  let processStub;
+  let hostnameStub;
+  let processNameStub;
+  beforeEach(() => {
+    dateStub = sinon.stub(Date.prototype, 'toISOString');
+    processStub = sinon.stub(Logality.prototype, '_getPid');
+    hostnameStub = sinon.stub(os, 'hostname');
+    processNameStub = sinon.stub(Logality.prototype, '_getProcessName');
+    processNameStub.returns('node .');
+    hostnameStub.returns('localhost');
+    dateStub.returns('2018-05-18T16:25:57.815Z');
+    processStub.returns(36255);
+  });
+
+  afterEach(() => {
+    hostnameStub.restore();
+    dateStub.restore();
+    processNameStub.restore();
+    processStub.restore();
+  });
 };
 
 /** @type {Regex} Regex to test ISO 8601 Dates */
