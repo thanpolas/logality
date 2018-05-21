@@ -39,6 +39,9 @@ find bellow the configuration options:
 
 * `appName` {string} An arbitrary string to uniquely identify the service.
 * `wstream` {Stream} A writeable stream to output logging, default is stdout.
+* `serializers` {Object} You can define custom serializers for the various data
+objects as defined in the Log Schema:
+    * `serializers.user` {Function} Define a custom user serializer.
 
 ```js
 const Logality = require('logality');
@@ -47,6 +50,31 @@ const logality = new Logality({
     appName: 'service-something',
 });
 ```
+
+#### User Serializer
+
+Your User Data Object (UDO) can be of any schema, however [Log Schema][log-schema]
+has a strict definition of how to log a UDO, to transform the data from one
+schema to another we use the "user serializer", this is a simple function that
+accepts an Object, the UDO and returns an Object, properly formated as per 
+the Log Schema.
+
+
+```js
+const locality = new Logality({
+    serializers: {
+        user: function (udo) {
+            return {
+                id: udo.userId,
+                email: udo.email,
+            };
+        },
+    },
+})
+```
+
+> **BEWARE** Using custom serializers makes **you** responsible for retaining the
+Log Schema integrity.
 
 ### Logging Levels
 
