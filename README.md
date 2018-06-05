@@ -4,7 +4,7 @@
 
 [![CircleCI](https://circleci.com/gh/alacrity-law/logality.svg?style=svg)](https://circleci.com/gh/alacrity-law/logality)
 
-![Logality](https://i.imgur.com/fORCPP2.png)
+![Logality](https://i.imgur.com/xru6Q7O.png)
 
 ## Install
 
