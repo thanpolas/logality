@@ -91,7 +91,7 @@ const Logality = module.exports = function (opts = {}) {
   /** @type {Object} Logality configuration */
   this._opts = {
     appName: opts.appName || 'Logality',
-    pretty: opts.pretty || false,
+    prettyPrint: opts.prettyPrint || false,
   };
 
   /** @type {Object} Logality serializers */
@@ -253,7 +253,7 @@ Logality.prototype._writeRaw = function (logContext) {
  * @private
  */
 Logality.prototype._write = function (logContext) {
-  if (this._opts.pretty) {
+  if (this._opts.prettyPrint) {
     this._writePretty(logContext);
   } else {
     this._writeRaw(logContext);

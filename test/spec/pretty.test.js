@@ -9,7 +9,7 @@ describe('Pretty Logging', () => {
 
   test('Will pretty log expected JSON properties', (done) => {
     const logality = new Logality({
-      pretty: true,
+      prettyPrint: true,
       appName: 'testLogality',
       wstream: sinkPretty((chunk) => {
         expect(chunk).toMatchSnapshot();
@@ -25,7 +25,7 @@ describe('Pretty Logging', () => {
 
   test('Will pretty log an object in context', (done) => {
     const logality = new Logality({
-      pretty: true,
+      prettyPrint: true,
       appName: 'testLogality',
       wstream: sinkPretty((chunk) => {
         expect(chunk).toMatchSnapshot();
