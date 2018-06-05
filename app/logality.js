@@ -237,7 +237,7 @@ Logality.prototype._writePretty = function (logContext) {
   const message = config.color(`${config.icon} ${logContext.level} - ${logContext.message}`);
   const logs = this._getLogs(logContext);
 
-  const output = `${file}\n${date} ${message}\n${logs}\n`;
+  const output = `${date} ${message} ${file}\n${logs}\n`;
 
   this._stream.write(output);
 };
