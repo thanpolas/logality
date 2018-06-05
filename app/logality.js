@@ -18,6 +18,8 @@ const format = require('json-format');
 
 const serializers = require('./serializers');
 
+const { isObjectEmpty } = require('./utils');
+
 /**
  * @fileOverview bootstrap and master exporting module.
  */
@@ -191,6 +193,28 @@ Logality.prototype._getDt = function () {
 };
 
 /**
+ * Returns formatted logs
+ *
+ * @param {Object} logContext The log context to format.
+ * @private
+ */
+Logality.prototype._getLogs = function (logContext) {
+  const logs = {};
+
+  // set event
+  if (!isObjectEmpty(logContext.event)) {
+    logs.event = logContext.event;
+  }
+
+  // set context
+  if (!isObjectEmpty(logContext.context)) {
+    logs.context = logContext.context;
+  }
+
+  return format(logs, { type: 'space', size: 2 });
+};
+
+/**
  * Write prettified log to selected output.
  *
  * @param {Object} logContext The log context to write.
@@ -204,8 +228,7 @@ Logality.prototype._writePretty = function (logContext) {
   const message = config.color(`${config.icon} ${logContext.level} - ${logContext.message}`);
 
   // format logs
-  // TODO print event or context if they have values
-  const logs = format(logContext, { type: 'space', size: 2 });
+  const logs = this._getLogs(logContext);
 
   // create output
   const output = `\n${date} ${message}\n\n${logs}\n`;
