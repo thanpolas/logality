@@ -204,6 +204,7 @@ Logality.prototype._writePretty = function (logContext) {
   const message = config.color(`${config.icon} ${logContext.level} - ${logContext.message}`);
 
   // format logs
+  // TODO print event or context if they have values
   const logs = format(logContext, { type: 'space', size: 2 });
 
   // create output
@@ -219,7 +220,9 @@ Logality.prototype._writePretty = function (logContext) {
  * @private
  */
 Logality.prototype._writeRaw = function (logContext) {
-  this._stream.write(JSON.stringify(logContext));
+  let strLogContext = JSON.stringify(logContext);
+  strLogContext += '\n';
+  this._stream.write(strLogContext);
 };
 
 /**
@@ -230,10 +233,10 @@ Logality.prototype._writeRaw = function (logContext) {
  */
 Logality.prototype._write = function (logContext) {
   if (this._opts.pretty) {
-    return this._writePretty(logContext);
+    this._writePretty(logContext);
+  } else {
+    this._writeRaw(logContext);
   }
-
-  return this._writeRaw(logContext);
 };
 
 /**
@@ -360,3 +363,15 @@ Logality.prototype._assignRequest = function (logContext, req) {
   };
 };
 
+
+const logality = new Logality({ pretty: true });
+const log = logality.get();
+
+log.debug('This is message of level: Debug');
+log.info('This is message of level: Info');
+log.notice('This is message of level: Notice');
+log.warn('This is message of level: warning');
+log.error('This is message of level: Error');
+log.critical('This is message of level: Critical');
+log.alert('This is message of level: Alert');
+log.emergency('This is message of level: Emergency');
