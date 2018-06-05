@@ -229,8 +229,6 @@ Logality.prototype._writePretty = function (logContext) {
 
   // format logs
   const logs = this._getLogs(logContext);
-
-  // create output
   const output = `\n${date} ${message}\n\n${logs}\n`;
 
   this._stream.write(output);
