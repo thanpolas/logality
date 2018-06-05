@@ -197,15 +197,27 @@ Logality.prototype._getDt = function () {
  */
 Logality.prototype._getLogs = function (logContext) {
   const logs = {};
+  const blacklist = ['runtime', 'source', 'system'];
+  const { event, context } = logContext;
+
+  // remove unnecessary keys
+  blacklist.forEach((key) => {
+    delete context[key];
+  });
 
   // set event if exists
-  if (!isObjectEmpty(logContext.event)) {
-    logs.event = logContext.event;
+  if (!isObjectEmpty(event)) {
+    logs.event = event;
   }
 
-  // set context if exists
-  if (!isObjectEmpty(logContext.context)) {
-    logs.context = logContext.context;
+  // set context
+  if (!isObjectEmpty(context)) {
+    logs.context = context;
+  }
+
+  // empty string if the logs are emtpy
+  if (isObjectEmpty(logs)) {
+    return '';
   }
 
   return format(logs, { type: 'space', size: 2 });
@@ -236,7 +248,7 @@ Logality.prototype._writePretty = function (logContext) {
     ['Message', message],
   );
 
-  const output = `${table.toString()}\n\n${logs}\n`;
+  const output = `${table.toString()}\n${logs}\n`;
 
   this._stream.write(output);
 };
