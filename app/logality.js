@@ -219,7 +219,9 @@ Logality.prototype._getLogs = function (logContext) {
     return '';
   }
 
-  return format(logs, { type: 'space', size: 2 });
+  const prettyLogs = format(logs, { type: 'space', size: 2 });
+
+  return `${prettyLogs}\n`;
 };
 
 /**
@@ -234,10 +236,11 @@ Logality.prototype._writePretty = function (logContext) {
 
   const file = chalk.underline.green(logContext.context.source.file_name);
   const date = chalk.white(`[${logContext.dt}]`);
-  const message = config.color(`${config.icon} ${logContext.level} - ${logContext.message}`);
+  const level = config.color(`${config.icon} ${logContext.level}`);
+  const message = config.color(logContext.message);
   const logs = this._getLogs(logContext);
 
-  const output = `${date} ${message} ${file}\n${logs}\n`;
+  const output = `${date} ${level} ${file} - ${message}\n${logs}`;
 
   this._stream.write(output);
 };
