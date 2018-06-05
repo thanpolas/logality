@@ -41,6 +41,7 @@ find bellow the configuration options:
 
 * `appName` {string} An arbitrary string to uniquely identify the service.
 * `wstream` {Stream} A writeable stream to output logging, default is stdout.
+* `pretty` {boolean} If true will format and prettify the stacktrace, default is `false`.
 * `serializers` {Object} You can define custom serializers for the various data
 objects as defined in the Log Schema:
     * `serializers.user` {Function} Define a custom user serializer.
