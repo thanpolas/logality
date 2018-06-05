@@ -179,6 +179,8 @@ data objects.
 
 ## Release History
 
+- **v1.1.0**, *05 Jun 2018* :: JSON Log Schema Version: 4.1.0
+    - Added `prettyPrint` option, thank you [Marius](https://github.com/balajmarius).
 - **v1.0.0**, *21 May 2018* :: JSON Log Schema Version: 4.1.0
     - Big Bang
 
