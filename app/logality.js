@@ -9,15 +9,11 @@
 const os = require('os');
 
 const stackTrace = require('stack-trace');
-
 const chalk = require('chalk');
-
 const figures = require('figures');
-
 const format = require('json-format');
 
 const serializers = require('./serializers');
-
 const { isObjectEmpty } = require('./utils');
 
 /**
