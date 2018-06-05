@@ -89,7 +89,7 @@ const Logality = module.exports = function (opts = {}) {
   /** @type {Object} Logality configuration */
   this._opts = {
     appName: opts.appName || 'Logality',
-    prettify: opts.prettify || false,
+    pretty: opts.pretty || false,
   };
 
   /** @type {Object} Logality serializers */
@@ -196,7 +196,7 @@ Logality.prototype._getDt = function () {
  * @param {Object} logContext The log context to write.
  * @private
  */
-Logality.prototype._writePrettify = function (logContext) {
+Logality.prototype._writePretty = function (logContext) {
   // current level icon and color
   const config = LEVELS_CONFIG[logContext.level];
 
@@ -229,8 +229,8 @@ Logality.prototype._writeRaw = function (logContext) {
  * @private
  */
 Logality.prototype._write = function (logContext) {
-  if (this._opts.prettify) {
-    return this._writePrettify(logContext);
+  if (this._opts.pretty) {
+    return this._writePretty(logContext);
   }
 
   return this._writeRaw(logContext);
