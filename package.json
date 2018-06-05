@@ -24,6 +24,9 @@
     "test": "eslint app/** && jest"
   },
   "dependencies": {
+    "chalk": "^2.4.1",
+    "figures": "^2.0.0",
+    "json-format": "^1.0.1",
     "stack-trace": "0.0.10"
   },
   "devDependencies": {

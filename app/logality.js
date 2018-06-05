@@ -9,8 +9,12 @@
 const os = require('os');
 
 const stackTrace = require('stack-trace');
+const chalk = require('chalk');
+const figures = require('figures');
+const format = require('json-format');
 
 const serializers = require('./serializers');
+const { isObjectEmpty } = require('./utils');
 
 /**
  * @fileOverview bootstrap and master exporting module.
@@ -27,6 +31,42 @@ const ALLOWED_LEVELS = [
   'info', // Syslog level 6
   'debug', // Syslog level 7
 ];
+
+/** @constant {Object} LEVELS_CONFIG Levels colors and icons */
+const LEVELS_CONFIG = {
+  emergency: {
+    color: chalk.red.underline,
+    icon: figures.bullet,
+  },
+  alert: {
+    color: chalk.red.underline,
+    icon: figures.warning,
+  },
+  critical: {
+    color: chalk.red,
+    icon: figures.cross,
+  },
+  error: {
+    color: chalk.red,
+    icon: figures.square,
+  },
+  warn: {
+    color: chalk.yellow,
+    icon: figures.checkboxCircleOn,
+  },
+  notice: {
+    color: chalk.cyan,
+    icon: figures.play,
+  },
+  info: {
+    color: chalk.blue,
+    icon: figures.info,
+  },
+  debug: {
+    color: chalk.green,
+    icon: figures.star,
+  },
+};
 
 /** @type {string} Get the Current Working Directory of the app */
 const CWD = process.cwd();
@@ -47,6 +87,7 @@ const Logality = module.exports = function (opts = {}) {
   /** @type {Object} Logality configuration */
   this._opts = {
     appName: opts.appName || 'Logality',
+    prettyPrint: opts.prettyPrint || false,
   };
 
   /** @type {Object} Logality serializers */
@@ -148,15 +189,86 @@ Logality.prototype._getDt = function () {
 };
 
 /**
+ * Returns formatted logs
+ *
+ * @param {Object} logContext The log context to format.
+ * @private
+ */
+Logality.prototype._getLogs = function (logContext) {
+  const logs = {};
+  const blacklist = ['runtime', 'source', 'system'];
+  const { event, context } = logContext;
+
+  // remove unnecessary keys
+  blacklist.forEach((key) => {
+    delete context[key];
+  });
+
+  // set event if exists
+  if (!isObjectEmpty(event)) {
+    logs.event = event;
+  }
+
+  // set context
+  if (!isObjectEmpty(context)) {
+    logs.context = context;
+  }
+
+  // empty string if the logs are emtpy
+  if (isObjectEmpty(logs)) {
+    return '';
+  }
+
+  const prettyLogs = format(logs, { type: 'space', size: 2 });
+
+  return `${prettyLogs}\n`;
+};
+
+/**
+ * Write prettified log to selected output.
+ *
+ * @param {Object} logContext The log context to write.
+ * @private
+ */
+Logality.prototype._writePretty = function (logContext) {
+  // current level icon and color
+  const config = LEVELS_CONFIG[logContext.level];
+
+  const file = chalk.underline.green(logContext.context.source.file_name);
+  const date = chalk.white(`[${logContext.dt}]`);
+  const level = config.color(`${config.icon} ${logContext.level}`);
+  const message = config.color(logContext.message);
+  const logs = this._getLogs(logContext);
+
+  const output = `${date} ${level} ${file} - ${message}\n${logs}`;
+
+  this._stream.write(output);
+};
+
+/**
+ * Write raw log to selected output.
+ *
+ * @param {Object} logContext The log context to write.
+ * @private
+ */
+Logality.prototype._writeRaw = function (logContext) {
+  let strLogContext = JSON.stringify(logContext);
+  strLogContext += '\n';
+  this._stream.write(strLogContext);
+};
+
+/**
  * Write log to selected output.
  *
  * @param {Object} logContext The log context to write.
  * @private
  */
 Logality.prototype._write = function (logContext) {
-  let strLogContext = JSON.stringify(logContext);
-  strLogContext += '\n';
-  this._stream.write(strLogContext);
+  if (this._opts.prettyPrint) {
+    this._writePretty(logContext);
+  } else {
+    this._writeRaw(logContext);
+  }
 };
 
 /**
