@@ -37,6 +37,16 @@ tester.sink = function (func) {
 };
 
 /**
+ * Writable stream helper for capturing pretty logging output.
+ *
+ * @param {Function} func Callback with the logging streams.
+ * @return {Writable Stream}
+ */
+tester.sinkPretty = function (func) {
+  return writeStream.obj(func);
+};
+
+/**
  * Stub Logality so it can be properly tested with snapshots.
  *
  */
