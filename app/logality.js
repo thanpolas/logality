@@ -12,7 +12,6 @@ const stackTrace = require('stack-trace');
 const chalk = require('chalk');
 const figures = require('figures');
 const format = require('json-format');
-const Table = require('cli-table');
 
 const serializers = require('./serializers');
 const { isObjectEmpty } = require('./utils');
@@ -234,21 +233,11 @@ Logality.prototype._writePretty = function (logContext) {
   const config = LEVELS_CONFIG[logContext.level];
 
   const file = chalk.underline.green(logContext.context.source.file_name);
-  const date = chalk.white(`${logContext.dt}`);
-  const status = config.color(`${config.icon} ${logContext.level}`);
-  const message = config.color(logContext.message);
+  const date = chalk.white(`[${logContext.dt}]`);
+  const message = config.color(`${config.icon} ${logContext.level} - ${logContext.message}`);
   const logs = this._getLogs(logContext);
 
-  const table = new Table();
-
-  table.push(
-    ['File', file],
-    ['Date', date],
-    ['Status', status],
-    ['Message', message],
-  );
-
-  const output = `${table.toString()}\n${logs}\n`;
+  const output = `${file}\n${date} ${message}\n${logs}\n`;
 
   this._stream.write(output);
 };
