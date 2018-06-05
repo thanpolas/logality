@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pretty Logging Will pretty log an object in context 1`] = `
+"
+[37m[2018-05-18T16:25:57.815Z][39m [34mℹ info - hello world[39m
+
+{
+  \\"context\\": {
+    \\"runtime\\": {
+      \\"application\\": \\"testLogality\\",
+      \\"file\\": \\"/test/spec/pretty.test.js\\"
+    },
+    \\"source\\": {
+      \\"file_name\\": \\"/test/spec/pretty.test.js\\"
+    },
+    \\"system\\": {
+      \\"hostname\\": \\"localhost\\",
+      \\"pid\\": 36255,
+      \\"process_name\\": \\"node .\\"
+    },
+    \\"custom\\": {
+      \\"a\\": 1,
+      \\"b\\": 2
+    }
+  }
+}
+"
+`;
+
+exports[`Pretty Logging Will pretty log expected JSON properties 1`] = `
+"
+[37m[2018-05-18T16:25:57.815Z][39m [34mℹ info - hello world[39m
+
+{
+  \\"context\\": {
+    \\"runtime\\": {
+      \\"application\\": \\"testLogality\\",
+      \\"file\\": \\"/test/spec/pretty.test.js\\"
+    },
+    \\"source\\": {
+      \\"file_name\\": \\"/test/spec/pretty.test.js\\"
+    },
+    \\"system\\": {
+      \\"hostname\\": \\"localhost\\",
+      \\"pid\\": 36255,
+      \\"process_name\\": \\"node .\\"
+    }
+  }
+}
+"
+`;
