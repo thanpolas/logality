@@ -63,7 +63,7 @@ the Log Schema.
 
 
 ```js
-const locality = new Logality({
+const logality = new Logality({
     serializers: {
         user: function (udo) {
             return {
