@@ -10,6 +10,12 @@ const os = require('os');
 
 const stackTrace = require('stack-trace');
 
+const chalk = require('chalk');
+
+const figures = require('figures');
+
+const format = require('json-format');
+
 const serializers = require('./serializers');
 
 /**
@@ -27,6 +33,42 @@ const ALLOWED_LEVELS = [
   'info', // Syslog level 6
   'debug', // Syslog level 7
 ];
+
+/** @constant {Object} LEVELS_CONFIG Levels colors and icons */
+const LEVELS_CONFIG = {
+  emergency: {
+    color: chalk.red.underline,
+    icon: figures.bullet,
+  },
+  alert: {
+    color: chalk.red.underline,
+    icon: figures.warning,
+  },
+  critical: {
+    color: chalk.red,
+    icon: figures.cross,
+  },
+  error: {
+    color: chalk.red,
+    icon: figures.square,
+  },
+  warn: {
+    color: chalk.yellow,
+    icon: figures.checkboxCircleOn,
+  },
+  notice: {
+    color: chalk.cyan,
+    icon: figures.play,
+  },
+  info: {
+    color: chalk.blue,
+    icon: figures.info,
+  },
+  debug: {
+    color: chalk.green,
+    icon: figures.star,
+  },
+};
 
 /** @type {string} Get the Current Working Directory of the app */
 const CWD = process.cwd();
@@ -47,6 +89,7 @@ const Logality = module.exports = function (opts = {}) {
   /** @type {Object} Logality configuration */
   this._opts = {
     appName: opts.appName || 'Logality',
+    prettify: opts.prettify || false,
   };
 
   /** @type {Object} Logality serializers */
@@ -148,15 +191,49 @@ Logality.prototype._getDt = function () {
 };
 
 /**
+ * Write prettified log to selected output.
+ *
+ * @param {Object} logContext The log context to write.
+ * @private
+ */
+Logality.prototype._writePrettify = function (logContext) {
+  // current level icon and color
+  const config = LEVELS_CONFIG[logContext.level];
+
+  const date = chalk.white(`[${logContext.dt}]`);
+  const message = config.color(`${config.icon} ${logContext.level} - ${logContext.message}`);
+
+  // format logs
+  const logs = format(logContext, { type: 'space', size: 2 });
+
+  // create output
+  const output = `\n${date} ${message}\n\n${logs}\n`;
+
+  this._stream.write(output);
+};
+
+/**
+ * Write raw log to selected output.
+ *
+ * @param {Object} logContext The log context to write.
+ * @private
+ */
+Logality.prototype._writeRaw = function (logContext) {
+  this._stream.write(JSON.stringify(logContext));
+};
+
+/**
  * Write log to selected output.
  *
  * @param {Object} logContext The log context to write.
  * @private
  */
 Logality.prototype._write = function (logContext) {
-  let strLogContext = JSON.stringify(logContext);
-  strLogContext += '\n';
-  this._stream.write(strLogContext);
+  if (this._opts.prettify) {
+    return this._writePrettify(logContext);
+  }
+
+  return this._writeRaw(logContext);
 };
 
 /**
