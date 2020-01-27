@@ -9,7 +9,6 @@ Object {
     },
     "runtime": Object {
       "application": "testLogality",
-      "file": "/test/spec/logging.test.js",
     },
     "source": Object {
       "file_name": "/test/spec/logging.test.js",
@@ -33,7 +32,6 @@ Object {
   "context": Object {
     "runtime": Object {
       "application": "testLogality",
-      "file": "/test/spec/logging.test.js",
     },
     "source": Object {
       "file_name": "/test/spec/logging.test.js",

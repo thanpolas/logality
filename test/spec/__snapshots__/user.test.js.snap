@@ -5,7 +5,6 @@ Object {
   "context": Object {
     "runtime": Object {
       "application": "testLogality",
-      "file": "/test/spec/user.test.js",
     },
     "source": Object {
       "file_name": "/test/spec/user.test.js",
@@ -18,35 +17,6 @@ Object {
     "user": Object {
       "email": "one@go.com",
       "id": 10,
-      "type": null,
-    },
-  },
-  "dt": "2018-05-18T16:25:57.815Z",
-  "event": Object {},
-  "level": "info",
-  "message": "hello world",
-  "severity": 6,
-}
-`;
-
-exports[`User Data Object Logging Will log UDO with a custom serializer 1`] = `
-Object {
-  "context": Object {
-    "runtime": Object {
-      "application": "testLogality",
-      "file": "/test/spec/user.test.js",
-    },
-    "source": Object {
-      "file_name": "/test/spec/user.test.js",
-    },
-    "system": Object {
-      "hostname": "localhost",
-      "pid": 36255,
-      "process_name": "node .",
-    },
-    "user": Object {
-      "email": "two@go.com",
-      "id": 12,
     },
   },
   "dt": "2018-05-18T16:25:57.815Z",
