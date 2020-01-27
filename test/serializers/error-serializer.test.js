@@ -1,7 +1,7 @@
 /**
  * @fileOverview Test logging a JS error with error stack.
  */
-const Logality = require('../..');
+const Logality = require('../../app/logality');
 const { sink, stubLogality } = require('../lib/tester.lib');
 
 describe('Error Stack Testing', () => {

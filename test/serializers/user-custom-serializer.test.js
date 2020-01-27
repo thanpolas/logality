@@ -1,7 +1,7 @@
 /**
  * @fileOverview Test custom user serializer
  */
-const Logality = require('../..');
+const Logality = require('../../app/logality');
 const { sink, stubLogality } = require('../lib/tester.lib');
 
 const UDO_MOCK = {

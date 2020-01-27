@@ -7,7 +7,7 @@ Object {
       "application": "testLogality",
     },
     "source": Object {
-      "file_name": "/test/serializers/user.test.js",
+      "file_name": "/test/serializers/user-custom-serializer.test.js",
     },
     "system": Object {
       "hostname": "localhost",
@@ -34,7 +34,7 @@ Object {
       "application": "testLogality",
     },
     "source": Object {
-      "file_name": "/test/serializers/user.test.js",
+      "file_name": "/test/serializers/user-custom-serializer.test.js",
     },
     "system": Object {
       "hostname": "localhost",
