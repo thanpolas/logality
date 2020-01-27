@@ -6,19 +6,28 @@
  * Copyright © Alacrity Law Limited
  * All rights reserved.
  */
-const os = require('os');
+
+/**
+ * @fileOverview bootstrap and master exporting module.
+ */
+
+ const os = require('os');
 
 const stackTrace = require('stack-trace');
 const chalk = require('chalk');
 const figures = require('figures');
 const format = require('json-format');
 
+const assign = require('lodash.assign');
+
 const serializers = require('./serializers');
 const { isObjectEmpty } = require('./utils');
 
-/**
- * @fileOverview bootstrap and master exporting module.
- */
+const dtSerializer = require('./serializers/dt.serializer');
+const userSerializer = require('./serializers/user.serializer');
+const errorSerializer = require('./serializers/error.serializer');
+const reqSerializer = require('./serializers/express-request.serializer');
+const customSerializer = require('./serializers/custom.serializer');
 
 /** @constant {Array.<string>} ALLOWED_LEVELS All levels, sequence MATTERS */
 const ALLOWED_LEVELS = [
@@ -92,8 +101,15 @@ const Logality = module.exports = function (opts = {}) {
 
   /** @type {Object} Logality serializers */
   this._serializers = {
-    user: (opts.serializers && opts.serializers.user) || serializers.user,
+    user: userSerializer,
+    error: errorSerializer,
+    req: reqSerializer,
+    custom: customSerializer,
   };
+
+  if (opts.serializers) {
+    this._serializers = assign(this._serializers, opts.serializers);
+  }
 
   /** @type {string} Cache the hostname */
   this._hostname = os.hostname();
@@ -147,7 +163,6 @@ Logality.prototype.log = function (filePath, level, message, context) {
     context: {
       runtime: {
         application: this._opts.appName,
-        file: filePath,
       },
       source: {
         file_name: filePath,
@@ -156,23 +171,6 @@ Logality.prototype.log = function (filePath, level, message, context) {
     event: {},
   };
 
-  this._assignSystem(logContext);
-
-  if (context && context.user) {
-    this._assignUser(logContext, context.user);
-  }
-
-  if (context && context.error) {
-    this._assignError(logContext, context.error);
-  }
-
-  if (context && context.req) {
-    this._assignRequest(logContext, context.req);
-  }
-
-  if (context && context.custom) {
-    logContext.context.custom = context.custom;
-  }
 
   this._write(logContext);
 };
@@ -189,7 +187,7 @@ Logality.prototype._getDt = function () {
 };
 
 /**
- * Returns formatted logs
+ * Returns formatted logs for pretty print.
  *
  * @param {Object} logContext The log context to format.
  * @private
@@ -280,30 +278,9 @@ Logality.prototype._write = function (logContext) {
 Logality.prototype._assignSystem = function (logContext) {
   logContext.context.system = {
     hostname: this._hostname,
-    pid: this._getPid(),
-    process_name: this._getProcessName(),
+    pid: process.pid,
+    process_name: process.argv[0],
   };
-};
-
-/**
- * Returns the current process id, made a method for easier stubing while testing.
- *
- * @return {number} The pid.
- * @private
- */
-Logality.prototype._getPid = function () {
-  return process.pid;
-};
-
-/**
- * Returns the process name as invoked by the cli, made a method for
- * easier stubing while testing.
- *
- * @return {string} The process name as invoked by the cli.
- * @private
- */
-Logality.prototype._getProcessName = function () {
-  return process.argv[0];
 };
 
 /**
@@ -346,52 +323,4 @@ Logality.prototype._getFilePath = function () {
   }
 };
 
-/**
- * Assigns a JS native Error Object into log-schema.
- *
- * @param {Object} logContext The log record context.
- * @param {Error} error Javascript Error Object.
- * @private
- */
-Logality.prototype._assignError = function (logContext, error) {
-  logContext.event.error = {
-    name: error.name,
-    message: error.message,
-    backtrace: [],
-  };
-
-  if (!error.stack) {
-    return;
-  }
-
-  const trace = stackTrace.parse(error);
-
-  trace.forEach(function (traceLine) {
-    const traceLogItem = {
-      file: traceLine.getFileName(),
-      function: traceLine.getFunctionName(),
-      line: `${traceLine.getLineNumber()}:${traceLine.getColumnNumber()}`,
-    };
-
-    logContext.event.error.backtrace.push(traceLogItem);
-  });
-};
-
-/**
- * Assign Express Request values and properties.
- *
- * @param {Object} logContext The log record context.
- * @param {Express.req} req Express Request Object.
- * @private
- */
-Logality.prototype._assignRequest = function (logContext, req) {
-  logContext.event.http_request = {
-    headers: req.header,
-    host: req.hostname,
-    method: req.method,
-    path: req.path,
-    query_string: JSON.stringify(req.query),
-    scheme: req.secure ? 'https' : 'http',
-  };
-};
 
