@@ -24,21 +24,21 @@
     "test": "eslint app/** && jest"
   },
   "dependencies": {
-    "chalk": "^2.4.1",
-    "figures": "^2.0.0",
+    "chalk": "^3.0.0",
+    "figures": "^3.1.0",
     "json-format": "^1.0.1",
     "stack-trace": "0.0.10"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^4.18.2",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.9.0",
-    "flush-write-stream": "^1.0.3",
-    "grunt": "^1.0.2",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
+    "flush-write-stream": "^2.0.0",
+    "grunt": "^1.0.4",
     "grunt-release": "^0.14.0",
-    "jest": "^22.4.3",
-    "sinon": "^5.0.7",
-    "split2": "^2.2.0"
+    "jest": "^25.1.0",
+    "sinon": "^8.1.1",
+    "split2": "^3.1.1"
   }
 }
