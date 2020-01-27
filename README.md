@@ -337,13 +337,24 @@ Anything
 ## Custom Serializers
 
 You can define your own serializers or overwrite the existing ones when
-you first instantiate Logality. There are two parameters when creating a
-serializer, the "output path" and the value to store there. The "output path"
-refers to the path in the JSON object to store the serialized value.
+you first instantiate Logality. There are three parameters when creating a
+serializer:
 
-Those two parameters are expected to be found on the return of the serializers:
+* **Context Name** The name on your `context` object that will trigger the
+    serializer.
+* **Output Path** The path in the JSON output where you want the serializer's
+    value to be stored. Use dot notation to signify the exact path.
+* **Value** The serialized value to output on the log message.
 
-* `path` **{string}** Path to save the value, use empty string for root.
+The *Context Name* is the key on which you define your serializer. So for
+instance when you set a serializer on the user key like so 
+`mySerializers.user = userSerializer` the keyword `user` will be used from
+"mySerializers.<b>user</b>".
+
+Output Path and Value are the output of your serializer function and are 
+expected as separate keys in the object you must return:
+
+* `path` **{string}** Path to save the value, use dot notation.
 * `value` **{*}** Any value to store on that path.
 
 An Example:
@@ -354,7 +365,7 @@ const Logality = require('logality');
 mySerializers = {
     user: function (user) {
         return {
-            path: 'context',
+            path: 'context.user',
             value: {
                 id: user.id,
                 email: email.id,
@@ -364,7 +375,7 @@ mySerializers = {
     },
     order: function (order) {
         return {
-            path: '',
+            path: 'context.order',
             value: {
                 order_id: order.id,
                 sku_id: order.sku,
