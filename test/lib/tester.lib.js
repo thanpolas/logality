@@ -57,13 +57,13 @@ tester.stubLogality = function () {
   let processNameStub;
   beforeEach(() => {
     dateStub = sinon.stub(Date.prototype, 'toISOString');
-    processStub = sinon.stub(Logality.prototype, '_getPid');
-    hostnameStub = sinon.stub(os, 'hostname');
-    processNameStub = sinon.stub(Logality.prototype, '_getProcessName');
-    processNameStub.returns('node .');
-    hostnameStub.returns('localhost');
     dateStub.returns('2018-05-18T16:25:57.815Z');
+    hostnameStub = sinon.stub(os, 'hostname');
+    hostnameStub.returns('localhost');
+    processStub = sinon.stub(process, 'pid');
     processStub.returns(36255);
+    processNameStub = sinon.stub(process, 'argv');
+    processNameStub.returns(['node .']);
   });
 
   afterEach(() => {
