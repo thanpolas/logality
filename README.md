@@ -248,13 +248,7 @@ log.error('Something broke', { error: err });
         "error":{ 
             "name":"Error",
             "message":"Broke",
-            "backtrace":[ 
-                { 
-                    "file":"/Users/logality/test/spec/error-stack.test.js",
-                    "function":"Object.done",
-                    "line":"41:13"
-                }
-            ]
+            "backtrace": "Stack Trace...",
         }
     }
 ```
