@@ -30,26 +30,4 @@ describe('User Data Object Logging', () => {
 
     log('info', 'hello world', { user: UDO_MOCK });
   });
-
-  test('Will log UDO with a custom serializer', (done) => {
-    const logality = new Logality({
-      appName: 'testLogality',
-      serializers: {
-        user: (udo) => {
-          return {
-            id: udo.userId,
-            email: udo.userEmail,
-          };
-        },
-      },
-      wstream: sink((chunk) => {
-        expect(chunk).toMatchSnapshot();
-        done();
-      }),
-    });
-
-    const log = logality.get();
-
-    log('info', 'hello world', { user: UDO_MOCK_TWO });
-  });
 });
