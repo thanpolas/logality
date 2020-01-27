@@ -15,7 +15,7 @@ const os = require('os');
 
 const assign = require('lodash.assign');
 
-const writePretty = require('./pretty-print');
+const prettyPrint = require('./pretty-print');
 const utils = require('./utils');
 
 const userSerializer = require('./serializers/user.serializer');
@@ -188,7 +188,7 @@ Logality.prototype._writeRaw = function (logContext) {
  */
 Logality.prototype._write = function (logContext) {
   if (this._opts.prettyPrint) {
-    const output = writePretty(logContext);
+    const output = prettyPrint.writePretty(logContext);
     this._stream.write(output);
   } else {
     this._writeRaw(logContext);
