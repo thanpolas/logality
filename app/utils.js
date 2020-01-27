@@ -32,6 +32,7 @@ utils.assignPath = function (path, target, value) {
     if (index === (parts.length - 1)) {
       ref[part] = value;
     } else {
+      ref[part] = ref[part] || {};
       ref = ref[part];
     }
   });
