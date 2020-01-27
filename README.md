@@ -6,7 +6,7 @@
 
 ![Logality](https://i.imgur.com/xru6Q7O.png)
 
-## Install
+# Install
 
 Install the module using NPM:
 
@@ -14,16 +14,23 @@ Install the module using NPM:
 npm install logality --save
 ```
 
-## Documentation
+# Why Another Logging Service
 
 With the introduction of microservices aggregating logs from all the various 
-services became an ever growing issue. A simple solution to that problem is to
-enforce a common logging schema across your organization. 
-The [Simple Log Schema][log-schema] is, today, the most commonly accepted 
-Logging schema and Logality is the Node.js, vendor agnostic, implementation of 
-that Schema.
+services became an ever growing issue. A proven solution to that problem is to
+enforce a common logging schema across your organization.
 
-### Quick Start
+Logality follows the [Simple Log Schema][log-schema] when generating log 
+messages.
+
+However, The Simple Log Schema is just a starting point, you are able to extend
+it to make it fit your particular needs. What matters, is that your 
+organization complies with a single schema for logging and that is why we've 
+built logality.
+
+# Documentation
+
+## Quick Start
 
 ```js
 const Logality = require('logality');
@@ -35,18 +42,19 @@ const log = logality.get();
 log.info('Hello World!');
 ```
 
-### Initial Configuration
+## Initial Configuration
 
 Logality requires to be initialized and configured once, then use the instance 
-throughout your application. During instantiation you may configure Logality,
+throughout your application. You may configure Logality during instantiation,
 find bellow the configuration options:
 
-* `appName` {string} An arbitrary string to uniquely identify the service.
+* `appName` {string} **REQUIRED** An arbitrary string to uniquely identify 
+    the service.
 * `wstream` {Stream} A writeable stream to output logging, default is stdout.
-* `prettyPrint` {boolean} If true will format and prettify the event and context, default is `false`.
-* `serializers` {Object} You can define custom serializers for the various data
-objects as defined in the Log Schema:
-    * `serializers.user` {Function} Define a custom user serializer.
+* `prettyPrint` {boolean} If true will format and prettify the event and 
+    context, default is `false`.
+* `serializers` {Object} You can define custom serializers or overwrite
+    logality's, see more about Serializers bellow.
 
 ```js
 const Logality = require('logality');
@@ -56,32 +64,60 @@ const logality = new Logality({
 });
 ```
 
-#### User Serializer
+## The Logging Schema
 
-Your User Data Object (UDO) can be of any schema, however [Log Schema][log-schema]
-has a strict definition of how to log a UDO, to transform the data from one
-schema to another we use the "user serializer", this is a simple function that
-accepts an Object, the UDO and returns an Object, properly formated as per 
-the Log Schema.
-
+Logallity automatically calculates and formats a series of system information
+which is then included in the output. When you log using:
 
 ```js
-const logality = new Logality({
-    serializers: {
-        user: function (udo) {
-            return {
-                id: udo.userId,
-                email: udo.email,
-            };
-        },
-    },
-})
+log.info('Hello World!');
 ```
 
-> **BEWARE** Using custom serializers makes **you** responsible for retaining the
-Log Schema integrity.
+Logality, when on production, will output the following (expanded) JSON string:
 
-### Logging Levels
+```JSON
+{
+    "severity": 6,
+    "level": "info",
+    "dt": "2018-05-18T16:25:57.815Z",
+    "message": "hello world",
+    "event": {},
+    "context": {
+        "runtime": {
+            "application": "testLogality",
+            "file": "/test/spec/surface.test.js"
+        },
+        "source": {
+          "file_name": "/test/spec/surface.test.js"
+        },
+        "system": {
+            "hostname": "localhost",
+            "pid": 36255,
+            "process_name": "node ."
+        }
+    }
+}
+```
+
+* `severity` **{number}** Message severity expressed in an integer (7 lowest, 
+    0 higher), see bellow fow values.
+* `level` **{string}** Message severity expressed in a unique string, 
+    see bellow fow values.
+* `dt` **{string}** An [ISO8601][iso8601] date.
+* `message` **{string}** Any message provided to the logger.
+* `event` **{Object}** When the log was triggered by an event, the metadata
+    of that event are stored here. Logality supports many kinds of events as 
+    explained in the Serializers section.
+* `context` **{Object}** Context related to the log message.
+* `context.runtime.application` **{string}** Name of the service, define this
+    when first instantiating the locality service.
+* `context.runtime.file` **{string}** The local file used to run the service.
+* `context.source.file_name` **{string}** The module where the log originated.
+* `context.system.hostname` **{string}** The local system's hostname.
+* `context.system.pid` **{string}** The local process id.
+* `context.system.process_name` **{string}** The local process name.
+
+## Logging Levels
 
 As per the [Log Schema](log-schema), the logging levels map to those of Syslog
 RFC 5424:
@@ -114,10 +150,10 @@ log.alert('This is message of level: Alert');
 log.emergency('This is message of level: Emergency');
 ```
 
-### Getting a Logger
+## Getting a Logger
 
 To get a logger you have to invoke the `get()` method. That method will detect
-and use the module filename that it was invoked from so it is strongly advised
+and use the module filename that it was invoked from so it is advised
 that you use the `get()` method only once per module to have proper log 
 messages.
 
@@ -146,28 +182,206 @@ illustrated in ["Logging Levels"](#logging-levels) above.
 Using the level functions (e.g. `log.info()`) your first argument is the 
 "message" which is any arbitrary string to describe what has happened. 
 It is the second argument, "context" that you will need to put any and 
-all data you also
-want to attach with the logging message. However, there are strict rules
-as to where and how you store your data objects depending on what they are.
+all data you also want to attach with the logging message.
 
 ```js
 log.info(message, context);
 ```
 
-Context accepts the following keys:
+The `context` argument is parsed by what are called "Serializers". Serializers
+will take your data as input and format them in an appropriate, logging schema
+compliant output.
 
-* `user` Pass the viewer's User Data Object in this key.
-* `error` Pass the whole Javascript Error Object in this key.
-* `req` Pass Express.js Request object in this key.
-* `custom` Any other, arbitrary data, needs to be stored under this key.
+You may extend logality with new serializers or you may overwrite the existing
+ones.
 
-> Context accepted keys is a work in progress to fully implement the 
-[Log Schema][log-schema], if there is a logging property available in the 
-schema but not in this Library feel free to open an issue requesting it
-or even better submit your own PR.
+## Logality Serializers
 
-Logality will process and output as per the Log Schema spec all the provided
-data objects.
+Serializers are triggered by defined keys in the `context` object, Logality has 
+implemented the following serializers out of the box.
+
+### The User Serializer
+
+> Serializes a User Data Object.
+
+```js
+// a user logged in
+const user = login(username, password);
+
+// Let log the event
+log.info('User Logged in', { user: user })
+```
+
+#### Expects
+
+* `id` The user's id.
+* `email` The user's email.
+
+#### Outputs
+
+```JSON
+    "context": {
+        "user": {
+            "id": 10,
+            "email": "one@go.com",
+        }
+    }
+```
+
+### The Error Serializer
+
+> Serializes a Javascript Error Object or an Exception.
+
+```js
+const err = new Error('Broke');
+
+log.error('Something broke', { error: err });
+```
+
+#### Expects
+
+* `name` Name of the error.
+* `message` The error's message.
+
+#### Outputs
+
+```JSON
+    "event":{ 
+        "error":{ 
+            "name":"Error",
+            "message":"Broke",
+            "backtrace":[ 
+                { 
+                    "file":"/Users/logality/test/spec/error-stack.test.js",
+                    "function":"Object.done",
+                    "line":"41:13"
+                }
+            ]
+        }
+    }
+```
+* `event.error` **{Object}** When an error occures this is where it is 
+logged. The `event.error` Object contains three keys:
+* `event.error.name` **{string}** The name of the error.
+* `event.error.message` **{string}** The message of the error.
+* `event.error.backtrace` **{Array\<Object\>}** An array of trace
+    item objects.
+
+### The Request Serializer
+
+> Serializes an Express.JS Request Object.
+
+```js
+function index(req, res) {
+    log.info('Index Request', { req: req });
+}
+
+```
+
+#### Expects
+
+Express JS Request Object.
+
+#### Outputs
+
+```JSON
+    "event":{ 
+        "http_request": {
+            "headers": {},
+            "host": "localhost",
+            "method": "GET",
+            "path": "/",
+            "query_string": "",
+            "scheme": "http"
+        }
+    }
+```
+
+* `event.http_request` **{Object}** When the request object is passed
+    the following additional data are stored:
+* `event.http_request.headers` **{Object}** Key-value pairs of all
+    the HTTP headers, excluding sensitive headers.
+* `event.http_request.host` **{string}** The hostname.
+* `event.http_request.method` **{string}** HTTP method used.
+* `event.http_request.path` **{string}** The request path.
+* `event.http_request.query_string` **{string}** Query string used.
+* `event.http_request.scheme` **{string}** One of "http" or "https".
+
+### The Custom Serializer
+
+> Serializes any data that is passed as JSON.
+
+```js
+// Custom log
+log.info('Something happened', { 
+    custom: {
+        any: 'value',
+    } 
+});
+```
+
+#### Expects
+
+Anything
+
+#### Outputs
+
+```JSON
+    "context": {
+        "custom": {
+            "any": 'value'
+        }
+    }
+```
+
+## Custom Serializers
+
+You can define your own serializers or overwrite the existing ones when
+you first instantiate Logality. There are two parameters when creating a
+serializer, the "output path" and the value to store there. The "output path"
+refers to the path in the JSON object to store the serialized value.
+
+Those two parameters are expected to be found on the return of the serializers:
+
+* `path` **{string}** Path to save the value, use empty string for root.
+* `value` **{*}** Any value to store on that path.
+
+An Example:
+
+```js
+const Logality = require('logality');
+
+mySerializers = {
+    user: function (user) {
+        return {
+            path: 'context',
+            value: {
+                id: user.id,
+                email: email.id,
+                type: user.type,
+            },
+        };
+    },
+    order: function (order) {
+        return {
+            path: '',
+            value: {
+                order_id: order.id,
+                sku_id: order.sku,
+                total_price: order.item_price * order.quantity,
+                quantity: order.quantity,
+            },
+        };
+    },
+};
+
+const logality = new Logality({
+    appName: 'service-something',
+    serializers: mySerializers,
+});
+```
+
+# Project Meta
 
 ## Releasing
 
@@ -193,3 +407,4 @@ data objects.
 Copyright Alacrity Law Limited. [Licensed under the MIT license](/LICENSE)
 
 [log-schema]: https://github.com/timberio/log-event-json-schema
+[iso8601]: https://en.wikipedia.org/wiki/ISO_8601
