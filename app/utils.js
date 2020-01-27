@@ -39,3 +39,21 @@ utils.assignPath = function (path, target, value) {
 
   return target;
 };
+
+/**
+ * Returns the process name, required for testing.
+ *
+ * @return {string}
+ */
+utils.getProcessName = function () {
+  return process.argv[0];
+};
+
+/**
+ * Returns the process id, required for testing.
+ *
+ * @return {string}
+ */
+utils.getProcessId = function () {
+  return process.pid;
+};
