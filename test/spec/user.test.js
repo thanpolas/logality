@@ -9,11 +9,6 @@ const UDO_MOCK = {
   email: 'one@go.com',
 };
 
-const UDO_MOCK_TWO = {
-  userId: 12,
-  userEmail: 'two@go.com',
-};
-
 describe('User Data Object Logging', () => {
   stubLogality();
 

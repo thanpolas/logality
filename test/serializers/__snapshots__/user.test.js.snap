@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom User Serializer Will log custom UDO 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/serializers/user.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+    "user": Object {
+      "email": "one@go.com",
+      "id": 10,
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
+
+exports[`Custom User Serializer Will log custom UDO on custom path 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/serializers/user.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+  "user": Object {
+    "email": "one@go.com",
+    "id": 10,
+  },
+}
+`;
