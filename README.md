@@ -84,8 +84,7 @@ Logality, when on production, will output the following (expanded) JSON string:
     "event": {},
     "context": {
         "runtime": {
-            "application": "testLogality",
-            "file": "/test/spec/surface.test.js"
+            "application": "testLogality"
         },
         "source": {
           "file_name": "/test/spec/surface.test.js"
@@ -111,7 +110,6 @@ Logality, when on production, will output the following (expanded) JSON string:
 * `context` **{Object}** Context related to the log message.
 * `context.runtime.application` **{string}** Name of the service, define this
     when first instantiating the locality service.
-* `context.runtime.file` **{string}** The local file used to run the service.
 * `context.source.file_name` **{string}** The module where the log originated.
 * `context.system.hostname` **{string}** The local system's hostname.
 * `context.system.pid` **{string}** The local process id.
