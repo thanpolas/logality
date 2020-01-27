@@ -23,9 +23,9 @@ enforce a common logging schema across your organization.
 Logality follows the [Simple Log Schema][log-schema] when generating log 
 messages.
 
-However, The Simple Log Schema is just a starting point, you are able to extend
-it to make it fit your particular needs. What matters, is that your 
-organization complies with a single schema for logging and that is why we've 
+However, The Simple Log Schema is just the starting point, you are able to 
+extend it so it fits your needs. What matters, is that your 
+organization uses a single schema for logging and that is why we've 
 built logality.
 
 # Documentation
@@ -35,7 +35,7 @@ built logality.
 ```js
 const Logality = require('logality');
 
-const logality = new Logality();
+const logality = Logality();
 
 const log = logality.get();
 
@@ -44,11 +44,11 @@ log.info('Hello World!');
 
 ## Initial Configuration
 
-Logality requires to be initialized and configured once, then use the instance 
-throughout your application. You may configure Logality during instantiation,
-find bellow the configuration options:
+**Important!** Logality requires to be initialized and configured once, then use the instance 
+throughout your application. You can configure Logality during instantiation,
+find the configuration options bellow:
 
-* `appName` {string} **REQUIRED** An arbitrary string to uniquely identify 
+* `appName` {string} An arbitrary string to uniquely identify 
     the service.
 * `wstream` {Stream} A writeable stream to output logging, default is stdout.
 * `prettyPrint` {boolean} If true will format and prettify the event and 
@@ -59,7 +59,7 @@ find bellow the configuration options:
 ```js
 const Logality = require('logality');
 
-const logality = new Logality({
+const logality = Logality({
     appName: 'service-something',
 });
 ```
@@ -256,8 +256,7 @@ log.error('Something broke', { error: err });
 logged. The `event.error` Object contains three keys:
 * `event.error.name` **{string}** The name of the error.
 * `event.error.message` **{string}** The message of the error.
-* `event.error.backtrace` **{Array\<Object\>}** An array of trace
-    item objects.
+* `event.error.backtrace` **{string}** The stack trace.
 
 ### The Request Serializer
 
@@ -340,8 +339,7 @@ serializer:
 
 The *Context Name* is the key on which you define your serializer. So for
 instance when you set a serializer on the user key like so 
-`mySerializers.user = userSerializer` the keyword `user` will be used from
-"mySerializers.<b>user</b>".
+`mySerializers.user = userSerializer` the keyword `user` will be used.
 
 Output Path and Value are the output of your serializer function and are 
 expected as separate keys in the object you must return:
