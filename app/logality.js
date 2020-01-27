@@ -16,6 +16,7 @@ const os = require('os');
 const assign = require('lodash.assign');
 
 const writePretty = require('./pretty-print');
+const { assignPath } = require('./utils');
 
 const userSerializer = require('./serializers/user.serializer');
 const errorSerializer = require('./serializers/error.serializer');
@@ -128,8 +129,30 @@ Logality.prototype.log = function (filePath, level, message, context) {
     event: {},
   };
 
+  this._applySerializers(logContext, context);
 
   this._write(logContext);
+};
+
+/**
+ * Apply serializers on context contents.
+ *
+ * @param {Object} logContext The log context to write.
+ * @param {Object|null} context Extra data to log.
+ */
+Logality.prototype._applySerializers = function (logContext, context) {
+  if (!context) {
+    return;
+  }
+
+  const contextKeys = Object.keys(context);
+
+  contextKeys.forEach(function (key) {
+    if (this._serializers[key]) {
+      const res = this._serializers[key](context[key]);
+      assignPath(res.path, logContext, res.value);
+    }
+  }, this);
 };
 
 /**
