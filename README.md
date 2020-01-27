@@ -394,6 +394,9 @@ const logality = new Logality({
 
 ## Release History
 
+- **v2.0.0**, *TBD* :: Extensible Serializers
+    - Enables new serializers and allows over-writing the built-in ones.
+    - Backwards compatible.
 - **v1.1.0**, *05 Jun 2018* :: JSON Log Schema Version: 4.1.0
     - Added `prettyPrint` option, thank you [Marius](https://github.com/balajmarius).
 - **v1.0.0**, *21 May 2018* :: JSON Log Schema Version: 4.1.0
