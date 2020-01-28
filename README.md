@@ -14,7 +14,19 @@ Install the module using NPM:
 npm install logality --save
 ```
 
-# Why Another Logging Service
+# What Logality can do for you
+
+## Key Features
+
+* JSON log messages with a strict schema.
+* Extend the logging schema to fit your needs.
+* Customize by overwriting the built-in serializers to create your
+    own logging schema.
+* Use Logality in your NPM Libraries and expose a writable stream so that the
+    upstream consumer applications can manage the logging stream of your 
+    library.
+
+## Longer Description
 
 With the introduction of microservices aggregating logs from all the various 
 services became an ever growing issue. A proven solution to that problem is to
@@ -25,8 +37,8 @@ messages.
 
 However, The Simple Log Schema is just the starting point, you are able to 
 extend it so it fits your needs. What matters, is that your 
-organization uses a single schema for logging and that is why we've 
-built logality.
+organization uses a single schema for logging and that is where logality 
+excels at.
 
 # Documentation
 
