@@ -1,3 +1,5 @@
+const { sanitizeHttpHeaders } = require('../utils');
+
 /**
  * Express Request Object Serializer.
  *
@@ -8,7 +10,7 @@ module.exports = function (req) {
   const result = {
     path: 'event.http_request',
     value: {
-      headers: req.header,
+      headers: sanitizeHttpHeaders(req.headers),
       host: req.hostname,
       method: req.method,
       path: req.path,

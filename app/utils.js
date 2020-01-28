@@ -57,3 +57,24 @@ utils.getProcessName = function () {
 utils.getProcessId = function () {
   return process.pid;
 };
+
+/**
+ * Clean HTTP Headers from secusiry sensitive data.
+ *
+ * @param {Object} headers The headers.
+ * @return {Object} Sanitized headers.
+ */
+utils.sanitizeHttpHeaders = function (headers) {
+  const REMOVE = [
+    'cookie',
+    'authorization',
+  ];
+
+  REMOVE.forEach(function (header) {
+    if (headers[header]) {
+      headers[header] = '-- REMOVED FOR SAFETY --';
+    }
+  });
+
+  return headers;
+};
