@@ -2,7 +2,8 @@
 
 > Extensible JSON Logger.
 
-[![CircleCI](https://circleci.com/gh/thanpolas/logality/tree/master.svg?style=svg)](https://circleci.com/gh/thanpolas/logality/tree/master)
+[![NPM Version][npm-image]][npm-url]
+[![CircleCI](https://circleci.com/gh/thanpolas/logality.svg?style=svg)](https://circleci.com/gh/thanpolas/logality)
 
 ![Logality](https://i.imgur.com/xru6Q7O.png)
 
