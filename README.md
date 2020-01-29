@@ -423,5 +423,5 @@ Copyright Thanasis Polychronakis [Licensed under the MIT license](/LICENSE)
 [iso8601]: https://en.wikipedia.org/wiki/ISO_8601
 [npm-image]: https://img.shields.io/npm/v/logality.svg
 [npm-url]: https://npmjs.org/package/logality
-[circle-image]: https://circleci.com/gh/thanpolas/logality.svg?style=svg
+[circle-image]: https://img.shields.io/circleci/build/gh/thanpolas/logality/master?label=Tests
 [circle-url]: https://circleci.com/gh/thanpolas/logality
