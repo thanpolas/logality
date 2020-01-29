@@ -1,7 +1,7 @@
 /**
  * @fileOverview Test logging a JS error with error stack.
  */
-const Logality = require('../..');
+const Logality = require('../../app/logality');
 const { sink, stubLogality } = require('../lib/tester.lib');
 
 describe('Error Stack Testing', () => {
@@ -23,13 +23,6 @@ describe('Error Stack Testing', () => {
         expect(chunk.event.error).toHaveProperty('message', 'An error did not occur');
         expect(chunk.event.error).toHaveProperty('name', 'Error');
 
-        expect(chunk.event.error.backtrace.length).toBeGreaterThan(4);
-
-        chunk.event.error.backtrace.forEach((traceItem) => {
-          expect(traceItem).toHaveProperty('file');
-          expect(traceItem).toHaveProperty('function');
-          expect(traceItem).toHaveProperty('line');
-        });
         done();
       }),
     });

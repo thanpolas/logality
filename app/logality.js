@@ -6,19 +6,22 @@
  * Copyright © Alacrity Law Limited
  * All rights reserved.
  */
-const os = require('os');
-
-const stackTrace = require('stack-trace');
-const chalk = require('chalk');
-const figures = require('figures');
-const format = require('json-format');
-
-const serializers = require('./serializers');
-const { isObjectEmpty } = require('./utils');
 
 /**
  * @fileOverview bootstrap and master exporting module.
  */
+
+const os = require('os');
+
+const assign = require('lodash.assign');
+
+const prettyPrint = require('./pretty-print');
+const utils = require('./utils');
+
+const userSerializer = require('./serializers/user.serializer');
+const errorSerializer = require('./serializers/error.serializer');
+const reqSerializer = require('./serializers/express-request.serializer');
+const customSerializer = require('./serializers/custom.serializer');
 
 /** @constant {Array.<string>} ALLOWED_LEVELS All levels, sequence MATTERS */
 const ALLOWED_LEVELS = [
@@ -31,42 +34,6 @@ const ALLOWED_LEVELS = [
   'info', // Syslog level 6
   'debug', // Syslog level 7
 ];
-
-/** @constant {Object} LEVELS_CONFIG Levels colors and icons */
-const LEVELS_CONFIG = {
-  emergency: {
-    color: chalk.red.underline,
-    icon: figures.bullet,
-  },
-  alert: {
-    color: chalk.red.underline,
-    icon: figures.warning,
-  },
-  critical: {
-    color: chalk.red,
-    icon: figures.cross,
-  },
-  error: {
-    color: chalk.red,
-    icon: figures.square,
-  },
-  warn: {
-    color: chalk.yellow,
-    icon: figures.checkboxCircleOn,
-  },
-  notice: {
-    color: chalk.cyan,
-    icon: figures.play,
-  },
-  info: {
-    color: chalk.blue,
-    icon: figures.info,
-  },
-  debug: {
-    color: chalk.green,
-    icon: figures.star,
-  },
-};
 
 /** @type {string} Get the Current Working Directory of the app */
 const CWD = process.cwd();
@@ -92,8 +59,15 @@ const Logality = module.exports = function (opts = {}) {
 
   /** @type {Object} Logality serializers */
   this._serializers = {
-    user: (opts.serializers && opts.serializers.user) || serializers.user,
+    user: userSerializer,
+    error: errorSerializer,
+    req: reqSerializer,
+    custom: customSerializer,
   };
+
+  if (opts.serializers) {
+    this._serializers = assign(this._serializers, opts.serializers);
+  }
 
   /** @type {string} Cache the hostname */
   this._hostname = os.hostname();
@@ -147,7 +121,6 @@ Logality.prototype.log = function (filePath, level, message, context) {
     context: {
       runtime: {
         application: this._opts.appName,
-        file: filePath,
       },
       source: {
         file_name: filePath,
@@ -158,23 +131,30 @@ Logality.prototype.log = function (filePath, level, message, context) {
 
   this._assignSystem(logContext);
 
-  if (context && context.user) {
-    this._assignUser(logContext, context.user);
-  }
-
-  if (context && context.error) {
-    this._assignError(logContext, context.error);
-  }
-
-  if (context && context.req) {
-    this._assignRequest(logContext, context.req);
-  }
-
-  if (context && context.custom) {
-    logContext.context.custom = context.custom;
-  }
+  this._applySerializers(logContext, context);
 
   this._write(logContext);
+};
+
+/**
+ * Apply serializers on context contents.
+ *
+ * @param {Object} logContext The log context to write.
+ * @param {Object|null} context Extra data to log.
+ */
+Logality.prototype._applySerializers = function (logContext, context) {
+  if (!context) {
+    return;
+  }
+
+  const contextKeys = Object.keys(context);
+
+  contextKeys.forEach(function (key) {
+    if (this._serializers[key]) {
+      const res = this._serializers[key](context[key]);
+      utils.assignPath(res.path, logContext, res.value);
+    }
+  }, this);
 };
 
 /**
@@ -186,63 +166,6 @@ Logality.prototype.log = function (filePath, level, message, context) {
 Logality.prototype._getDt = function () {
   const dt = new Date();
   return dt.toISOString();
-};
-
-/**
- * Returns formatted logs
- *
- * @param {Object} logContext The log context to format.
- * @private
- */
-Logality.prototype._getLogs = function (logContext) {
-  const logs = {};
-  const blacklist = ['runtime', 'source', 'system'];
-  const { event, context } = logContext;
-
-  // remove unnecessary keys
-  blacklist.forEach((key) => {
-    delete context[key];
-  });
-
-  // set event if exists
-  if (!isObjectEmpty(event)) {
-    logs.event = event;
-  }
-
-  // set context
-  if (!isObjectEmpty(context)) {
-    logs.context = context;
-  }
-
-  // empty string if the logs are emtpy
-  if (isObjectEmpty(logs)) {
-    return '';
-  }
-
-  const prettyLogs = format(logs, { type: 'space', size: 2 });
-
-  return `${prettyLogs}\n`;
-};
-
-/**
- * Write prettified log to selected output.
- *
- * @param {Object} logContext The log context to write.
- * @private
- */
-Logality.prototype._writePretty = function (logContext) {
-  // current level icon and color
-  const config = LEVELS_CONFIG[logContext.level];
-
-  const file = chalk.underline.green(logContext.context.source.file_name);
-  const date = chalk.white(`[${logContext.dt}]`);
-  const level = config.color(`${config.icon} ${logContext.level}`);
-  const message = config.color(logContext.message);
-  const logs = this._getLogs(logContext);
-
-  const output = `${date} ${level} ${file} - ${message}\n${logs}`;
-
-  this._stream.write(output);
 };
 
 /**
@@ -265,7 +188,8 @@ Logality.prototype._writeRaw = function (logContext) {
  */
 Logality.prototype._write = function (logContext) {
   if (this._opts.prettyPrint) {
-    this._writePretty(logContext);
+    const output = prettyPrint.writePretty(logContext);
+    this._stream.write(output);
   } else {
     this._writeRaw(logContext);
   }
@@ -280,41 +204,9 @@ Logality.prototype._write = function (logContext) {
 Logality.prototype._assignSystem = function (logContext) {
   logContext.context.system = {
     hostname: this._hostname,
-    pid: this._getPid(),
-    process_name: this._getProcessName(),
+    pid: utils.getProcessId(),
+    process_name: utils.getProcessName(),
   };
-};
-
-/**
- * Returns the current process id, made a method for easier stubing while testing.
- *
- * @return {number} The pid.
- * @private
- */
-Logality.prototype._getPid = function () {
-  return process.pid;
-};
-
-/**
- * Returns the process name as invoked by the cli, made a method for
- * easier stubing while testing.
- *
- * @return {string} The process name as invoked by the cli.
- * @private
- */
-Logality.prototype._getProcessName = function () {
-  return process.argv[0];
-};
-
-/**
- * Assigns log-schema properties to the logContext for the given UDO.
- *
- * @param {Object} logContext The log record context.
- * @param {Object} user The UDO.
- * @private
- */
-Logality.prototype._assignUser = function (logContext, user) {
-  logContext.context.user = this._serializers.user(user);
 };
 
 /**
@@ -345,53 +237,3 @@ Logality.prototype._getFilePath = function () {
     return filePath;
   }
 };
-
-/**
- * Assigns a JS native Error Object into log-schema.
- *
- * @param {Object} logContext The log record context.
- * @param {Error} error Javascript Error Object.
- * @private
- */
-Logality.prototype._assignError = function (logContext, error) {
-  logContext.event.error = {
-    name: error.name,
-    message: error.message,
-    backtrace: [],
-  };
-
-  if (!error.stack) {
-    return;
-  }
-
-  const trace = stackTrace.parse(error);
-
-  trace.forEach(function (traceLine) {
-    const traceLogItem = {
-      file: traceLine.getFileName(),
-      function: traceLine.getFunctionName(),
-      line: `${traceLine.getLineNumber()}:${traceLine.getColumnNumber()}`,
-    };
-
-    logContext.event.error.backtrace.push(traceLogItem);
-  });
-};
-
-/**
- * Assign Express Request values and properties.
- *
- * @param {Object} logContext The log record context.
- * @param {Express.req} req Express Request Object.
- * @private
- */
-Logality.prototype._assignRequest = function (logContext, req) {
-  logContext.event.http_request = {
-    headers: req.header,
-    host: req.hostname,
-    method: req.method,
-    path: req.path,
-    query_string: JSON.stringify(req.query),
-    scheme: req.secure ? 'https' : 'http',
-  };
-};
-

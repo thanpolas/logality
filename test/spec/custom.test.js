@@ -1,18 +1,18 @@
 /**
- * @fileOverview Test logging of user data objects.
+ * @fileOverview Test logging of custom data objects.
  */
 const Logality = require('../..');
 const { sink, stubLogality } = require('../lib/tester.lib');
 
-const UDO_MOCK = {
+const DATA = {
   id: 10,
   email: 'one@go.com',
 };
 
-describe('User Data Object Logging', () => {
+describe('Custom Serializer', () => {
   stubLogality();
 
-  test('Will log UDO Properly by default', (done) => {
+  test('Will log custom data properly', (done) => {
     const logality = new Logality({
       appName: 'testLogality',
       wstream: sink((chunk) => {
@@ -23,6 +23,6 @@ describe('User Data Object Logging', () => {
 
     const log = logality.get();
 
-    log('info', 'hello world', { user: UDO_MOCK });
+    log('info', 'hello world', { custom: DATA });
   });
 });

@@ -8,7 +8,7 @@ const writeStream = require('flush-write-stream');
 const split = require('split2');
 const sinon = require('sinon');
 
-const Logality = require('../..');
+const utils = require('../../app/utils');
 
 const tester = module.exports = {};
 
@@ -57,13 +57,13 @@ tester.stubLogality = function () {
   let processNameStub;
   beforeEach(() => {
     dateStub = sinon.stub(Date.prototype, 'toISOString');
-    processStub = sinon.stub(Logality.prototype, '_getPid');
-    hostnameStub = sinon.stub(os, 'hostname');
-    processNameStub = sinon.stub(Logality.prototype, '_getProcessName');
-    processNameStub.returns('node .');
-    hostnameStub.returns('localhost');
     dateStub.returns('2018-05-18T16:25:57.815Z');
+    hostnameStub = sinon.stub(os, 'hostname');
+    hostnameStub.returns('localhost');
+    processStub = sinon.stub(utils, 'getProcessId');
     processStub.returns(36255);
+    processNameStub = sinon.stub(utils, 'getProcessName');
+    processNameStub.returns('node .');
   });
 
   afterEach(() => {

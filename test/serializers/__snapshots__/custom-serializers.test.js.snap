@@ -1,22 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Normal Logging Will log an object in context 1`] = `
+exports[`Custom Serializers Will log custom serializer on context 1`] = `
 Object {
   "context": Object {
-    "custom": Object {
-      "a": 1,
-      "b": 2,
-    },
     "runtime": Object {
       "application": "testLogality",
     },
     "source": Object {
-      "file_name": "/test/spec/logging.test.js",
+      "file_name": "/test/serializers/custom-serializers.test.js",
     },
     "system": Object {
       "hostname": "localhost",
       "pid": 36255,
       "process_name": "node .",
+    },
+    "zit": Object {
+      "id": 12,
+      "property": "zero",
+      "value": 0.23,
     },
   },
   "dt": "2018-05-18T16:25:57.815Z",
@@ -27,14 +28,14 @@ Object {
 }
 `;
 
-exports[`Normal Logging Will log expected JSON properties 1`] = `
+exports[`Custom Serializers Will log custom serializer on root 1`] = `
 Object {
   "context": Object {
     "runtime": Object {
       "application": "testLogality",
     },
     "source": Object {
-      "file_name": "/test/spec/logging.test.js",
+      "file_name": "/test/serializers/custom-serializers.test.js",
     },
     "system": Object {
       "hostname": "localhost",
@@ -47,5 +48,10 @@ Object {
   "level": "info",
   "message": "hello world",
   "severity": 6,
+  "zit": Object {
+    "id": 12,
+    "property": "zero",
+    "value": 0.23,
+  },
 }
 `;
