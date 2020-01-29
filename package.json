@@ -22,7 +22,10 @@
   },
   "scripts": {
     "lint": "eslint app test",
-    "test": "eslint app/** && jest"
+    "test": "eslint app/** && jest",
+    "release": "grunt release:patch",
+    "release:minor": "grunt release:minor",
+    "release:major": "grunt release:major"
   },
   "dependencies": {
     "chalk": "^3.0.0",
