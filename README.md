@@ -26,20 +26,7 @@ npm install logality --save
 * Use Logality in your NPM Libraries and expose a writable stream so that the
     upstream consumer applications can manage the logging stream of your 
     library.
-
-## Longer Description
-
-With the introduction of microservices aggregating logs from all the various 
-services became an ever growing issue. A proven solution to that problem is to
-enforce a common logging schema across your organization.
-
-Logality follows the [Simple Log Schema][log-schema] when generating log 
-messages.
-
-However, The Simple Log Schema is just the starting point, you are able to 
-extend it so it fits your needs. What matters, is that your 
-organization uses a single schema for logging and that is where logality 
-excels at.
+* Schema based on the [Simple Log Schema][log-schema].
 
 # Documentation
 
@@ -400,14 +387,14 @@ const logality = new Logality({
 ## Releasing
 
 1. Update the changelog bellow.
-1. Ensure you are on master.
-1. Type: `grunt release`
-    * `grunt release:minor` for minor number jump.
-    * `grunt release:major` for major number jump.
+1. Ensure you are on master and your repository is clean.
+1. Type: `npm run release`
+    * `npm run release:minor` for minor number jump.
+    * `npm run release:major` for major number jump.
 
 ## Release History
 
-- **v2.0.0**, *TBD* :: Extensible Serializers
+- **v2.0.0**, *29 Jan 2020* :: Extensible Serializers
     - Enables new serializers and allows over-writing the built-in ones.
     - Backwards compatible.
 - **v1.1.0**, *05 Jun 2018* :: JSON Log Schema Version: 4.1.0
