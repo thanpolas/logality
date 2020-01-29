@@ -1,6 +1,6 @@
 {
   "name": "logality",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "./app/logality",
   "description": "Extensible JSON Logger",
   "homepage": "https://github.com/thanpolas/logality",
