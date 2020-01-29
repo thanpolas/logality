@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom Serializer Will log custom data properly 1`] = `
+Object {
+  "context": Object {
+    "custom": Object {
+      "email": "one@go.com",
+      "id": 10,
+    },
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/custom.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
