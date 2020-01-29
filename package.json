@@ -2,9 +2,9 @@
   "name": "logality",
   "version": "1.1.0",
   "main": "./app/logality",
-  "description": "Alacrity custom logger for Node.js",
-  "homepage": "https://github.com/alacrity-law/logality",
-  "bugs": "https://github.com/alacrity-law/logality/issues",
+  "description": "Extensible JSON Logger",
+  "homepage": "https://github.com/thanpolas/logality",
+  "bugs": "https://github.com/thanpolas/logality/issues",
   "author": {
     "name": "Thanasis Polychronakis",
     "email": "thanpolas@gmail.com"
@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/alacrity-law/logality"
+    "url": "https://github.com/thanpolas/logality"
   },
   "license": "MIT",
   "engines": {
