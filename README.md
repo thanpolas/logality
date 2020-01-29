@@ -1,8 +1,8 @@
 # Logality
 
-> JSON Logger based on [Simple Log Event Schema][log-schema]
+> Extensible JSON Logger.
 
-[![CircleCI](https://circleci.com/gh/alacrity-law/logality.svg?style=svg)](https://circleci.com/gh/alacrity-law/logality)
+[![CircleCI](https://circleci.com/gh/thanpolas/logality/tree/master.svg?style=svg)](https://circleci.com/gh/thanpolas/logality/tree/master)
 
 ![Logality](https://i.imgur.com/xru6Q7O.png)
 
@@ -414,13 +414,9 @@ const logality = new Logality({
 - **v1.0.0**, *21 May 2018* :: JSON Log Schema Version: 4.1.0
     - Big Bang
 
-## Authors
-
-* [Thanasis Polychronakis](https://github.com/thanpolas)
-
 ## License
 
-Copyright Alacrity Law Limited. [Licensed under the MIT license](/LICENSE)
+Copyright Thanasis Polychronakis [Licensed under the MIT license](/LICENSE)
 
 [log-schema]: https://github.com/timberio/log-event-json-schema
 [iso8601]: https://en.wikipedia.org/wiki/ISO_8601
