@@ -2,6 +2,8 @@
 
 > Extensible JSON Logger.
 
+[![CircleCI](https://circleci.com/gh/thanpolas/logality/tree/master.svg?style=svg)](https://circleci.com/gh/thanpolas/logality/tree/master)
+
 ![Logality](https://i.imgur.com/xru6Q7O.png)
 
 # Install
