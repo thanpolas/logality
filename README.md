@@ -421,3 +421,5 @@ Copyright Thanasis Polychronakis [Licensed under the MIT license](/LICENSE)
 
 [log-schema]: https://github.com/timberio/log-event-json-schema
 [iso8601]: https://en.wikipedia.org/wiki/ISO_8601
+[npm-image]: https://img.shields.io/npm/v/logality.svg
+[npm-url]: https://npmjs.org/package/logality
