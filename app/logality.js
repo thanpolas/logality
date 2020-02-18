@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * Logality
  * Alacrity custom logger for Node.js
@@ -14,6 +15,8 @@
 const os = require('os');
 
 const assign = require('lodash.assign');
+
+require('./jsdoc-type-definitions');
 
 const prettyPrint = require('./pretty-print');
 const utils = require('./utils');
@@ -47,6 +50,7 @@ const CWD = process.cwd();
  *    default stdout.
  * @param {boolean=} opts.async Use Asynchronous API returning a promise
  *    on writes.
+ * @return {Logality} Logality instance.
  */
 const Logality = (module.exports = function(opts = {}) {
   // Force instantiation
@@ -76,7 +80,7 @@ const Logality = (module.exports = function(opts = {}) {
   /** @type {string} Cache the hostname */
   this._hostname = os.hostname();
 
-  /** @type {Stream} The output writable stream */
+  /** @type {WriteStream} The output writable stream */
   this._stream = opts.wstream || process.stdout;
 });
 
@@ -107,7 +111,7 @@ Logality.prototype.get = function() {
  * The main logging method.
  *
  * @param {string} filePath The path to the logging module.
- * @param {enum} level The level of the log.
+ * @param {string} level The level of the log.
  * @param {string} message Human readable log message.
  * @param {Object|null} context Extra data to log.
  */
@@ -177,6 +181,7 @@ Logality.prototype._getDt = function() {
  * stringifies to JSON and adds a newline at the end.
  *
  * @param {Object} logContext The log context to write.
+ * @return {string} Serialized message to output.
  * @private
  */
 Logality.prototype._masterSerialize = function(logContext) {
