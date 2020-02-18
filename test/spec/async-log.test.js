@@ -7,20 +7,6 @@ const { sink, stubLogality } = require('../lib/tester.lib');
 describe('Asynchronous Logging', () => {
   stubLogality();
 
-  test('Async logging with default writestream to stdout', done => {
-    const logality = new Logality({
-      appName: 'testLogality',
-      async: true,
-    });
-
-    const log = logality.get();
-
-    log('info', 'hello world');
-
-    // Give CI some time to complete the async write logging.
-    setTimeout(done, 100);
-  });
-
   test('Async Logging with async writabble stream', async () => {
     const logality = new Logality({
       appName: 'testLogality',
