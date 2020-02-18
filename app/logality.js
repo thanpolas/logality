@@ -1,10 +1,10 @@
 /**
  * Logality
  * Alacrity custom logger for Node.js
- * https://github.com/alacrity-law/logality
+ * https://github.com/thanpolas/logality
  *
- * Copyright © Alacrity Law Limited
- * All rights reserved.
+ * Copyright © Thanasis Polychronakis
+ * All rights reserved. Licensed under the MIT license.
  */
 
 /**
