@@ -21,11 +21,11 @@
     "node": ">=8.1.x"
   },
   "scripts": {
-    "lint": "eslint app test",
-    "test": "eslint app/** && jest",
+    "test": "jest",
     "release": "grunt release:patch",
     "release:minor": "grunt release:minor",
-    "release:major": "grunt release:major"
+    "release:major": "grunt release:major",
+    "eslint": "eslint app test"
   },
   "dependencies": {
     "chalk": "^3.0.0",
