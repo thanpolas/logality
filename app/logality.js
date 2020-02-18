@@ -169,15 +169,17 @@ Logality.prototype._getDt = function () {
 };
 
 /**
- * Write raw log to selected output.
+ * Master serializer of object to be written to the output stream, basically
+ * stringifies to JSON and adds a newline at the end.
  *
  * @param {Object} logContext The log context to write.
  * @private
  */
-Logality.prototype._writeRaw = function (logContext) {
+Logality.prototype._masterSerialize = function (logContext) {
   let strLogContext = JSON.stringify(logContext);
   strLogContext += '\n';
-  this._stream.write(strLogContext);
+
+  return strLogContext;
 };
 
 /**
@@ -187,12 +189,14 @@ Logality.prototype._writeRaw = function (logContext) {
  * @private
  */
 Logality.prototype._write = function (logContext) {
+  let stringOutput = '';
   if (this._opts.prettyPrint) {
-    const output = prettyPrint.writePretty(logContext);
-    this._stream.write(output);
+    stringOutput = prettyPrint.writePretty(logContext);
   } else {
-    this._writeRaw(logContext);
+    stringOutput = this._masterSerialize(logContext);
   }
+
+  this._stream.write(stringOutput);
 };
 
 /**
