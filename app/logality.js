@@ -42,8 +42,11 @@ const CWD = process.cwd();
  * Initialize the logging service
  *
  * @param {Object} opts Set of options to configure Logality:
- *   @param {string} appName The application name to log.
- *   @param {Function} wstream Writable stream to output logs to, default stdout.
+ * @param {string=} opts.appName The application name to log.
+ * @param {Function=} opts.wstream Writable stream to output logs to,
+ *    default stdout.
+ * @param {boolean=} opts.async Use Asynchronous API returning a promise
+ *    on writes.
  */
 const Logality = module.exports = function (opts = {}) {
   // Force instantiation
@@ -55,6 +58,7 @@ const Logality = module.exports = function (opts = {}) {
   this._opts = {
     appName: opts.appName || 'Logality',
     prettyPrint: opts.prettyPrint || false,
+    async: opts.async || false,
   };
 
   /** @type {Object} Logality serializers */
@@ -196,6 +200,17 @@ Logality.prototype._write = function (logContext) {
     stringOutput = this._masterSerialize(logContext);
   }
 
+  this._stream.write(stringOutput);
+};
+
+/**
+ * Write log to selected output asynchronously.
+ *
+ * @param {string} stringOutput The string to write.
+ * @return {Promise} A Promise.
+ * @private
+ */
+Logality.prototype._writeAsync = async function (stringOutput) {
   this._stream.write(stringOutput);
 };
 
