@@ -320,7 +320,7 @@ Anything
 ```JSON
     "context": {
         "custom": {
-            "any": 'value'
+            "any": "value"
         }
     }
 ```
@@ -380,6 +380,67 @@ const logality = new Logality({
     appName: 'service-something',
     serializers: mySerializers,
 });
+```
+## Example of How To Initialize Logality on Your Project
+
+
+### /app/services/logger.service.js
+
+This is the initializing module. During your application bootstrap and before
+you anything else, you need to require this module and invoke the `init()`
+function to initialize logality.
+
+```js
+const Logality = require('logality');
+
+const logger = (module.exports = {});
+
+// Will store the logality reference.
+logger.logality = null;
+
+/**
+ * Initialize the logging service.
+ *
+ * @param {Object} bootOpts boot options. This module will check for:
+ * @param {string=} bootOpts.appName Set a custom appname for the logger.
+ * @param {WriteStream|null} bootOpts.wstream Optionally define a custom
+ *   writable stream.
+ */
+logger.init = function(bootOpts = {}) {
+  // check if already initialized.
+  if (logger.logality) {
+    return;
+  }
+
+  const appName = bootOpts.appName || 'app-name';
+
+  logger.logality = new Logality({
+    prettyPrint: process.env.ENV !== 'production',
+    appName,
+    wstream: bootOpts.wstream,
+  });
+
+  // Create the get method
+  logger.get = logger.logality.get.bind(logger.logality);
+};
+```
+
+### /app/model/user.model.js
+
+Then, in any module you want to log something you fetch the logality instance
+from your logger service.
+
+```js
+const log = require('../services/log.service').get();
+
+/* ... */
+
+function register (userData) => {
+    log.info('New user registration', {
+        userData
+    });
+}
+
 ```
 
 # Project Meta
