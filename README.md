@@ -455,6 +455,8 @@ function register (userData) => {
 
 ## Release History
 
+- **v2.0.1**, *18 Feb 2020*
+    - Fixed issue with null http headers on sanitizer helper.
 - **v2.0.0**, *29 Jan 2020* :: Extensible Serializers
     - Enables new serializers and allows over-writing the built-in ones.
     - Backwards compatible.
