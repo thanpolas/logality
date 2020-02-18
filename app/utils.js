@@ -65,6 +65,9 @@ utils.getProcessId = function () {
  * @return {Object} Sanitized headers.
  */
 utils.sanitizeHttpHeaders = function (headers) {
+  if (typeof headers !== 'object') {
+    return headers;
+  }
   const REMOVE = [
     'cookie',
     'authorization',
