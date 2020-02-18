@@ -1,5 +1,5 @@
 /**
- * @fileOverview Test logging of custom data objects.
+ * @fileoverview Test logging of custom data objects.
  */
 const Logality = require('../..');
 const { sink, stubLogality } = require('../lib/tester.lib');
@@ -12,10 +12,10 @@ const DATA = {
 describe('Custom Serializer', () => {
   stubLogality();
 
-  test('Will log custom data properly', (done) => {
+  test('Will log custom data properly', done => {
     const logality = new Logality({
       appName: 'testLogality',
-      wstream: sink((chunk) => {
+      wstream: sink(chunk => {
         expect(chunk).toMatchSnapshot();
         done();
       }),

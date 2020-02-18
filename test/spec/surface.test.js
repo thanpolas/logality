@@ -1,5 +1,5 @@
 /**
- * @fileOverview Test the API surface, library properly exporting methods.
+ * @fileoverview Test the API surface, library properly exporting methods.
  */
 const Logality = require('../..');
 const { sink, stubLogality } = require('../lib/tester.lib');
@@ -26,10 +26,10 @@ describe('API Surface', () => {
   describe('Logging Function Levels', () => {
     stubLogality();
 
-    test('Testing log level: debug', (done) => {
+    test('Testing log level: debug', done => {
       const logality = new Logality({
         appName: 'testLogality',
-        wstream: sink((chunk) => {
+        wstream: sink(chunk => {
           expect(chunk).toMatchSnapshot();
           done();
         }),
@@ -39,10 +39,10 @@ describe('API Surface', () => {
 
       log.debug('hello world');
     });
-    test('Testing log level: info', (done) => {
+    test('Testing log level: info', done => {
       const logality = new Logality({
         appName: 'testLogality',
-        wstream: sink((chunk) => {
+        wstream: sink(chunk => {
           expect(chunk).toMatchSnapshot();
           done();
         }),
@@ -52,10 +52,10 @@ describe('API Surface', () => {
 
       log.info('hello world');
     });
-    test('Testing log level: notice', (done) => {
+    test('Testing log level: notice', done => {
       const logality = new Logality({
         appName: 'testLogality',
-        wstream: sink((chunk) => {
+        wstream: sink(chunk => {
           expect(chunk).toMatchSnapshot();
           done();
         }),
@@ -65,10 +65,10 @@ describe('API Surface', () => {
 
       log.notice('hello world');
     });
-    test('Testing log level: warn', (done) => {
+    test('Testing log level: warn', done => {
       const logality = new Logality({
         appName: 'testLogality',
-        wstream: sink((chunk) => {
+        wstream: sink(chunk => {
           expect(chunk).toMatchSnapshot();
           done();
         }),
@@ -78,10 +78,10 @@ describe('API Surface', () => {
 
       log.warn('hello world');
     });
-    test('Testing log level: error', (done) => {
+    test('Testing log level: error', done => {
       const logality = new Logality({
         appName: 'testLogality',
-        wstream: sink((chunk) => {
+        wstream: sink(chunk => {
           expect(chunk).toMatchSnapshot();
           done();
         }),
@@ -91,10 +91,10 @@ describe('API Surface', () => {
 
       log.error('hello world');
     });
-    test('Testing log level: critical', (done) => {
+    test('Testing log level: critical', done => {
       const logality = new Logality({
         appName: 'testLogality',
-        wstream: sink((chunk) => {
+        wstream: sink(chunk => {
           expect(chunk).toMatchSnapshot();
           done();
         }),
@@ -104,10 +104,10 @@ describe('API Surface', () => {
 
       log.critical('hello world');
     });
-    test('Testing log level: alert', (done) => {
+    test('Testing log level: alert', done => {
       const logality = new Logality({
         appName: 'testLogality',
-        wstream: sink((chunk) => {
+        wstream: sink(chunk => {
           expect(chunk).toMatchSnapshot();
           done();
         }),
@@ -117,10 +117,10 @@ describe('API Surface', () => {
 
       log.alert('hello world');
     });
-    test('Testing log level: emergency', (done) => {
+    test('Testing log level: emergency', done => {
       const logality = new Logality({
         appName: 'testLogality',
-        wstream: sink((chunk) => {
+        wstream: sink(chunk => {
           expect(chunk).toMatchSnapshot();
           done();
         }),

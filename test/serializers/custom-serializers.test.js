@@ -1,5 +1,5 @@
 /**
- * @fileOverview Test custom serializers.
+ * @fileoverview Test custom serializers.
  */
 const Logality = require('../../app/logality');
 const { sink, stubLogality } = require('../lib/tester.lib');
@@ -13,9 +13,9 @@ const DATA = {
 describe('Custom Serializers', () => {
   stubLogality();
 
-  test('Will log custom serializer on context', (done) => {
+  test('Will log custom serializer on context', done => {
     const serializers = {
-      zit: (data) => {
+      zit: data => {
         return {
           path: 'context.zit',
           value: data,
@@ -26,7 +26,7 @@ describe('Custom Serializers', () => {
     const logality = new Logality({
       appName: 'testLogality',
       serializers,
-      wstream: sink((chunk) => {
+      wstream: sink(chunk => {
         expect(chunk).toMatchSnapshot();
         done();
       }),
@@ -37,9 +37,9 @@ describe('Custom Serializers', () => {
     log('info', 'hello world', { zit: DATA });
   });
 
-  test('Will log custom serializer on root', (done) => {
+  test('Will log custom serializer on root', done => {
     const serializers = {
-      zit: (data) => {
+      zit: data => {
         return {
           path: 'zit',
           value: data,
@@ -50,7 +50,7 @@ describe('Custom Serializers', () => {
     const logality = new Logality({
       appName: 'testLogality',
       serializers,
-      wstream: sink((chunk) => {
+      wstream: sink(chunk => {
         expect(chunk).toMatchSnapshot();
         done();
       }),

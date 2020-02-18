@@ -1,5 +1,5 @@
 /**
- * @fileOverview Test logging a JS error with error stack.
+ * @fileoverview Test logging a JS error with error stack.
  */
 const Logality = require('../../app/logality');
 const { sink, stubLogality } = require('../lib/tester.lib');
@@ -7,10 +7,10 @@ const { sink, stubLogality } = require('../lib/tester.lib');
 describe('Error Stack Testing', () => {
   stubLogality();
 
-  test('Will properly figure out invoking function module on error', (done) => {
+  test('Will properly figure out invoking function module on error', done => {
     const logality = new Logality({
       appName: 'testLogality',
-      wstream: sink((chunk) => {
+      wstream: sink(chunk => {
         expect(chunk).toHaveProperty('severity', 3);
         expect(chunk).toHaveProperty('message', 'An error happened, maybe?');
         expect(chunk).toHaveProperty('level', 'error');
@@ -20,7 +20,10 @@ describe('Error Stack Testing', () => {
 
         expect(chunk.event).toHaveProperty('error');
         expect(chunk.event.error).toHaveProperty('backtrace');
-        expect(chunk.event.error).toHaveProperty('message', 'An error did not occur');
+        expect(chunk.event.error).toHaveProperty(
+          'message',
+          'An error did not occur',
+        );
         expect(chunk.event.error).toHaveProperty('name', 'Error');
 
         done();

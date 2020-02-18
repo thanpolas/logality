@@ -1,3 +1,5 @@
+root: true
+
 extends:
   - 'airbnb-base'
   - plugin:jsdoc/recommended
@@ -33,3 +35,20 @@ settings:
       constant: const
       file: fileoverview
       returns: return
+
+globals:
+  # Testing
+  suite: true
+  test: true
+  describe: true
+  it: true
+  setup: true
+  before: true
+  beforeEach: true
+  after: true
+  afterEach: true
+  teardown: true
+  assert: true
+  fit: true
+  fdescribe: true
+  expect: true
