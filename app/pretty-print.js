@@ -8,9 +8,9 @@ const figures = require('figures');
 
 const { isObjectEmpty } = require('./utils');
 
-const pretty = module.exports = {};
+const pretty = (module.exports = {});
 
-/** @constant {Object} LEVELS_CONFIG Levels colors and icons */
+/** @const {Object} LEVELS_CONFIG Levels colors and icons */
 const LEVELS_CONFIG = {
   emergency: {
     color: chalk.red.underline,
@@ -52,7 +52,7 @@ const LEVELS_CONFIG = {
  * @param {Object} logContext The log context to write.
  * @private
  */
-pretty.writePretty = function (logContext) {
+pretty.writePretty = function(logContext) {
   // current level icon and color
   const config = LEVELS_CONFIG[logContext.level];
 
@@ -73,13 +73,13 @@ pretty.writePretty = function (logContext) {
  * @param {Object} logContext The log context to format.
  * @private
  */
-pretty._getLogs = function (logContext) {
+pretty._getLogs = function(logContext) {
   const logs = {};
   const blacklist = ['runtime', 'source', 'system'];
   const { event, context } = logContext;
 
   // remove unnecessary keys
-  blacklist.forEach((key) => {
+  blacklist.forEach(key => {
     delete context[key];
   });
 

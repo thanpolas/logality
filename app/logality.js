@@ -23,7 +23,7 @@ const errorSerializer = require('./serializers/error.serializer');
 const reqSerializer = require('./serializers/express-request.serializer');
 const customSerializer = require('./serializers/custom.serializer');
 
-/** @constant {Array.<string>} ALLOWED_LEVELS All levels, sequence MATTERS */
+/** @const {Array.<string>} ALLOWED_LEVELS All levels, sequence MATTERS */
 const ALLOWED_LEVELS = [
   'emergency', // Syslog level 0
   'alert', // Syslog level 1
@@ -43,12 +43,12 @@ const CWD = process.cwd();
  *
  * @param {Object} opts Set of options to configure Logality:
  * @param {string=} opts.appName The application name to log.
- * @param {Function=} opts.wstream Writable stream to output logs to,
+ * @param {function=} opts.wstream Writable stream to output logs to,
  *    default stdout.
  * @param {boolean=} opts.async Use Asynchronous API returning a promise
  *    on writes.
  */
-const Logality = module.exports = function (opts = {}) {
+const Logality = (module.exports = function(opts = {}) {
   // Force instantiation
   if (!(this instanceof Logality)) {
     return new Logality(opts);
@@ -78,7 +78,7 @@ const Logality = module.exports = function (opts = {}) {
 
   /** @type {Stream} The output writable stream */
   this._stream = opts.wstream || process.stdout;
-};
+});
 
 /**
  * Get a logger and hard-assign the filepath location of the invoking
@@ -89,14 +89,14 @@ const Logality = module.exports = function (opts = {}) {
  * @return {Logality.log} The log method partialed with the filePath of the
  *   invoking module.
  */
-Logality.prototype.get = function () {
+Logality.prototype.get = function() {
   const filePath = this._getFilePath();
 
   // Do a partial application on log and return it.
   const partialedLog = this.log.bind(this, filePath);
 
   // Attach log levels as methods
-  ALLOWED_LEVELS.forEach((level) => {
+  ALLOWED_LEVELS.forEach(level => {
     partialedLog[level] = this.log.bind(this, filePath, level);
   });
 
@@ -111,7 +111,7 @@ Logality.prototype.get = function () {
  * @param {string} message Human readable log message.
  * @param {Object|null} context Extra data to log.
  */
-Logality.prototype.log = function (filePath, level, message, context) {
+Logality.prototype.log = function(filePath, level, message, context) {
   const levelSeverity = ALLOWED_LEVELS.indexOf(level);
   if (levelSeverity === -1) {
     throw new Error('Invalid log level');
@@ -146,14 +146,14 @@ Logality.prototype.log = function (filePath, level, message, context) {
  * @param {Object} logContext The log context to write.
  * @param {Object|null} context Extra data to log.
  */
-Logality.prototype._applySerializers = function (logContext, context) {
+Logality.prototype._applySerializers = function(logContext, context) {
   if (!context) {
     return;
   }
 
   const contextKeys = Object.keys(context);
 
-  contextKeys.forEach(function (key) {
+  contextKeys.forEach(function(key) {
     if (this._serializers[key]) {
       const res = this._serializers[key](context[key]);
       utils.assignPath(res.path, logContext, res.value);
@@ -167,7 +167,7 @@ Logality.prototype._applySerializers = function (logContext, context) {
  * @return {string}
  * @private
  */
-Logality.prototype._getDt = function () {
+Logality.prototype._getDt = function() {
   const dt = new Date();
   return dt.toISOString();
 };
@@ -179,7 +179,7 @@ Logality.prototype._getDt = function () {
  * @param {Object} logContext The log context to write.
  * @private
  */
-Logality.prototype._masterSerialize = function (logContext) {
+Logality.prototype._masterSerialize = function(logContext) {
   let strLogContext = JSON.stringify(logContext);
   strLogContext += '\n';
 
@@ -192,7 +192,7 @@ Logality.prototype._masterSerialize = function (logContext) {
  * @param {Object} logContext The log context to write.
  * @private
  */
-Logality.prototype._write = function (logContext) {
+Logality.prototype._write = function(logContext) {
   let stringOutput = '';
   if (this._opts.prettyPrint) {
     stringOutput = prettyPrint.writePretty(logContext);
@@ -210,7 +210,7 @@ Logality.prototype._write = function (logContext) {
  * @return {Promise} A Promise.
  * @private
  */
-Logality.prototype._writeAsync = async function (stringOutput) {
+Logality.prototype._writeAsync = async function(stringOutput) {
   this._stream.write(stringOutput);
 };
 
@@ -220,7 +220,7 @@ Logality.prototype._writeAsync = async function (stringOutput) {
  * @param {Object} logContext The log record context.
  * @private
  */
-Logality.prototype._assignSystem = function (logContext) {
+Logality.prototype._assignSystem = function(logContext) {
   logContext.context.system = {
     hostname: this._hostname,
     pid: utils.getProcessId(),
@@ -234,7 +234,7 @@ Logality.prototype._assignSystem = function (logContext) {
  * @return {string} Relative filepath of callee.
  * @private
  */
-Logality.prototype._getFilePath = function () {
+Logality.prototype._getFilePath = function() {
   try {
     throw new Error();
   } catch (ex) {

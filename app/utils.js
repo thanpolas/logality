@@ -1,4 +1,4 @@
-const utils = module.exports = {};
+const utils = (module.exports = {});
 
 /**
  * Check if object is empty
@@ -6,7 +6,7 @@ const utils = module.exports = {};
  * @param {Object} obj
  * @return {boolean}
  */
-utils.isObjectEmpty = function (obj) {
+utils.isObjectEmpty = function(obj) {
   return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
 
@@ -18,7 +18,7 @@ utils.isObjectEmpty = function (obj) {
  * @param {*} value The value to save.
  * @return {Object} The target object.
  */
-utils.assignPath = function (path, target, value) {
+utils.assignPath = function(path, target, value) {
   const parts = path.split('.');
 
   if (parts.length === 1) {
@@ -28,8 +28,8 @@ utils.assignPath = function (path, target, value) {
   }
 
   let ref = target;
-  parts.forEach(function (part, index) {
-    if (index === (parts.length - 1)) {
+  parts.forEach(function(part, index) {
+    if (index === parts.length - 1) {
       ref[part] = value;
     } else {
       ref[part] = ref[part] || {};
@@ -45,7 +45,7 @@ utils.assignPath = function (path, target, value) {
  *
  * @return {string}
  */
-utils.getProcessName = function () {
+utils.getProcessName = function() {
   return process.argv[0];
 };
 
@@ -54,7 +54,7 @@ utils.getProcessName = function () {
  *
  * @return {string}
  */
-utils.getProcessId = function () {
+utils.getProcessId = function() {
   return process.pid;
 };
 
@@ -64,16 +64,13 @@ utils.getProcessId = function () {
  * @param {Object} headers The headers.
  * @return {Object} Sanitized headers.
  */
-utils.sanitizeHttpHeaders = function (headers) {
+utils.sanitizeHttpHeaders = function(headers) {
   if (typeof headers !== 'object') {
     return headers;
   }
-  const REMOVE = [
-    'cookie',
-    'authorization',
-  ];
+  const REMOVE = ['cookie', 'authorization'];
 
-  REMOVE.forEach(function (header) {
+  REMOVE.forEach(function(header) {
     if (headers[header]) {
       headers[header] = '-- REMOVED FOR SAFETY --';
     }
