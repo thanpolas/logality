@@ -21,7 +21,7 @@ npm install logality --save
 
 -   JSON log messages with a strict schema.
 -   Extend the logging schema to fit your needs.
--   Customize by overwriting the built-in serializers to create your
+-   Customize built-in serializers by overwriting them to create your
     own logging schema.
 -   Use Logality in your NPM Libraries and expose a writable stream so that the
     upstream consumer applications can manage the logging stream of your
@@ -55,6 +55,7 @@ find the configuration options bellow:
     context, default is `false`.
 -   `serializers` {Object} You can define custom serializers or overwrite
     logality's, see more about Serializers bellow.
+-   `async` {boolean} Set to true to enable the asynchronous API for logging.
 
 ```js
 const Logality = require('logality');
@@ -62,6 +63,32 @@ const Logality = require('logality');
 const logality = Logality({
     appName: 'service-something',
 });
+```
+
+### About Asynchronous Logging
+
+When logging has a transactional requirement, such as audit logs, you can
+use an asynchronous writable stream that performs any type of I/O
+(database writes, queue pushing, etc). To enable the async API all you have to
+do is set the option `async` to true. All logging methods will now return
+a promise for you to handle.
+
+```js
+const Logality = require('logality');
+
+const logality = Logality({
+    appName: 'service-audit',
+    async: true,
+    wstream: someAsyncWritableStream,
+});
+
+/** ... */
+
+async function createUser (userData) => {
+    await log.info('New user creation', {
+        userData,
+    });
+}
 ```
 
 ## The Logging Schema
