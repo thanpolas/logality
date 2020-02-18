@@ -28,7 +28,7 @@ tester.cooldown = function(seconds) {
  * Writable stream helper for capturing logging output.
  *
  * @param {function} func Callback with the logging streams.
- * @return {Object} Writeable stream.
+ * @return {Object} Parsed log message.
  */
 tester.sink = function(func) {
   const result = split(JSON.parse);
