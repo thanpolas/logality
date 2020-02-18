@@ -9,14 +9,28 @@
  */
 
 /**
- * @fileOverview bootstrap and master exporting module.
+ * @fileoverview bootstrap and master exporting module.
+ */
+
+/**
+ * Custom JSDoc Type definitions
+ */
+
+/**
+ * The logality instance.
+ *
+ * @typedef {(Object)} Logality
+ */
+
+/**
+ * A writable stream.
+ *
+ * @typedef {(Object)} WriteStream
  */
 
 const os = require('os');
 
 const assign = require('lodash.assign');
-
-require('./jsdoc-type-definitions');
 
 const prettyPrint = require('./pretty-print');
 const utils = require('./utils');
@@ -166,9 +180,9 @@ Logality.prototype._applySerializers = function(logContext, context) {
 };
 
 /**
- * Return an ISO8601 formated date.
+ * Return an ISO8601 formatted date.
  *
- * @return {string}
+ * @return {string} The formatted date.
  * @private
  */
 Logality.prototype._getDt = function() {

@@ -1,10 +1,11 @@
+/* eslint-disable security/detect-object-injection */
 const utils = (module.exports = {});
 
 /**
  * Check if object is empty
  *
- * @param {Object} obj
- * @return {boolean}
+ * @param {Object} obj The object to examine.
+ * @return {boolean} True if it is empty.
  */
 utils.isObjectEmpty = function(obj) {
   return Object.keys(obj).length === 0 && obj.constructor === Object;
@@ -43,7 +44,7 @@ utils.assignPath = function(path, target, value) {
 /**
  * Returns the process name, required for testing.
  *
- * @return {string}
+ * @return {string} The process name.
  */
 utils.getProcessName = function() {
   return process.argv[0];
@@ -52,7 +53,7 @@ utils.getProcessName = function() {
 /**
  * Returns the process id, required for testing.
  *
- * @return {string}
+ * @return {string} The process id.
  */
 utils.getProcessId = function() {
   return process.pid;

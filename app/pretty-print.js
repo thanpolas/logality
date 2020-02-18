@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @fileoverview Handles pretty printing for logality, used in
  *  local development.
@@ -50,6 +51,7 @@ const LEVELS_CONFIG = {
  * Write prettified log to selected output.
  *
  * @param {Object} logContext The log context to write.
+ * @return {string} Formatted output.
  * @private
  */
 pretty.writePretty = function(logContext) {
@@ -71,6 +73,7 @@ pretty.writePretty = function(logContext) {
  * Returns formatted logs for pretty print.
  *
  * @param {Object} logContext The log context to format.
+ * @return {string} Log output.
  * @private
  */
 pretty._getLogs = function(logContext) {
