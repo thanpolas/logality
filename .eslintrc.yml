@@ -22,14 +22,14 @@ rules:
   no-use-before-define: 0
   class-methods-use-this: 0
 
-  settings:
-    jsdoc:
-      preferredTypes:
-        object: Object
-        express: Express
-        Function: function
-        knex: Knex
-      tagNamePreference:
-        constant: const
-        file: fileoverview
-        returns: return
+settings:
+  jsdoc:
+    preferredTypes:
+      object: Object
+      express: Express
+      Function: function
+      knex: Knex
+    tagNamePreference:
+      constant: const
+      file: fileoverview
+      returns: return
