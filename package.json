@@ -38,10 +38,16 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-jest": "23.3.0",
+    "eslint-plugin-jsdoc": "20.0.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-security": "1.4.0",
     "flush-write-stream": "^2.0.0",
     "grunt": "^1.0.4",
     "grunt-release": "^0.14.0",
     "jest": "^25.1.0",
+    "prettier": "^1.19.1",
     "sinon": "^8.1.1",
     "split2": "^3.1.1"
   }
