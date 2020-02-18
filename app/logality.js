@@ -29,6 +29,7 @@
  */
 
 const os = require('os');
+const { promisify } = require('util');
 
 const assign = require('lodash.assign');
 
@@ -96,6 +97,12 @@ const Logality = (module.exports = function(opts = {}) {
 
   /** @type {WriteStream} The output writable stream */
   this._stream = opts.wstream || process.stdout;
+
+  if (this._opts.async) {
+    this._asyncWrite = promisify(this._stream.write);
+  } else {
+    this._asyncWrite = null;
+  }
 });
 
 /**
@@ -209,6 +216,7 @@ Logality.prototype._masterSerialize = function(logContext) {
  * Write log to selected output.
  *
  * @param {Object} logContext The log context to write.
+ * @return {Promise|void} Returns promise when async opt is enabled.
  * @private
  */
 Logality.prototype._write = function(logContext) {
@@ -219,17 +227,10 @@ Logality.prototype._write = function(logContext) {
     stringOutput = this._masterSerialize(logContext);
   }
 
-  this._stream.write(stringOutput);
-};
+  if (this._opts.async) {
+    return this._asyncWrite(stringOutput);
+  }
 
-/**
- * Write log to selected output asynchronously.
- *
- * @param {string} stringOutput The string to write.
- * @return {Promise} A Promise.
- * @private
- */
-Logality.prototype._writeAsync = async function(stringOutput) {
   this._stream.write(stringOutput);
 };
 
