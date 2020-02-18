@@ -1,4 +1,14 @@
-extends: 'airbnb-base'
+root: true
+
+extends:
+  - 'airbnb-base'
+  - plugin:jsdoc/recommended
+  - plugin:security/recommended
+  - plugin:prettier/recommended
+
+plugins:
+  - jsdoc
+  - security
 
 rules:
   arrow-body-style: 0
@@ -13,6 +23,18 @@ rules:
   prefer-arrow-callback: 0
   no-use-before-define: 0
   class-methods-use-this: 0
+
+settings:
+  jsdoc:
+    preferredTypes:
+      object: Object
+      express: Express
+      Function: function
+      knex: Knex
+    tagNamePreference:
+      constant: const
+      file: fileoverview
+      returns: return
 
 globals:
   # Testing

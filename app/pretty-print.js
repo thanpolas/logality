@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @fileoverview Handles pretty printing for logality, used in
  *  local development.
@@ -8,9 +9,9 @@ const figures = require('figures');
 
 const { isObjectEmpty } = require('./utils');
 
-const pretty = module.exports = {};
+const pretty = (module.exports = {});
 
-/** @constant {Object} LEVELS_CONFIG Levels colors and icons */
+/** @const {Object} LEVELS_CONFIG Levels colors and icons */
 const LEVELS_CONFIG = {
   emergency: {
     color: chalk.red.underline,
@@ -50,9 +51,10 @@ const LEVELS_CONFIG = {
  * Write prettified log to selected output.
  *
  * @param {Object} logContext The log context to write.
+ * @return {string} Formatted output.
  * @private
  */
-pretty.writePretty = function (logContext) {
+pretty.writePretty = function(logContext) {
   // current level icon and color
   const config = LEVELS_CONFIG[logContext.level];
 
@@ -71,15 +73,16 @@ pretty.writePretty = function (logContext) {
  * Returns formatted logs for pretty print.
  *
  * @param {Object} logContext The log context to format.
+ * @return {string} Log output.
  * @private
  */
-pretty._getLogs = function (logContext) {
+pretty._getLogs = function(logContext) {
   const logs = {};
   const blacklist = ['runtime', 'source', 'system'];
   const { event, context } = logContext;
 
   // remove unnecessary keys
-  blacklist.forEach((key) => {
+  blacklist.forEach(key => {
     delete context[key];
   });
 

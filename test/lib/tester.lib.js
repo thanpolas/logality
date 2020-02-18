@@ -1,5 +1,5 @@
 /**
- * @fileOverview Main testing helper lib.
+ * @fileoverview Main testing helper lib.
  *
  */
 const os = require('os');
@@ -10,16 +10,16 @@ const sinon = require('sinon');
 
 const utils = require('../../app/utils');
 
-const tester = module.exports = {};
+const tester = (module.exports = {});
 
 /**
  * Have a Cooldown period between tests.
  *
  * @param {number} seconds cooldown in seconds.
- * @return {Function} use is beforeEach().
+ * @return {function} use is beforeEach().
  */
-tester.cooldown = function (seconds) {
-  return function (done) {
+tester.cooldown = function(seconds) {
+  return function(done) {
     setTimeout(done, seconds);
   };
 };
@@ -27,10 +27,10 @@ tester.cooldown = function (seconds) {
 /**
  * Writable stream helper for capturing logging output.
  *
- * @param {Function} func Callback with the logging streams.
- * @return {Writable Stream}
+ * @param {function} func Callback with the logging streams.
+ * @return {Object} Parsed log message.
  */
-tester.sink = function (func) {
+tester.sink = function(func) {
   const result = split(JSON.parse);
   result.pipe(writeStream.obj(func));
   return result;
@@ -39,10 +39,10 @@ tester.sink = function (func) {
 /**
  * Writable stream helper for capturing pretty logging output.
  *
- * @param {Function} func Callback with the logging streams.
- * @return {Writable Stream}
+ * @param {function} func Callback with the logging streams.
+ * @return {Object} Custom writable stream.
  */
-tester.sinkPretty = function (func) {
+tester.sinkPretty = function(func) {
   return writeStream.obj(func);
 };
 
@@ -50,7 +50,7 @@ tester.sinkPretty = function (func) {
  * Stub Logality so it can be properly tested with snapshots.
  *
  */
-tester.stubLogality = function () {
+tester.stubLogality = function() {
   let dateStub;
   let processStub;
   let hostnameStub;
@@ -74,5 +74,6 @@ tester.stubLogality = function () {
   });
 };
 
-/** @type {Regex} Regex to test ISO 8601 Dates */
+/** @type {RegExp} Regex to test ISO 8601 Dates */
+// eslint-disable-next-line security/detect-unsafe-regex
 tester.reISO8601 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;

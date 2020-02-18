@@ -1,5 +1,5 @@
 /**
- * @fileOverview Test logging of user data objects.
+ * @fileoverview Test logging of user data objects.
  */
 const Logality = require('../..');
 const { sink, stubLogality } = require('../lib/tester.lib');
@@ -12,10 +12,10 @@ const UDO_MOCK = {
 describe('User Data Object Logging', () => {
   stubLogality();
 
-  test('Will log UDO Properly by default', (done) => {
+  test('Will log UDO Properly by default', done => {
     const logality = new Logality({
       appName: 'testLogality',
-      wstream: sink((chunk) => {
+      wstream: sink(chunk => {
         expect(chunk).toMatchSnapshot();
         done();
       }),

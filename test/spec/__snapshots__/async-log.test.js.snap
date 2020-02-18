@@ -1,0 +1,239 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Asynchronous Logging Async Logging Streamer Error Propagates 1`] = `
+Object {
+  "context": Object {
+    "custom": Object {
+      "a": 1,
+      "b": 2,
+    },
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
+
+exports[`Asynchronous Logging Async Logging with async writabble stream 1`] = `
+Object {
+  "context": Object {
+    "custom": Object {
+      "a": 1,
+      "b": 2,
+    },
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
+
+exports[`Asynchronous Logging Test API helpers with Async Logging 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "debug",
+  "message": "This is message of level: Debug",
+  "severity": 7,
+}
+`;
+
+exports[`Asynchronous Logging Test API helpers with Async Logging 2`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "This is message of level: Info",
+  "severity": 6,
+}
+`;
+
+exports[`Asynchronous Logging Test API helpers with Async Logging 3`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "notice",
+  "message": "This is message of level: Notice",
+  "severity": 5,
+}
+`;
+
+exports[`Asynchronous Logging Test API helpers with Async Logging 4`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "warn",
+  "message": "This is message of level: warning",
+  "severity": 4,
+}
+`;
+
+exports[`Asynchronous Logging Test API helpers with Async Logging 5`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "error",
+  "message": "This is message of level: Error",
+  "severity": 3,
+}
+`;
+
+exports[`Asynchronous Logging Test API helpers with Async Logging 6`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "critical",
+  "message": "This is message of level: Critical",
+  "severity": 2,
+}
+`;
+
+exports[`Asynchronous Logging Test API helpers with Async Logging 7`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "alert",
+  "message": "This is message of level: Alert",
+  "severity": 1,
+}
+`;
+
+exports[`Asynchronous Logging Test API helpers with Async Logging 8`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/async-log.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "emergency",
+  "message": "This is message of level: Emergency",
+  "severity": 0,
+}
+`;

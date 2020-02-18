@@ -1,5 +1,5 @@
 /**
- * @fileOverview Test utility functions.
+ * @fileoverview Test utility functions.
  */
 const util = require('../../app/utils');
 
@@ -63,8 +63,6 @@ describe('Utility Functions', () => {
       };
 
       util.assignPath('one.second', target, 'two');
-
-      console.log('TARGET:', target);
 
       expect(target).toHaveProperty('one');
       expect(target.one).toHaveProperty('first');

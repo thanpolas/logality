@@ -1,5 +1,5 @@
 /**
- * @fileOverview Test normal logging.
+ * @fileoverview Test normal logging.
  */
 const Logality = require('../..');
 const { sinkPretty, stubLogality } = require('../lib/tester.lib');
@@ -7,11 +7,11 @@ const { sinkPretty, stubLogality } = require('../lib/tester.lib');
 describe('Pretty Logging', () => {
   stubLogality();
 
-  test('Will pretty log expected JSON properties', (done) => {
+  test('Will pretty log expected JSON properties', done => {
     const logality = new Logality({
       prettyPrint: true,
       appName: 'testLogality',
-      wstream: sinkPretty((chunk) => {
+      wstream: sinkPretty(chunk => {
         expect(chunk).toMatchSnapshot();
         done();
       }),
@@ -22,12 +22,11 @@ describe('Pretty Logging', () => {
     log('info', 'hello world');
   });
 
-
-  test('Will pretty log an object in context', (done) => {
+  test('Will pretty log an object in context', done => {
     const logality = new Logality({
       prettyPrint: true,
       appName: 'testLogality',
-      wstream: sinkPretty((chunk) => {
+      wstream: sinkPretty(chunk => {
         expect(chunk).toMatchSnapshot();
         done();
       }),

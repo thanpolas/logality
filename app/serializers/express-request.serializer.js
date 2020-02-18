@@ -6,7 +6,7 @@ const { sanitizeHttpHeaders } = require('../utils');
  * @param {Express.Request} req Express request object.
  * @return {Object} Properly serialized for Logging Schema.
  */
-module.exports = function (req) {
+module.exports = function(req) {
   const result = {
     path: 'event.http_request',
     value: {
