@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Multi-Key Serializers Will log multi-key serializer on context 1`] = `
+Object {
+  "context": Object {
+    "nit": Object {
+      "id": 12,
+      "property": "zero",
+      "value": 0.23,
+    },
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/serializers/multi-key-serializers.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+    "zit": Object {
+      "id": 12,
+      "property": "zero",
+      "value": 0.23,
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "rootpath": Object {
+    "id": 12,
+    "property": "zero",
+    "value": 0.23,
+  },
+  "severity": 6,
+}
+`;

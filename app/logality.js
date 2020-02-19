@@ -177,7 +177,14 @@ Logality.prototype._applySerializers = function(logContext, context) {
   contextKeys.forEach(function(key) {
     if (this._serializers[key]) {
       const res = this._serializers[key](context[key]);
-      utils.assignPath(res.path, logContext, res.value);
+
+      if (Array.isArray(res)) {
+        res.forEach(function(serial) {
+          utils.assignPath(serial.path, logContext, serial.value);
+        });
+      } else {
+        utils.assignPath(res.path, logContext, res.value);
+      }
     }
   }, this);
 };
