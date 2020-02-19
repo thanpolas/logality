@@ -60,7 +60,7 @@ utils.getProcessId = function() {
 };
 
 /**
- * Clean HTTP Headers from secusiry sensitive data.
+ * Clean HTTP Headers from sensitive data.
  *
  * @param {Object} headers The headers.
  * @return {Object} Sanitized headers.
