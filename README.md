@@ -539,6 +539,10 @@ function register (userData) => {
 
 ## Release History
 
+-   **v2.1.1**, _19 Feb 2020_
+    -   Added the "objectMode" feature.
+    -   Implemented multi-key serializers feature.
+    -   Fixed async logging issues and tests.
 -   **v2.1.0**, _18 Feb 2020_
     -   Added Async feature.
 -   **v2.0.1**, _18 Feb 2020_
