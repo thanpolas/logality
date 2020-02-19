@@ -237,8 +237,18 @@ ones.
 
 ## Logality Serializers
 
-Serializers are triggered by defined keys in the `context` object, Logality has
-implemented the following serializers out of the box.
+Serializers are triggered by defined keys in the `context` object. 
+Every serializer is configured to listen to a specific context key, for example
+the user serializer expects the `user` key in the context:
+
+```js
+log.info('User Logged in', {
+    user: udo
+});
+```
+
+If no serializer is configured for the `user` property, the data will be 
+ignored. Logality has implemented the following serializers out of the box:
 
 ### The User Serializer
 
@@ -415,6 +425,38 @@ mySerializers = {
                 quantity: order.quantity,
             },
         };
+    },
+};
+
+const logality = new Logality({
+    appName: 'service-something',
+    serializers: mySerializers,
+});
+```
+
+### Multi Key Custom Serializers
+
+In some cases you may need to write to more than one keys in the log context.
+To be able to do that, simply return an Array instead of an Object like so:
+
+```js
+const Logality = require('logality');
+
+mySerializers = {
+    user: function(user) {
+        return [{
+            path: 'context.user',
+            value: {
+                id: user.id,
+                email: email.id,
+                type: user.type,
+            },
+        }, {
+            path: 'context.request',
+            value: {
+                user_id: user.id,
+            },
+        }];
     },
 };
 
