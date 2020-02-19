@@ -131,6 +131,7 @@ Logality.prototype.get = function() {
  * @param {string} level The level of the log.
  * @param {string} message Human readable log message.
  * @param {Object|null} context Extra data to log.
+ * @return {Promise|void} Returns promise when async opt is enabled.
  */
 Logality.prototype.log = function(filePath, level, message, context) {
   const levelSeverity = ALLOWED_LEVELS.indexOf(level);
@@ -158,7 +159,7 @@ Logality.prototype.log = function(filePath, level, message, context) {
 
   this._applySerializers(logContext, context);
 
-  this._write(logContext);
+  return this._write(logContext);
 };
 
 /**
