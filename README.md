@@ -55,7 +55,10 @@ find the configuration options bellow:
     context, default is `false`.
 -   `serializers` {Object} You can define custom serializers or overwrite
     logality's, see more about Serializers bellow.
--   `async` {boolean} Set to true to enable the asynchronous API for logging.
+-   `async` {boolean} Set to true to enable the asynchronous API for logging,
+        see more bellow.
+-   `objectMode` {boolean} Set to true to have logality pass the object context
+        as a native Javascript Object, see more bellow.
 
 ```js
 const Logality = require('logality');
@@ -90,6 +93,18 @@ async function createUser (userData) => {
     });
 }
 ```
+
+### The "objectMode"
+
+Enabling objectMode will force Logality to not JSON serialize the log payload
+and thus pass to the writable stream the logging context as a native Javascript
+Object.
+
+**Important!**: For the writable stream to support the native JS Object it has
+to have the `objectMode` property turned on, 
+[learn more about stream's "objectMode" at Node.js Stream Documentation][stream-docs].
+
+When Logality has `objectMode` enabled, the `prettyPrint` option is ignored.
 
 ## The Logging Schema
 
@@ -504,3 +519,4 @@ Copyright Thanasis Polychronakis [Licensed under the MIT license](/LICENSE)
 [npm-url]: https://npmjs.org/package/logality
 [circle-image]: https://img.shields.io/circleci/build/gh/thanpolas/logality/master?label=Tests
 [circle-url]: https://circleci.com/gh/thanpolas/logality
+[stream-docs]: https://nodejs.org/api/stream.html#stream_object_mode
