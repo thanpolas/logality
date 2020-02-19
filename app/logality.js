@@ -29,7 +29,6 @@
  */
 
 const os = require('os');
-const { promisify } = require('util');
 
 const assign = require('lodash.assign');
 
@@ -65,6 +64,8 @@ const CWD = process.cwd();
  *    default stdout.
  * @param {boolean=} opts.async Use Asynchronous API returning a promise
  *    on writes.
+ * @param {boolean=} opts.objectMode Set to true to have logality transmit
+ *    the logging objects unserialized, as native JS Objects.
  * @return {Logality} Logality instance.
  */
 const Logality = (module.exports = function(opts = {}) {
@@ -78,6 +79,7 @@ const Logality = (module.exports = function(opts = {}) {
     appName: opts.appName || 'Logality',
     prettyPrint: opts.prettyPrint || false,
     async: opts.async || false,
+    objectMode: opts.objectMode || false,
   };
 
   /** @type {Object} Logality serializers */
@@ -97,12 +99,6 @@ const Logality = (module.exports = function(opts = {}) {
 
   /** @type {WriteStream} The output writable stream */
   this._stream = opts.wstream || process.stdout;
-
-  if (this._opts.async) {
-    this._asyncWrite = promisify(this._stream.write);
-  } else {
-    this._asyncWrite = null;
-  }
 });
 
 /**
@@ -135,6 +131,7 @@ Logality.prototype.get = function() {
  * @param {string} level The level of the log.
  * @param {string} message Human readable log message.
  * @param {Object|null} context Extra data to log.
+ * @return {Promise|void} Returns promise when async opt is enabled.
  */
 Logality.prototype.log = function(filePath, level, message, context) {
   const levelSeverity = ALLOWED_LEVELS.indexOf(level);
@@ -162,7 +159,7 @@ Logality.prototype.log = function(filePath, level, message, context) {
 
   this._applySerializers(logContext, context);
 
-  this._write(logContext);
+  return this._write(logContext);
 };
 
 /**
@@ -181,7 +178,14 @@ Logality.prototype._applySerializers = function(logContext, context) {
   contextKeys.forEach(function(key) {
     if (this._serializers[key]) {
       const res = this._serializers[key](context[key]);
-      utils.assignPath(res.path, logContext, res.value);
+
+      if (Array.isArray(res)) {
+        res.forEach(function(serial) {
+          utils.assignPath(serial.path, logContext, serial.value);
+        });
+      } else {
+        utils.assignPath(res.path, logContext, res.value);
+      }
     }
   }, this);
 };
@@ -220,6 +224,38 @@ Logality.prototype._masterSerialize = function(logContext) {
  * @private
  */
 Logality.prototype._write = function(logContext) {
+  const output = this._getOutput(logContext);
+
+  if (this._opts.async) {
+    return new Promise((resolve, reject) => {
+      this._stream.write(output, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  this._stream.write(output);
+};
+
+/**
+ * Determines the kind of output to be send downstream to the writable stream.
+ *
+ * If objectmode is enabled the log context is returned as is, otherwise
+ * it gets serialzied.
+ *
+ * @param {Object} logContext The log context to serialize.
+ * @return {Object|string} variable output depending on configuration.
+ * @private
+ */
+Logality.prototype._getOutput = function(logContext) {
+  if (this._opts.objectMode) {
+    return logContext;
+  }
+
   let stringOutput = '';
   if (this._opts.prettyPrint) {
     stringOutput = prettyPrint.writePretty(logContext);
@@ -227,11 +263,7 @@ Logality.prototype._write = function(logContext) {
     stringOutput = this._masterSerialize(logContext);
   }
 
-  if (this._opts.async) {
-    return this._asyncWrite(stringOutput);
-  }
-
-  this._stream.write(stringOutput);
+  return stringOutput;
 };
 
 /**

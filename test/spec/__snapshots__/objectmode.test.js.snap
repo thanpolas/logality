@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`objectMode Logging Will return the Logging object 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "testLogality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/objectmode.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;

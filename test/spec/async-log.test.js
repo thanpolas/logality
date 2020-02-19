@@ -10,6 +10,7 @@ describe('Asynchronous Logging', () => {
   test('Async Logging with async writabble stream', async () => {
     const logality = new Logality({
       appName: 'testLogality',
+      async: true,
       wstream: sink((chunk, enc, cb) => {
         expect(chunk).toMatchSnapshot();
         expect(enc).toEqual('utf8');
@@ -22,9 +23,31 @@ describe('Asynchronous Logging', () => {
     await log('info', 'hello world', { custom: { a: 1, b: 2 } });
   });
 
+  test('Async Logging will return a promise.', async () => {
+    const logality = new Logality({
+      appName: 'testLogality',
+      async: true,
+      wstream: sink((chunk, enc, cb) => {
+        expect(chunk).toMatchSnapshot();
+        expect(enc).toEqual('utf8');
+        cb();
+      }),
+    });
+
+    const log = logality.get();
+
+    const promise = log('info', 'hello world', { custom: { a: 1, b: 2 } });
+
+    expect(typeof promise).toEqual('object');
+    expect(typeof promise.then).toEqual('function');
+    expect(typeof promise.catch).toEqual('function');
+    await promise;
+  });
+
   test('Test API helpers with Async Logging', async () => {
     const logality = new Logality({
       appName: 'testLogality',
+      async: true,
       wstream: sink((chunk, enc, cb) => {
         expect(chunk).toMatchSnapshot();
         expect(enc).toEqual('utf8');
@@ -47,6 +70,7 @@ describe('Asynchronous Logging', () => {
   test('Async Logging Streamer Error Propagates', async () => {
     const logality = new Logality({
       appName: 'testLogality',
+      async: true,
       wstream: sink((chunk, enc, cb) => {
         expect(chunk).toMatchSnapshot();
         expect(enc).toEqual('utf8');

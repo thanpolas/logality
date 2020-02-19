@@ -55,7 +55,10 @@ find the configuration options bellow:
     context, default is `false`.
 -   `serializers` {Object} You can define custom serializers or overwrite
     logality's, see more about Serializers bellow.
--   `async` {boolean} Set to true to enable the asynchronous API for logging.
+-   `async` {boolean} Set to true to enable the asynchronous API for logging,
+        see more bellow.
+-   `objectMode` {boolean} Set to true to have logality pass the object context
+        as a native Javascript Object, see more bellow.
 
 ```js
 const Logality = require('logality');
@@ -90,6 +93,18 @@ async function createUser (userData) => {
     });
 }
 ```
+
+### The "objectMode"
+
+Enabling objectMode will force Logality to not JSON serialize the log payload
+and thus pass to the writable stream the logging context as a native Javascript
+Object.
+
+**Important!**: For the writable stream to support the native JS Object it has
+to have the `objectMode` property turned on, 
+[learn more about stream's "objectMode" at Node.js Stream Documentation][stream-docs].
+
+When Logality has `objectMode` enabled, the `prettyPrint` option is ignored.
 
 ## The Logging Schema
 
@@ -222,8 +237,18 @@ ones.
 
 ## Logality Serializers
 
-Serializers are triggered by defined keys in the `context` object, Logality has
-implemented the following serializers out of the box.
+Serializers are triggered by defined keys in the `context` object. 
+Every serializer is configured to listen to a specific context key, for example
+the user serializer expects the `user` key in the context:
+
+```js
+log.info('User Logged in', {
+    user: udo
+});
+```
+
+If no serializer is configured for the `user` property, the data will be 
+ignored. Logality has implemented the following serializers out of the box:
 
 ### The User Serializer
 
@@ -409,6 +434,38 @@ const logality = new Logality({
 });
 ```
 
+### Multi Key Custom Serializers
+
+In some cases you may need to write to more than one keys in the log context.
+To be able to do that, simply return an Array instead of an Object like so:
+
+```js
+const Logality = require('logality');
+
+mySerializers = {
+    user: function(user) {
+        return [{
+            path: 'context.user',
+            value: {
+                id: user.id,
+                email: email.id,
+                type: user.type,
+            },
+        }, {
+            path: 'context.request',
+            value: {
+                user_id: user.id,
+            },
+        }];
+    },
+};
+
+const logality = new Logality({
+    appName: 'service-something',
+    serializers: mySerializers,
+});
+```
+
 ## Example of How To Initialize Logality on Your Project
 
 ### /app/services/logger.service.js
@@ -482,6 +539,10 @@ function register (userData) => {
 
 ## Release History
 
+-   **v2.1.1**, _19 Feb 2020_
+    -   Added the "objectMode" feature.
+    -   Implemented multi-key serializers feature.
+    -   Fixed async logging issues and tests.
 -   **v2.1.0**, _18 Feb 2020_
     -   Added Async feature.
 -   **v2.0.1**, _18 Feb 2020_
@@ -504,3 +565,4 @@ Copyright Thanasis Polychronakis [Licensed under the MIT license](/LICENSE)
 [npm-url]: https://npmjs.org/package/logality
 [circle-image]: https://img.shields.io/circleci/build/gh/thanpolas/logality/master?label=Tests
 [circle-url]: https://circleci.com/gh/thanpolas/logality
+[stream-docs]: https://nodejs.org/api/stream.html#stream_object_mode
