@@ -85,6 +85,7 @@ pretty._getLogs = function(logContext) {
   blacklist.forEach(key => {
     delete context[key];
   });
+  delete event.http_request;
 
   // set event if exists
   if (!isObjectEmpty(event)) {

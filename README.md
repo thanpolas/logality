@@ -56,9 +56,9 @@ find the configuration options bellow:
 -   `serializers` {Object} You can define custom serializers or overwrite
     logality's, see more about Serializers bellow.
 -   `async` {boolean} Set to true to enable the asynchronous API for logging,
-        see more bellow.
+    see more bellow.
 -   `objectMode` {boolean} Set to true to have logality pass the object context
-        as a native Javascript Object, see more bellow.
+    as a native Javascript Object, see more bellow.
 
 ```js
 const Logality = require('logality');
@@ -101,7 +101,7 @@ and thus pass to the writable stream the logging context as a native Javascript
 Object.
 
 **Important!**: For the writable stream to support the native JS Object it has
-to have the `objectMode` property turned on, 
+to have the `objectMode` property turned on,
 [learn more about stream's "objectMode" at Node.js Stream Documentation][stream-docs].
 
 When Logality has `objectMode` enabled, the `prettyPrint` option is ignored.
@@ -237,17 +237,17 @@ ones.
 
 ## Logality Serializers
 
-Serializers are triggered by defined keys in the `context` object. 
+Serializers are triggered by defined keys in the `context` object.
 Every serializer is configured to listen to a specific context key, for example
 the user serializer expects the `user` key in the context:
 
 ```js
 log.info('User Logged in', {
-    user: udo
+    user: udo,
 });
 ```
 
-If no serializer is configured for the `user` property, the data will be 
+If no serializer is configured for the `user` property, the data will be
 ignored. Logality has implemented the following serializers out of the box:
 
 ### The User Serializer
@@ -444,19 +444,22 @@ const Logality = require('logality');
 
 mySerializers = {
     user: function(user) {
-        return [{
-            path: 'context.user',
-            value: {
-                id: user.id,
-                email: email.id,
-                type: user.type,
+        return [
+            {
+                path: 'context.user',
+                value: {
+                    id: user.id,
+                    email: email.id,
+                    type: user.type,
+                },
             },
-        }, {
-            path: 'context.request',
-            value: {
-                user_id: user.id,
+            {
+                path: 'context.request',
+                value: {
+                    user_id: user.id,
+                },
             },
-        }];
+        ];
     },
 };
 
@@ -531,14 +534,17 @@ function register (userData) => {
 
 ## Releasing
 
-1. Update the changelog bellow.
+1. Update the changelog bellow ("Release History").
 1. Ensure you are on master and your repository is clean.
-1. Type: `npm run release`
-    - `npm run release:minor` for minor number jump.
-    - `npm run release:major` for major number jump.
+1. Type: `npm run release` for patch version jump.
+    - `npm run release:minor` for minor version jump.
+    - `npm run release:major` for major major jump.
 
 ## Release History
 
+-   **v2.1.2**, _24 Feb 2020_
+    -   Removed http serializer when pretty print is enabled.
+    -   Replaced aged grunt with "release-it" for automated releasing.
 -   **v2.1.1**, _19 Feb 2020_
     -   Added the "objectMode" feature.
     -   Implemented multi-key serializers feature.
