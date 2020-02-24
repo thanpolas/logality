@@ -22,33 +22,38 @@
   },
   "scripts": {
     "test": "jest",
-    "release": "grunt release:patch",
-    "release:minor": "grunt release:minor",
-    "release:major": "grunt release:major",
+    "release": "release-it --ci",
+    "release:minor": "release-it minor --ci",
+    "release:major": "release-it major --ci",
     "eslint": "eslint app test"
+  },
+  "release-it": {
+    "github": {
+      "release": false
+    }
   },
   "dependencies": {
     "chalk": "^3.0.0",
     "figures": "^3.2.0",
     "json-format": "^1.0.1",
-    "lodash.assign": "^4.2.0"
+    "lodash.assign": "^4.2.0",
+    "middlewarify": "^1.0.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.20.1",
     "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-jest": "23.3.0",
-    "eslint-plugin-jsdoc": "20.0.3",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "23.8.0",
+    "eslint-plugin-jsdoc": "21.0.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-security": "1.4.0",
     "flush-write-stream": "^2.0.0",
-    "grunt": "^1.0.4",
-    "grunt-release": "^0.14.0",
     "jest": "^25.1.0",
     "prettier": "^1.19.1",
-    "sinon": "^8.1.1",
+    "release-it": "^12.6.1",
+    "sinon": "^9.0.0",
     "split2": "^3.1.1"
   }
 }
