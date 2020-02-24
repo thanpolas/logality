@@ -36,8 +36,7 @@
     "chalk": "^3.0.0",
     "figures": "^3.2.0",
     "json-format": "^1.0.1",
-    "lodash.assign": "^4.2.0",
-    "middlewarify": "^1.0.1"
+    "lodash.assign": "^4.2.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
