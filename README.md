@@ -7,6 +7,18 @@
 
 ![Logality](https://i.imgur.com/xru6Q7O.png)
 
+## Why Logality
+
+- JSON log messages with a strict schema.
+- Extend the logging schema to fit your needs.
+- Customize built-in serializers by overwriting them to create your
+    own logging schema.
+- Use at libraries and compose multiple Logality instances on the root
+    project.
+- Automatically detects the module filename and path and includes in the log.
+- Schema based on the [Simple Log Schema][log-schema].
+
+
 # Install
 
 Install the module using NPM:
@@ -14,19 +26,6 @@ Install the module using NPM:
 ```
 npm install logality --save
 ```
-
-# What Logality can do for you
-
-## Key Features
-
--   JSON log messages with a strict schema.
--   Extend the logging schema to fit your needs.
--   Customize built-in serializers by overwriting them to create your
-    own logging schema.
--   Use Logality in your NPM Libraries and expose a writable stream so that the
-    upstream consumer applications can manage the logging stream of your
-    library.
--   Schema based on the [Simple Log Schema][log-schema].
 
 # Documentation
 
@@ -44,9 +43,9 @@ log.info('Hello World!');
 
 ## Initial Configuration
 
-**Important!** Logality requires to be initialized and configured once, then use the instance
-throughout your application. You can configure Logality during instantiation,
-find the configuration options bellow:
+**Important!** Logality requires to be initialized and configured once, 
+then use the instance throughout your application. You can configure 
+Logality during instantiation, find the configuration options bellow:
 
 -   `appName` {string} An arbitrary string to uniquely identify
     the service.
@@ -105,6 +104,52 @@ to have the `objectMode` property turned on,
 [learn more about stream's "objectMode" at Node.js Stream Documentation][stream-docs].
 
 When Logality has `objectMode` enabled, the `prettyPrint` option is ignored.
+
+## Getting a Logger
+
+To get a logger you have to invoke the `get()` method. That method will detect
+and use the module filename that it was invoked from so it is advised
+that you use the `get()` method only once per module to have proper log
+messages.
+
+The `get()` method will return the `log()` method partialed with arguments.
+The full argument requirements of `log()`, are:
+
+```js
+logality.log(filename, level, message, context);`
+```
+
+With using `get()` you will get the same logger function but with the
+`filename` argument already filled out, so the partialed logger argument
+requirements are:
+
+```js
+const log = logality.get();
+
+log(level, message, context);
+```
+
+The partialed and returned `log` function will also have level helpers as
+illustrated in ["Logging Levels"](#logging-levels) above.
+
+### Logging Messages
+
+Using the level functions (e.g. `log.info()`) your first argument is the
+"message" which is any arbitrary string to describe what has happened.
+It is the second argument, "context" that you will need to put any and
+all data you also want to attach with the logging message.
+
+```js
+log.info(message, context);
+```
+
+The `context` argument is parsed by what are called "Serializers". Serializers
+will take your data as input and format them in an appropriate, logging schema
+compliant output.
+
+You may extend logality with new serializers or you may overwrite the existing
+ones.
+
 
 ## The Logging Schema
 
@@ -189,51 +234,6 @@ log.critical('This is message of level: Critical');
 log.alert('This is message of level: Alert');
 log.emergency('This is message of level: Emergency');
 ```
-
-## Getting a Logger
-
-To get a logger you have to invoke the `get()` method. That method will detect
-and use the module filename that it was invoked from so it is advised
-that you use the `get()` method only once per module to have proper log
-messages.
-
-The `get()` method will return the `log()` method partialed with arguments.
-The full argument requirements of `log()`, are:
-
-```js
-logality.log(filename, level, message, context);`
-```
-
-With using `get()` you will get the same logger function but with the
-`filename` argument already filled out, so the partialed logger argument
-requirements are:
-
-```js
-const log = logality.get();
-
-log(level, message, context);
-```
-
-The partialed and returned `log` function will also have level helpers as
-illustrated in ["Logging Levels"](#logging-levels) above.
-
-### Logging Messages
-
-Using the level functions (e.g. `log.info()`) your first argument is the
-"message" which is any arbitrary string to describe what has happened.
-It is the second argument, "context" that you will need to put any and
-all data you also want to attach with the logging message.
-
-```js
-log.info(message, context);
-```
-
-The `context` argument is parsed by what are called "Serializers". Serializers
-will take your data as input and format them in an appropriate, logging schema
-compliant output.
-
-You may extend logality with new serializers or you may overwrite the existing
-ones.
 
 ## Logality Serializers
 
