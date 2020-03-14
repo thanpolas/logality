@@ -563,7 +563,7 @@ function register (userData) => {
 
 ## License
 
-Copyright Thanasis Polychronakis [Licensed under the MIT license](/LICENSE)
+Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 
 [log-schema]: https://github.com/timberio/log-event-json-schema
 [iso8601]: https://en.wikipedia.org/wiki/ISO_8601

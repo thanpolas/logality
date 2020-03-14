@@ -1,11 +1,11 @@
 /* eslint-disable security/detect-object-injection */
 /**
  * Logality
- * Alacrity custom logger for Node.js
+ * Extensible JSON Logger.
  * https://github.com/thanpolas/logality
  *
  * Copyright © Thanasis Polychronakis
- * All rights reserved. Licensed under the MIT license.
+ * All rights reserved. Licensed under the ISC license.
  */
 
 /**
