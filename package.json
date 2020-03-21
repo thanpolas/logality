@@ -16,7 +16,7 @@
     "type": "git",
     "url": "https://github.com/thanpolas/logality"
   },
-  "license": "MIT",
+  "license": "ISC",
   "engines": {
     "node": ">=8.1.x"
   },
