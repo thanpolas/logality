@@ -636,6 +636,12 @@ function register (userData) => {
 
 ## Release History
 
+-   **v3.0.0**, _TBD_
+    -   Introduced [middleware][middleware] for pre-processing log messages.
+    -   Introduced the [pipe()][pipe] method to link multiple Logality
+        instances together, enables using logality in dependencies and libraries.
+    -   **Breaking Change** Replaced "wstream" with ["output"][output] to
+        customize logality's output.
 -   **v2.1.2**, _24 Feb 2020_
     -   Removed http serializer when pretty print is enabled.
     -   Replaced aged grunt with "release-it" for automated releasing.
@@ -671,3 +677,4 @@ Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 [logality-flow]: #logality_terminology_and_execution_flow
 [middleware]: #use_add_middleware
 [output]: #the_output
+[pipe]: #pipe_compose_multiple_logality_instances
