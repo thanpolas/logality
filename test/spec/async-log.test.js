@@ -2,21 +2,10 @@
  * @fileoverview Test asynchronous logging.
  */
 const Logality = require('../..');
-const { stubLogality } = require('../lib/tester.lib');
+const { stubLogality, cooldown } = require('../lib/tester.lib');
 
 describe('Asynchronous Logging', () => {
   stubLogality();
-
-  /**
-   * Stub func to emulate async operation.
-   *
-   * @return {Promise} A Promise.
-   */
-  function asyncFn() {
-    return new Promise((resolve) => {
-      setTimeout(resolve);
-    });
-  }
 
   test('Async Logging', async () => {
     const logality = new Logality({
@@ -25,7 +14,7 @@ describe('Asynchronous Logging', () => {
       output: async (logMessage) => {
         expect(logMessage).toBeString();
         expect(logMessage).toMatchSnapshot();
-        await asyncFn();
+        await cooldown();
       },
     });
 
