@@ -2,7 +2,7 @@
  * @fileoverview Test normal logging.
  */
 const Logality = require('../..');
-const { sinkPretty, stubLogality } = require('../lib/tester.lib');
+const { stubLogality } = require('../lib/tester.lib');
 
 describe('Pretty Logging', () => {
   stubLogality();
