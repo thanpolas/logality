@@ -31,6 +31,7 @@
 const os = require('os');
 
 const assign = require('lodash.assign');
+const middlewarify = require('middlewarify');
 
 const prettyPrint = require('./pretty-print');
 const utils = require('./utils');
@@ -73,14 +74,25 @@ const Logality = (module.exports = function (opts = {}) {
     return new Logality(opts);
   }
 
+  if (opts.objectMode && typeof opts.output !== 'function') {
+    throw new Error('Must defined "output" handler when objectMode is enabled');
+  }
+
+  const outputFn = opts.output || this._getOutput.bind(this);
+
   /** @type {Object} Logality configuration */
   this._opts = {
     appName: opts.appName || 'Logality',
     prettyPrint: opts.prettyPrint || false,
     async: opts.async || false,
     objectMode: opts.objectMode || false,
-    output: opts.output || false,
   };
+
+  middlewarify.make(this._opts, 'output', outputFn, {
+    async: this._opts.async,
+  });
+
+  this.use = this._opts.output.use;
 
   /** @type {Object} Logality serializers */
   this._serializers = {
@@ -124,7 +136,7 @@ Logality.prototype.get = function () {
 /**
  * The main logging method.
  *
- * @param {string} filePath The path to the logging module.
+ * @param {string} filePath Path of module that the log originated from.
  * @param {string} level The level of the log.
  * @param {string} message Human readable log message.
  * @param {Object|null} context Extra data to log.
@@ -136,7 +148,50 @@ Logality.prototype.log = function (filePath, level, message, context) {
     throw new Error('Invalid log level');
   }
 
-  const logContext = {
+  const logContext = this._getContext(level, levelSeverity, message, filePath);
+
+  this._assignSystem(logContext);
+
+  this._applySerializers(logContext, context);
+
+  if (this._opts.async) {
+    return this._handleAsync(logContext);
+  }
+
+  const logMessage = this._opts.output(logContext);
+
+  if (typeof logMessage === 'string') {
+    this._write(logMessage);
+  }
+};
+
+/**
+ * Handles asynchronous output of the log context.
+ *
+ * @param {Object} logContext The log context.
+ * @return {Promise} A Promise.
+ * @private
+ */
+Logality.prototype._handleAsync = async (logContext) => {
+  const logMessage = await this._opts.output(logContext);
+
+  if (typeof logMessage === 'string') {
+    this._write(logMessage);
+  }
+};
+
+/**
+ * This is where Log Contexts are born, isn't that cute?
+ *
+ * @param {string} level The level of the log.
+ * @param {number} levelSeverity The level expressed in an index.
+ * @param {string} message Human readable log message.
+ * @param {string} filePath Path of module that the log originated from.
+ * @return {Object} The log Context.
+ * @private
+ */
+Logality.prototype._getContext = (level, levelSeverity, message, filePath) => {
+  return {
     level,
     severity: levelSeverity,
     dt: this._getDt(),
@@ -151,12 +206,6 @@ Logality.prototype.log = function (filePath, level, message, context) {
     },
     event: {},
   };
-
-  this._assignSystem(logContext);
-
-  this._applySerializers(logContext, context);
-
-  return this._write(logContext);
 };
 
 /**
@@ -199,6 +248,37 @@ Logality.prototype._getDt = function () {
 };
 
 /**
+ * Write log to process standard out.
+ *
+ * @param {string} logMessage The log context to write.
+ * @private
+ */
+Logality.prototype._write = function (logMessage) {
+  this._stream.write(logMessage);
+};
+
+/**
+ * Determines the kind of output to be send downstream to the writable stream.
+ *
+ * If objectMode is enabled the log context is returned as is, otherwise
+ * it gets serialized.
+ *
+ * @param {Object} logContext The log context to serialize to string.
+ * @return {string} Log Message to be output.
+ * @private
+ */
+Logality.prototype._getOutput = function (logContext) {
+  let stringOutput = '';
+  if (this._opts.prettyPrint) {
+    stringOutput = prettyPrint.writePretty(logContext);
+  } else {
+    stringOutput = this._masterSerialize(logContext);
+  }
+
+  return stringOutput;
+};
+
+/**
  * Master serializer of object to be written to the output stream, basically
  * stringifies to JSON and adds a newline at the end.
  *
@@ -211,56 +291,6 @@ Logality.prototype._masterSerialize = function (logContext) {
   strLogContext += '\n';
 
   return strLogContext;
-};
-
-/**
- * Write log to selected output.
- *
- * @param {Object} logContext The log context to write.
- * @return {Promise|void} Returns promise when async opt is enabled.
- * @private
- */
-Logality.prototype._write = function (logContext) {
-  const output = this._getOutput(logContext);
-
-  if (this._opts.async) {
-    return new Promise((resolve, reject) => {
-      this._stream.write(output, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
-
-  this._stream.write(output);
-};
-
-/**
- * Determines the kind of output to be send downstream to the writable stream.
- *
- * If objectmode is enabled the log context is returned as is, otherwise
- * it gets serialzied.
- *
- * @param {Object} logContext The log context to serialize.
- * @return {Object|string} variable output depending on configuration.
- * @private
- */
-Logality.prototype._getOutput = function (logContext) {
-  if (this._opts.objectMode) {
-    return logContext;
-  }
-
-  let stringOutput = '';
-  if (this._opts.prettyPrint) {
-    stringOutput = prettyPrint.writePretty(logContext);
-  } else {
-    stringOutput = this._masterSerialize(logContext);
-  }
-
-  return stringOutput;
 };
 
 /**
