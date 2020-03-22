@@ -10,7 +10,7 @@
     "email": "thanpolas@gmail.com"
   },
   "contributors": [
-    ""
+    "Marius Balaj"
   ],
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   },
   "license": "ISC",
   "engines": {
-    "node": ">=8.1.x"
+    "node": ">=10.1.x"
   },
   "scripts": {
     "test": "jest",
