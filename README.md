@@ -646,7 +646,7 @@ function register (userData) => {
     -   Removed http serializer when pretty print is enabled.
     -   Replaced aged grunt with "release-it" for automated releasing.
 -   **v2.1.1**, _19 Feb 2020_
-    -   Added the "objectMode" feature.
+    -   Added the "objectMode" configuration.
     -   Implemented multi-key serializers feature.
     -   Fixed async logging issues and tests.
 -   **v2.1.0**, _18 Feb 2020_
