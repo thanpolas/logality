@@ -2,7 +2,7 @@
  * @fileoverview Test logging of user data objects.
  */
 const Logality = require('../..');
-const { sink, stubLogality } = require('../lib/tester.lib');
+const { stubLogality } = require('../lib/tester.lib');
 
 const UDO_MOCK = {
   id: 10,
@@ -12,13 +12,13 @@ const UDO_MOCK = {
 describe('User Data Object Logging', () => {
   stubLogality();
 
-  test('Will log UDO Properly by default', done => {
+  test('Will log UDO Properly by default', (done) => {
     const logality = new Logality({
       appName: 'testLogality',
-      wstream: sink(chunk => {
-        expect(chunk).toMatchSnapshot();
+      output: (logMessage) => {
+        expect(logMessage).toMatchSnapshot();
         done();
-      }),
+      },
     });
 
     const log = logality.get();

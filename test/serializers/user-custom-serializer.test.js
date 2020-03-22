@@ -2,7 +2,7 @@
  * @fileoverview Test custom user serializer
  */
 const Logality = require('../../app/logality');
-const { sink, stubLogality } = require('../lib/tester.lib');
+const { stubLogality } = require('../lib/tester.lib');
 
 const UDO_MOCK = {
   userId: 10,
@@ -12,9 +12,9 @@ const UDO_MOCK = {
 describe('Custom User Serializer', () => {
   stubLogality();
 
-  test('Will log custom UDO', done => {
+  test('Will log custom UDO', () => {
     const serializers = {
-      user: udo => {
+      user: (udo) => {
         return {
           path: 'context.user',
           value: {
@@ -25,23 +25,25 @@ describe('Custom User Serializer', () => {
       },
     };
 
+    let outputDone = false;
     const logality = new Logality({
       appName: 'testLogality',
       serializers,
-      wstream: sink(chunk => {
+      output: (chunk) => {
         expect(chunk).toMatchSnapshot();
-        done();
-      }),
+        outputDone = true;
+      },
     });
 
     const log = logality.get();
 
     log('info', 'hello world', { user: UDO_MOCK });
+    expect(outputDone).toBeTrue();
   });
 
-  test('Will log custom UDO on custom path', done => {
+  test('Will log custom UDO on custom path', () => {
     const serializers = {
-      user: udo => {
+      user: (udo) => {
         return {
           path: 'user',
           value: {
@@ -52,17 +54,19 @@ describe('Custom User Serializer', () => {
       },
     };
 
+    let outputDone = false;
     const logality = new Logality({
       appName: 'testLogality',
       serializers,
-      wstream: sink(chunk => {
+      output: (chunk) => {
         expect(chunk).toMatchSnapshot();
-        done();
-      }),
+        outputDone = true;
+      },
     });
 
     const log = logality.get();
 
     log('info', 'hello world', { user: UDO_MOCK });
+    expect(outputDone).toBeTrue();
   });
 });
