@@ -54,7 +54,7 @@ const LEVELS_CONFIG = {
  * @return {string} Formatted output.
  * @private
  */
-pretty.writePretty = function(logContext) {
+pretty.writePretty = function (logContext) {
   // current level icon and color
   const config = LEVELS_CONFIG[logContext.level];
 
@@ -76,13 +76,13 @@ pretty.writePretty = function(logContext) {
  * @return {string} Log output.
  * @private
  */
-pretty._getLogs = function(logContext) {
+pretty._getLogs = function (logContext) {
   const logs = {};
   const blacklist = ['runtime', 'source', 'system'];
   const { event, context } = logContext;
 
   // remove unnecessary keys
-  blacklist.forEach(key => {
+  blacklist.forEach((key) => {
     delete context[key];
   });
   delete event.http_request;
