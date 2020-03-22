@@ -21,6 +21,14 @@ describe('API Surface', () => {
     expect(logality.get).toBeFunction();
     expect(logality.log).toBeFunction();
     expect(logality.pipe).toBeFunction();
+    expect(logality.use).toBeFunction();
+  });
+  test('Will throw error if objectMode is enabled without output defined', () => {
+    const options = {
+      objectMode: true,
+    };
+
+    expect(Logality.bind(null, options)).toThrowError();
   });
 
   describe('Logging Function Levels', () => {
