@@ -33,8 +33,10 @@ const os = require('os');
 const assign = require('lodash.assign');
 const middlewarify = require('middlewarify');
 
+const fn = require('./functions');
 const prettyPrint = require('./pretty-print');
 const utils = require('./utils');
+const { version } = require('../package.json');
 
 const userSerializer = require('./serializers/user.serializer');
 const errorSerializer = require('./serializers/error.serializer');
@@ -64,8 +66,8 @@ const CWD = process.cwd();
  * @param {function=} opts.output Overwrite the final output operation.
  * @param {boolean=} opts.async Use Asynchronous API returning a promise
  *    on writes.
- * @param {boolean=} opts.objectMode Set to true to have logality transmit
- *    the logging objects unserialized, as native JS Objects.
+ * @param {boolean=} opts.prettyPrint Enable pretty print to stdout,
+ *    default false.
  * @return {Logality} Logality instance.
  */
 const Logality = (module.exports = function (opts = {}) {
@@ -74,25 +76,22 @@ const Logality = (module.exports = function (opts = {}) {
     return new Logality(opts);
   }
 
-  if (opts.objectMode && typeof opts.output !== 'function') {
-    throw new Error('Must defined "output" handler when objectMode is enabled');
-  }
+  this.version = version;
 
-  const outputFn = opts.output || this._getOutput.bind(this);
+  const outputHandler = opts.output || fn.returnArg;
 
   /** @type {Object} Logality configuration */
   this._opts = {
     appName: opts.appName || 'Logality',
     prettyPrint: opts.prettyPrint || false,
     async: opts.async || false,
-    objectMode: opts.objectMode || false,
   };
 
-  middlewarify.make(this._opts, 'output', outputFn, {
+  // Create Middleware functionality
+  middlewarify.make(this, '_middleware', outputHandler, {
     async: this._opts.async,
   });
-
-  this.use = this._opts.output.use;
+  this.use = this._middleware.use;
 
   /** @type {Object} Logality serializers */
   this._serializers = {
@@ -134,6 +133,28 @@ Logality.prototype.get = function () {
 };
 
 /**
+ * Pipes output of other logality instances to this one.
+ *
+ * @param {Logality|Array<Logality>} logality Single or multiple logality
+ *    instances.
+ */
+Logality.prototype.pipe = (logality) => {
+  let logalities = [];
+
+  if (Array.isArray(logality)) {
+    logalities = logality;
+  } else {
+    logalities.push(logality);
+  }
+
+  logalities.forEach((logalityInstance) => {
+    if (!logalityInstance.version) {
+      throw new Error('Argument passed not a Logality instance');
+    }
+  });
+};
+
+/**
  * The main logging method.
  *
  * @param {string} filePath Path of module that the log originated from.
@@ -148,64 +169,60 @@ Logality.prototype.log = function (filePath, level, message, context) {
     throw new Error('Invalid log level');
   }
 
-  const logContext = this._getContext(level, levelSeverity, message, filePath);
+  const logContext = fn.getContext(
+    level,
+    levelSeverity,
+    message,
+    filePath,
+    this._opts.appName,
+  );
 
-  this._assignSystem(logContext);
+  fn.assignSystem(logContext, this._hostname);
 
   this._applySerializers(logContext, context);
 
+  // run Middleware, they can mutate the logContext.
+  const result = this._output(logContext);
+
   if (this._opts.async) {
-    return this._handleAsync(logContext);
+    return this._handleAsync(result);
   }
 
-  const logMessage = this._opts.output(logContext);
-
-  if (typeof logMessage === 'string') {
-    this._write(logMessage);
-  }
+  this._handleOutput(result);
 };
 
 /**
  * Handles asynchronous output of the log context.
  *
- * @param {Object} logContext The log context.
+ * @param {Promise<Object|string|void>} prom Promise outcome of custom output
+ *    or logContext.
  * @return {Promise} A Promise.
  * @private
  */
-Logality.prototype._handleAsync = async (logContext) => {
-  const logMessage = await this._opts.output(logContext);
-
-  if (typeof logMessage === 'string') {
-    this._write(logMessage);
-  }
+Logality.prototype._handleAsync = async (prom) => {
+  this._handleOutput(await prom);
 };
 
 /**
- * This is where Log Contexts are born, isn't that cute?
+ * Final output handler method, determines if the log message needs
+ * further processing or output to standard out.
  *
- * @param {string} level The level of the log.
- * @param {number} levelSeverity The level expressed in an index.
- * @param {string} message Human readable log message.
- * @param {string} filePath Path of module that the log originated from.
- * @return {Object} The log Context.
- * @private
+ * @param {Object|string|void} result Outcome of custom output or logContext.
  */
-Logality.prototype._getContext = (level, levelSeverity, message, filePath) => {
-  return {
-    level,
-    severity: levelSeverity,
-    dt: this._getDt(),
-    message,
-    context: {
-      runtime: {
-        application: this._opts.appName,
-      },
-      source: {
-        file_name: filePath,
-      },
-    },
-    event: {},
-  };
+Logality.prototype._handleOutput = (result) => {
+  let logMessage;
+  switch (typeof result) {
+    case 'string':
+      fn.output(result);
+      break;
+    case 'object':
+      logMessage = this._getLogMessage(result);
+      fn.output(logMessage);
+      break;
+    default:
+      // no action
+      break;
+  }
 };
 
 /**
@@ -237,27 +254,6 @@ Logality.prototype._applySerializers = function (logContext, context) {
 };
 
 /**
- * Return an ISO8601 formatted date.
- *
- * @return {string} The formatted date.
- * @private
- */
-Logality.prototype._getDt = function () {
-  const dt = new Date();
-  return dt.toISOString();
-};
-
-/**
- * Write log to process standard out.
- *
- * @param {string} logMessage The log context to write.
- * @private
- */
-Logality.prototype._write = function (logMessage) {
-  this._stream.write(logMessage);
-};
-
-/**
  * Determines the kind of output to be send downstream to the writable stream.
  *
  * If objectMode is enabled the log context is returned as is, otherwise
@@ -267,44 +263,15 @@ Logality.prototype._write = function (logMessage) {
  * @return {string} Log Message to be output.
  * @private
  */
-Logality.prototype._getOutput = function (logContext) {
+Logality.prototype._getLogMessage = function (logContext) {
   let stringOutput = '';
   if (this._opts.prettyPrint) {
     stringOutput = prettyPrint.writePretty(logContext);
   } else {
-    stringOutput = this._masterSerialize(logContext);
+    stringOutput = fn.masterSerialize(logContext);
   }
 
   return stringOutput;
-};
-
-/**
- * Master serializer of object to be written to the output stream, basically
- * stringifies to JSON and adds a newline at the end.
- *
- * @param {Object} logContext The log context to write.
- * @return {string} Serialized message to output.
- * @private
- */
-Logality.prototype._masterSerialize = function (logContext) {
-  let strLogContext = JSON.stringify(logContext);
-  strLogContext += '\n';
-
-  return strLogContext;
-};
-
-/**
- * Assign system-wide details.
- *
- * @param {Object} logContext The log record context.
- * @private
- */
-Logality.prototype._assignSystem = function (logContext) {
-  logContext.context.system = {
-    hostname: this._hostname,
-    pid: utils.getProcessId(),
-    process_name: utils.getProcessName(),
-  };
 };
 
 /**

@@ -79,3 +79,13 @@ utils.sanitizeHttpHeaders = function (headers) {
 
   return headers;
 };
+
+/**
+ * Return an ISO8601 formatted date.
+ *
+ * @return {string} The formatted date.
+ */
+utils.getDt = function () {
+  const dt = new Date();
+  return dt.toISOString();
+};
