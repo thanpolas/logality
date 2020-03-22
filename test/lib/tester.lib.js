@@ -13,11 +13,11 @@ const tester = (module.exports = {});
 /**
  * Have a Cooldown period between tests.
  *
- * @param {number} seconds cooldown in seconds.
+ * @param {number=} seconds cooldown in seconds.
  * @return {function} use is beforeEach().
  */
-tester.cooldown = function(seconds) {
-  return function(done) {
+tester.cooldown = function (seconds = 0) {
+  return function (done) {
     setTimeout(done, seconds);
   };
 };
@@ -26,7 +26,7 @@ tester.cooldown = function(seconds) {
  * Stub Logality so it can be properly tested with snapshots.
  *
  */
-tester.stubLogality = function() {
+tester.stubLogality = function () {
   let dateStub;
   let processStub;
   let hostnameStub;
