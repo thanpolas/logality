@@ -2,18 +2,19 @@
  * @fileoverview Test normal logging.
  */
 const Logality = require('../..');
-const { sink, stubLogality } = require('../lib/tester.lib');
+const { stubLogality } = require('../lib/tester.lib');
 
 describe('Normal Logging', () => {
   stubLogality();
 
-  test('Will log expected JSON properties', done => {
+  test('Will log expected JSON properties', (done) => {
     const logality = new Logality({
       appName: 'testLogality',
-      wstream: sink(chunk => {
-        expect(chunk).toMatchSnapshot();
+      output: (logMessage) => {
+        expect(logMessage).toBeString();
+        expect(logMessage).toMatchSnapshot();
         done();
-      }),
+      },
     });
 
     const log = logality.get();
@@ -21,13 +22,30 @@ describe('Normal Logging', () => {
     log('info', 'hello world');
   });
 
-  test('Will log an object in context', done => {
+  test('Will log a custom object in context', (done) => {
     const logality = new Logality({
       appName: 'testLogality',
-      wstream: sink(chunk => {
-        expect(chunk).toMatchSnapshot();
+      output: (logMessage) => {
+        expect(logMessage).toBeString();
+        expect(logMessage).toMatchSnapshot();
         done();
-      }),
+      },
+    });
+
+    const log = logality.get();
+
+    log('info', 'hello world', { custom: { a: 1, b: 2 } });
+  });
+
+  test('objectMode config will provide object as argument on output fn', (done) => {
+    const logality = new Logality({
+      appName: 'testLogality',
+      objectMode: true,
+      output: (logObject) => {
+        expect(logObject).toBeObject();
+        expect(logObject).toMatchSnapshot();
+        done();
+      },
     });
 
     const log = logality.get();

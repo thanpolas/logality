@@ -4,8 +4,6 @@
  */
 const os = require('os');
 
-const writeStream = require('flush-write-stream');
-const split = require('split2');
 const sinon = require('sinon');
 
 const utils = require('../../app/utils');
@@ -22,28 +20,6 @@ tester.cooldown = function(seconds) {
   return function(done) {
     setTimeout(done, seconds);
   };
-};
-
-/**
- * Writable stream helper for capturing logging output.
- *
- * @param {function} func Callback with the logging streams.
- * @return {Object} Parsed log message.
- */
-tester.sink = function(func) {
-  const result = split(JSON.parse);
-  result.pipe(writeStream.obj(func));
-  return result;
-};
-
-/**
- * Writable stream helper for capturing pretty logging output.
- *
- * @param {function} func Callback with the logging streams.
- * @return {Object} Custom writable stream.
- */
-tester.sinkPretty = function(func) {
-  return writeStream.obj(func);
 };
 
 /**

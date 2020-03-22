@@ -7,14 +7,14 @@ const { sinkPretty, stubLogality } = require('../lib/tester.lib');
 describe('Pretty Logging', () => {
   stubLogality();
 
-  test('Will pretty log expected JSON properties', done => {
+  test('Will pretty log expected JSON properties', (done) => {
     const logality = new Logality({
       prettyPrint: true,
       appName: 'testLogality',
-      wstream: sinkPretty(chunk => {
-        expect(chunk).toMatchSnapshot();
+      output: (logMessage) => {
+        expect(logMessage).toMatchSnapshot();
         done();
-      }),
+      },
     });
 
     const log = logality.get();
@@ -22,14 +22,14 @@ describe('Pretty Logging', () => {
     log('info', 'hello world');
   });
 
-  test('Will pretty log an object in context', done => {
+  test('Will pretty log an object in context', (done) => {
     const logality = new Logality({
       prettyPrint: true,
       appName: 'testLogality',
-      wstream: sinkPretty(chunk => {
-        expect(chunk).toMatchSnapshot();
+      output: (logMessage) => {
+        expect(logMessage).toMatchSnapshot();
         done();
-      }),
+      },
     });
 
     const log = logality.get();

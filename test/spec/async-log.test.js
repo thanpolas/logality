@@ -2,20 +2,31 @@
  * @fileoverview Test asynchronous logging.
  */
 const Logality = require('../..');
-const { sink, stubLogality } = require('../lib/tester.lib');
+const { stubLogality } = require('../lib/tester.lib');
 
 describe('Asynchronous Logging', () => {
   stubLogality();
 
-  test('Async Logging with async writabble stream', async () => {
+  /**
+   * Stub func to emulate async operation.
+   *
+   * @return {Promise} A Promise.
+   */
+  function asyncFn() {
+    return new Promise((resolve) => {
+      setTimeout(resolve);
+    });
+  }
+
+  test('Async Logging', async () => {
     const logality = new Logality({
       appName: 'testLogality',
       async: true,
-      wstream: sink((chunk, enc, cb) => {
-        expect(chunk).toMatchSnapshot();
-        expect(enc).toEqual('utf8');
-        cb();
-      }),
+      output: async (logMessage) => {
+        expect(logMessage).toBeString();
+        expect(logMessage).toMatchSnapshot();
+        await asyncFn();
+      },
     });
 
     const log = logality.get();
@@ -27,11 +38,6 @@ describe('Asynchronous Logging', () => {
     const logality = new Logality({
       appName: 'testLogality',
       async: true,
-      wstream: sink((chunk, enc, cb) => {
-        expect(chunk).toMatchSnapshot();
-        expect(enc).toEqual('utf8');
-        cb();
-      }),
     });
 
     const log = logality.get();
@@ -48,11 +54,6 @@ describe('Asynchronous Logging', () => {
     const logality = new Logality({
       appName: 'testLogality',
       async: true,
-      wstream: sink((chunk, enc, cb) => {
-        expect(chunk).toMatchSnapshot();
-        expect(enc).toEqual('utf8');
-        cb();
-      }),
     });
 
     const log = logality.get();
@@ -67,16 +68,14 @@ describe('Asynchronous Logging', () => {
     await log.emergency('This is message of level: Emergency');
   });
 
-  test('Async Logging Streamer Error Propagates', async () => {
+  test('Async Logging output Error Propagates', async () => {
     const logality = new Logality({
       appName: 'testLogality',
       async: true,
-      wstream: sink((chunk, enc, cb) => {
-        expect(chunk).toMatchSnapshot();
-        expect(enc).toEqual('utf8');
-        const err = new Error('420');
-        cb(err);
-      }),
+      output: (logMessage) => {
+        expect(logMessage).toMatchSnapshot();
+        throw new Error('420');
+      },
     });
 
     const log = logality.get();
