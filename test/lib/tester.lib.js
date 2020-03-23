@@ -10,6 +10,9 @@ const utils = require('../../app/utils');
 
 const tester = (module.exports = {});
 
+tester.DT_VAL = '2018-05-18T16:25:57.815Z';
+tester.PID_VAL = 36255;
+
 /**
  * Have a Cooldown period between tests.
  *
@@ -33,11 +36,11 @@ tester.stubLogality = function () {
   let processNameStub;
   beforeEach(() => {
     dateStub = sinon.stub(Date.prototype, 'toISOString');
-    dateStub.returns('2018-05-18T16:25:57.815Z');
+    dateStub.returns(tester.DT_VAL);
     hostnameStub = sinon.stub(os, 'hostname');
     hostnameStub.returns('localhost');
     processStub = sinon.stub(utils, 'getProcessId');
-    processStub.returns(36255);
+    processStub.returns(tester.PID_VAL);
     processNameStub = sinon.stub(utils, 'getProcessName');
     processNameStub.returns('node .');
   });
