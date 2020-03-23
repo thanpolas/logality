@@ -77,13 +77,13 @@ const Logality = (module.exports = function (opts = {}) {
   }
 
   /** @type {string} Store the current logality version */
-  this.version = version;
+  this._version = version;
 
   /** @type {boolean} indicates if the current instance is piped to a parent */
-  this.isPiped = false;
+  this._isPiped = false;
 
   /** @type {?Logality} stores the parent logality instance when piped */
-  this.parentLogality = null;
+  this._parentLogality = null;
 
   const outputHandler = opts.output || fn.returnArg;
 
@@ -165,8 +165,7 @@ Logality.prototype.log = function (filePath, level, message, context) {
   fn.assignSystem(logContext, this._hostname);
 
   this._applySerializers(logContext, context);
-
-  return this.invokeOutput(logContext);
+  return this._invokeOutput(logContext);
 };
 
 /**
@@ -176,7 +175,7 @@ Logality.prototype.log = function (filePath, level, message, context) {
  * @param {Object} logContext The log context.
  * @return {Promise|void} Returns promise when async opt is enabled.
  */
-Logality.prototype.invokeOutput = (logContext) => {
+Logality.prototype._invokeOutput = (logContext) => {
   // run Middleware, they can mutate the logContext.
   const result = this._middleware(logContext);
 
@@ -203,11 +202,11 @@ Logality.prototype.pipe = (logality) => {
   }
 
   logalities.forEach((logalityInstance) => {
-    if (!logalityInstance.version) {
+    if (!logalityInstance._version) {
       throw new Error('Argument passed not a Logality instance');
     }
 
-    logalityInstance._youArePiped(this);
+    logalityInstance.youArePiped(this);
   });
 };
 
@@ -219,16 +218,16 @@ Logality.prototype.pipe = (logality) => {
  * @param {Logality} parentLogality The parent logality.
  */
 Logality.prototype.youArePiped = (parentLogality) => {
-  if (!parentLogality.version) {
+  if (!parentLogality._version) {
     throw new Error(
       'Argument passed for youArePiped() not a Logality instance',
     );
   }
-  if (this.isPiped) {
+  if (this._isPiped) {
     throw new Error('This instance is already piped to another parent');
   }
-  this.isPiped = true;
-  this.parentLogality = parentLogality;
+  this._isPiped = true;
+  this._parentLogality = parentLogality;
 };
 
 /**
@@ -250,7 +249,7 @@ Logality.prototype._handleAsync = async (prom) => {
  * @param {Object|string|void} result Outcome of custom output or logContext.
  */
 Logality.prototype._handleOutput = (result) => {
-  if (this.isPiped) {
+  if (this._isPiped) {
     this.parentLogality.invokeOutput(result);
     return;
   }
