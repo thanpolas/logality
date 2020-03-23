@@ -59,18 +59,22 @@ const ALLOWED_LEVELS = [
 const CWD = process.cwd();
 
 /**
- * Initialize the logging service
+ * The Logality Class
  *
- * @param {Object} opts Set of options to configure Logality:
- * @param {string=} opts.appName The application name to log.
- * @param {function=} opts.output Overwrite the final output operation.
- * @param {boolean=} opts.async Use Asynchronous API returning a promise
- *    on writes.
- * @param {boolean=} opts.prettyPrint Enable pretty print to stdout,
- *    default false.
- * @return {Logality} Logality instance.
  */
 class Logality {
+  /**
+   * Initialize the logging service
+   *
+   * @param {Object} opts Set of options to configure Logality:
+   * @param {string=} opts.appName The application name to log.
+   * @param {function=} opts.output Overwrite the final output operation.
+   * @param {boolean=} opts.async Use Asynchronous API returning a promise
+   *    on writes.
+   * @param {boolean=} opts.prettyPrint Enable pretty print to stdout,
+   *    default false.
+   * @return {Logality} Logality instance.
+   */
   constructor(opts = {}) {
     // Force instantiation
     if (!(this instanceof Logality)) {
@@ -166,7 +170,7 @@ class Logality {
     fn.assignSystem(logContext, this._hostname);
 
     this._applySerializers(logContext, context);
-    return this._invokeOutput(logContext);
+    return this.invokeOutput(logContext);
   }
 
   /**
@@ -176,7 +180,7 @@ class Logality {
    * @param {Object} logContext The log context.
    * @return {Promise|void} Returns promise when async opt is enabled.
    */
-  _invokeOutput(logContext) {
+  invokeOutput(logContext) {
     // run Middleware, they can mutate the logContext.
     const result = this._middleware(logContext);
 
