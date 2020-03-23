@@ -76,7 +76,14 @@ const Logality = (module.exports = function (opts = {}) {
     return new Logality(opts);
   }
 
+  /** @type {string} Store the current logality version */
   this.version = version;
+
+  /** @type {boolean} indicates if the current instance is piped to a parent */
+  this.isPiped = false;
+
+  /** @type {?Logality} stores the parent logality instance when piped */
+  this.parentLogality = null;
 
   const outputHandler = opts.output || fn.returnArg;
 
@@ -133,28 +140,6 @@ Logality.prototype.get = function () {
 };
 
 /**
- * Pipes output of other logality instances to this one.
- *
- * @param {Logality|Array<Logality>} logality Single or multiple logality
- *    instances.
- */
-Logality.prototype.pipe = (logality) => {
-  let logalities = [];
-
-  if (Array.isArray(logality)) {
-    logalities = logality;
-  } else {
-    logalities.push(logality);
-  }
-
-  logalities.forEach((logalityInstance) => {
-    if (!logalityInstance.version) {
-      throw new Error('Argument passed not a Logality instance');
-    }
-  });
-};
-
-/**
  * The main logging method.
  *
  * @param {string} filePath Path of module that the log originated from.
@@ -181,14 +166,69 @@ Logality.prototype.log = function (filePath, level, message, context) {
 
   this._applySerializers(logContext, context);
 
+  return this.invokeOutput(logContext);
+};
+
+/**
+ * Invokes any defined middleware and the output methods, custom or built-in
+ * depending on configuration.
+ *
+ * @param {Object} logContext The log context.
+ * @return {Promise|void} Returns promise when async opt is enabled.
+ */
+Logality.prototype.invokeOutput = (logContext) => {
   // run Middleware, they can mutate the logContext.
-  const result = this._output(logContext);
+  const result = this._middleware(logContext);
 
   if (this._opts.async) {
     return this._handleAsync(result);
   }
 
   this._handleOutput(result);
+};
+
+/**
+ * Pipes output of other logality instances to this one.
+ *
+ * @param {Logality|Array<Logality>} logality Single or multiple logality
+ *    instances.
+ */
+Logality.prototype.pipe = (logality) => {
+  let logalities = [];
+
+  if (Array.isArray(logality)) {
+    logalities = logality;
+  } else {
+    logalities.push(logality);
+  }
+
+  logalities.forEach((logalityInstance) => {
+    if (!logalityInstance.version) {
+      throw new Error('Argument passed not a Logality instance');
+    }
+
+    logalityInstance._youArePiped(this);
+  });
+};
+
+/**
+ * Internal method that's invoked by the parent logality instance when
+ * pipe() method is used, instructs the current logality instance to pipe
+ * the LogContext to the parent.
+ *
+ * @param {Logality} parentLogality The parent logality.
+ */
+Logality.prototype.youArePiped = (parentLogality) => {
+  if (!parentLogality.version) {
+    throw new Error(
+      'Argument passed for youArePiped() not a Logality instance',
+    );
+  }
+  if (this.isPiped) {
+    throw new Error('This instance is already piped to another parent');
+  }
+  this.isPiped = true;
+  this.parentLogality = parentLogality;
 };
 
 /**
@@ -210,6 +250,11 @@ Logality.prototype._handleAsync = async (prom) => {
  * @param {Object|string|void} result Outcome of custom output or logContext.
  */
 Logality.prototype._handleOutput = (result) => {
+  if (this.isPiped) {
+    this.parentLogality.invokeOutput(result);
+    return;
+  }
+
   let logMessage;
   switch (typeof result) {
     case 'string':
