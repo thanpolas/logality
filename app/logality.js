@@ -82,7 +82,7 @@ class Logality {
     }
 
     /** @type {string} Store the current logality version */
-    this._version = version;
+    this.version = version;
 
     /** @type {boolean} indicates if the current instance is piped to a parent */
     this._isPiped = false;
@@ -207,7 +207,7 @@ class Logality {
     }
 
     logalities.forEach((logalityInstance) => {
-      if (!logalityInstance._version) {
+      if (!logalityInstance.version) {
         throw new Error('Argument passed not a Logality instance');
       }
 
@@ -223,7 +223,7 @@ class Logality {
    * @param {Logality} parentLogality The parent logality.
    */
   youArePiped(parentLogality) {
-    if (!parentLogality._version) {
+    if (!parentLogality.version) {
       throw new Error(
         'Argument passed for youArePiped() not a Logality instance',
       );
