@@ -12,23 +12,13 @@ describe('API Surface', () => {
     const logality = new Logality();
     expect(logality.get).toBeFunction();
   });
-  test('Logality instantiates without the "new" keyword', () => {
-    const logality = Logality();
-    expect(logality.get).toBeFunction();
-  });
   test('Logality instance has expected methods exported', () => {
     const logality = Logality();
+    expect(logality.version).toBeString();
     expect(logality.get).toBeFunction();
     expect(logality.log).toBeFunction();
     expect(logality.pipe).toBeFunction();
     expect(logality.use).toBeFunction();
-  });
-  test('Will throw error if objectMode is enabled without output defined', () => {
-    const options = {
-      objectMode: true,
-    };
-
-    expect(Logality.bind(null, options)).toThrowError();
   });
 
   describe('Logging Function Levels', () => {
