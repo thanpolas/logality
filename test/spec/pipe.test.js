@@ -7,79 +7,140 @@ const { stubLogality, cooldown } = require('../lib/tester.lib');
 
 describe('pipe interface', () => {
   stubLogality();
-  test('Will pipe one logality instance to another', () => {
-    let outputDone = false;
-    const logalityChild = new Logality();
+  test.only('Will pipe one logality instance to another', () => {
+    const output = jest.fn();
+    const logalityChild = new Logality({
+      appName: 'child',
+    });
     const logalityParent = new Logality({
-      output: (logMessage) => {
-        expect(logMessage).toMatchSnapshot();
-        outputDone = true;
-      },
+      appName: 'parent',
+      output,
     });
 
     logalityParent.pipe(logalityChild);
-    logalityChild.get().log('hello world');
-    expect(outputDone).toBeTrue();
+    logalityChild.get()('info', 'hello world');
+    expect(output).toHaveBeenCalledTimes(1);
+    expect(output.mock.calls[0][0]).toMatchSnapshot();
   });
 
   test('Will pipe multiple logality instances to a single one', () => {
-    const logalityChild1 = new Logality();
-    const logalityChild2 = new Logality();
-    const logalityChild3 = new Logality();
+    const logalityChild1 = new Logality({ appName: 'child1' });
+    const logalityChild2 = new Logality({ appName: 'child2' });
+    const logalityChild3 = new Logality({ appName: 'child3' });
 
-    const mockOut = jest.fn();
+    const output = jest.fn();
 
     const logalityParent = new Logality({
-      output: mockOut,
+      appName: 'parent',
+      output,
     });
 
     logalityParent.pipe([logalityChild1, logalityChild2, logalityChild3]);
-    logalityChild1.get().log('hello world 1');
-    logalityChild2.get().log('hello world 2');
-    logalityChild3.get().log('hello world 3');
+    logalityChild1.get()('info', 'hello world 1');
+    logalityChild2.get()('info', 'hello world 2');
+    logalityChild3.get()('info', 'hello world 3');
 
-    expect(mockOut).toHaveBeenCalledTimes(3);
+    expect(output).toHaveBeenCalledTimes(3);
   });
-  test('Will pipe logality instance with custom output and objectMode', () => {
+  test('Piped async child with string custom output will bypass parent custom output', async () => {
     const logalityChild = new Logality({
-      objectMode: true,
-      output: (logMessage) => {
-        return JSON.stringify(logMessage);
-      },
-    });
-
-    const output = jest.fn();
-    const logalityParent = new Logality({
-      output,
-    });
-
-    logalityParent.pipe(logalityChild);
-
-    logalityChild.get().log('hello world');
-
-    expect(output).toHaveBeenCalled();
-    expect(output).toHaveBeenLastCalledWith('');
-  });
-  test('Will pipe logality instance with async custom output and objectMode', async () => {
-    const logalityChild = new Logality({
-      objectMode: true,
+      appName: 'child',
       async: true,
-      output: async (logMessage) => {
+      output: async (logContext) => {
         await cooldown();
-        return JSON.stringify(logMessage);
+        return JSON.stringify(logContext);
       },
     });
 
     const output = jest.fn();
     const logalityParent = new Logality({
+      appName: 'parent',
       output,
     });
 
     logalityParent.pipe(logalityChild);
 
-    await logalityChild.get().log('hello world');
+    const spy = jest.spyOn(process.stdout, 'write');
 
-    expect(output).toHaveBeenCalled();
-    expect(output).toHaveBeenLastCalledWith('');
+    await logalityChild.get()('info', 'hello world');
+
+    expect(output).toHaveBeenCalledTimes(0);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0][0]).toMatchSnapshot();
+    spy.mockRestore();
+  });
+  test('Piped async child with object custom output will go through synch parent custom output', async () => {
+    const logalityChild = new Logality({
+      appName: 'child',
+      async: true,
+      output: async (logContext) => {
+        await cooldown();
+        return logContext;
+      },
+    });
+
+    const output = jest.fn();
+    const logalityParent = new Logality({
+      appName: 'parent',
+      output,
+    });
+
+    logalityParent.pipe(logalityChild);
+
+    const spy = jest.spyOn(process.stdout, 'write');
+
+    await logalityChild.get()('info', 'hello world');
+
+    expect(output).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(output.mock.calls[0][0]).toMatchSnapshot();
+    expect(spy.mock.calls[0][0]).toMatchSnapshot();
+    spy.mockRestore();
+  });
+  test("Parent's middleware will receive the piped child messages", () => {
+    const output = jest.fn();
+    const middleware = jest.fn();
+    const logalityChild = new Logality({ appName: 'child' });
+    const logalityParent = new Logality({
+      appName: 'parent',
+      output,
+    });
+
+    logalityParent.pipe(logalityChild);
+    logalityParent.use(middleware);
+
+    logalityChild.get()('info', 'hello world');
+
+    expect(output).toHaveBeenCalledTimes(1);
+    expect(middleware).toHaveBeenCalledTimes(1);
+    const logContext = middleware.mock.calls[0][0];
+    expect(logContext.context.runtime.application).toEqual('child');
+    expect(logContext).toMatchSnapshot();
+  });
+
+  test('Will pipe three logality instances to another in chain', () => {
+    const output = jest.fn();
+    const outputGrand = jest.fn();
+    const logalityChild = new Logality({
+      appName: 'child',
+    });
+    const logalityParent = new Logality({
+      appName: 'parent',
+      output,
+    });
+    const logalityGrandParent = new Logality({
+      appName: 'grandParent',
+      output: outputGrand,
+    });
+
+    logalityParent.pipe(logalityChild);
+    logalityGrandParent.pipe(logalityParent);
+
+    logalityChild.get()('info', 'hello world');
+
+    expect(output).toHaveBeenCalledTimes(1);
+    expect(outputGrand).toHaveBeenCalledTimes(1);
+    expect(output.mock.calls[0][0]).toMatchSnapshot();
+    expect(outputGrand.mock.calls[0][0]).toMatchSnapshot();
   });
 });
