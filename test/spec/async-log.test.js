@@ -12,7 +12,7 @@ describe('Asynchronous Logging', () => {
       appName: 'testLogality',
       async: true,
       output: async (logMessage) => {
-        expect(logMessage).toBeString();
+        expect(logMessage).toBeObject();
         expect(logMessage).toMatchSnapshot();
         await cooldown();
       },
@@ -74,7 +74,7 @@ describe('Asynchronous Logging', () => {
     try {
       await log('info', 'hello world', { custom: { a: 1, b: 2 } });
     } catch (ex) {
-      expect(ex.context.message).toEqual('420');
+      expect(ex.message).toEqual('420');
       errorThrown = true;
     }
 
