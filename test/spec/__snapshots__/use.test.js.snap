@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Middleware interface Async Middleware will receive log context 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "Logality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/use.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello async world",
+  "severity": 6,
+}
+`;
+
+exports[`Middleware interface Middleware can mutate the Log Context 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "Logality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/use.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello bogus world",
+  "middleware": true,
+  "middleware2": true,
+  "severity": 6,
+}
+`;
+
+exports[`Middleware interface Middleware return value will be ignored 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "Logality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/use.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello bogus world",
+  "severity": 6,
+}
+`;
+
+exports[`Middleware interface Middleware will receive log context 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "Logality",
+    },
+    "source": Object {
+      "file_name": "/test/spec/use.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
