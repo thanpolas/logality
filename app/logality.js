@@ -255,7 +255,7 @@ class Logality {
    */
   _handleOutput(result) {
     if (this._isPiped) {
-      this.parentLogality.invokeOutput(result);
+      this._parentLogality.invokeOutput(result, true);
       return;
     }
 
