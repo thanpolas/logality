@@ -83,7 +83,7 @@ const logality = Logality({
     processing and ultimately output.
 -   **LogMessage {String}** The serialized `LogContext` into a string for output.
 
-![Logality Flow Chart](/assets/logality_flow_chart.png)
+![Logality Flow Chart](/assets/logality_flow_chart.png =300x)
 
 ### About Asynchronous Logging
 
