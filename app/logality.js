@@ -177,12 +177,15 @@ class Logality {
    * Invokes any defined middleware and the output methods, custom or built-in
    * depending on configuration.
    *
-   * @param {Object} logContext The log context.
+   * @param {Object|*} logContext The log context or any value a piped child
+   *      might output, usually either string or undefined.
+   * @param {Object=} pipedCall Set to true if this method is invoked from
+   *     piped child.
    * @return {Promise|void} Returns promise when async opt is enabled.
    */
-  invokeOutput(logContext) {
+  invokeOutput(logContext, pipedCall = false) {
     // run Middleware, they can mutate the logContext.
-    const result = this._middleware(logContext);
+    const result = this._middleware(logContext, pipedCall);
 
     if (this._opts.async) {
       return this._handleAsync(result);
@@ -254,7 +257,7 @@ class Logality {
    * @param {Object|string|void} result Outcome of custom output or logContext.
    */
   _handleOutput(result) {
-    if (this._isPiped) {
+    if (this._isPiped && result) {
       this._parentLogality.invokeOutput(result, true);
       return;
     }
