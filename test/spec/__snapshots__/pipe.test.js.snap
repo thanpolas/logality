@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pipe interface Parent's middleware will receive the piped child messages 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "child",
+    },
+    "source": Object {
+      "file_name": "/test/spec/pipe.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
+
+exports[`pipe interface Piped async child with object custom output will go through synch parent custom output 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "child",
+    },
+    "source": Object {
+      "file_name": "/test/spec/pipe.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
+
+exports[`pipe interface Piped async child with object custom output will go through synch parent custom output 2`] = `
+"{\\"level\\":\\"info\\",\\"severity\\":6,\\"dt\\":\\"2018-05-18T16:25:57.815Z\\",\\"message\\":\\"hello world\\",\\"context\\":{\\"runtime\\":{\\"application\\":\\"child\\"},\\"source\\":{\\"file_name\\":\\"/test/spec/pipe.test.js\\"},\\"system\\":{\\"hostname\\":\\"localhost\\",\\"pid\\":36255,\\"process_name\\":\\"node .\\"}},\\"event\\":{}}
+"
+`;
+
+exports[`pipe interface Piped async child with string custom output will go through parent custom output 1`] = `"{\\"level\\":\\"info\\",\\"severity\\":6,\\"dt\\":\\"2018-05-18T16:25:57.815Z\\",\\"message\\":\\"hello loki world\\",\\"context\\":{\\"runtime\\":{\\"application\\":\\"child\\"},\\"source\\":{\\"file_name\\":\\"/test/spec/pipe.test.js\\"},\\"system\\":{\\"hostname\\":\\"localhost\\",\\"pid\\":36255,\\"process_name\\":\\"node .\\"}},\\"event\\":{}}"`;
+
+exports[`pipe interface Will pipe one logality instance to another 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "child",
+    },
+    "source": Object {
+      "file_name": "/test/spec/pipe.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
+
+exports[`pipe interface Will pipe three logality instances to another in chain 1`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "child",
+    },
+    "source": Object {
+      "file_name": "/test/spec/pipe.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
+
+exports[`pipe interface Will pipe three logality instances to another in chain 2`] = `
+Object {
+  "context": Object {
+    "runtime": Object {
+      "application": "child",
+    },
+    "source": Object {
+      "file_name": "/test/spec/pipe.test.js",
+    },
+    "system": Object {
+      "hostname": "localhost",
+      "pid": 36255,
+      "process_name": "node .",
+    },
+  },
+  "dt": "2018-05-18T16:25:57.815Z",
+  "event": Object {},
+  "level": "info",
+  "message": "hello world",
+  "severity": 6,
+}
+`;
