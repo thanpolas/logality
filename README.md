@@ -49,18 +49,16 @@ You can configure Logality during instantiation, here are the available
 configuration options:
 
 -   `appName` {string} An arbitrary string to uniquely identify
-    the service.
+        the service (logger instance).
 -   `prettyPrint` {boolean} If true will format and prettify the event and
-    context, default is `false`.
+        context, default is `false`.
 -   `serializers` {Object} You can define custom serializers or overwrite
-    logality's, see more about Serializers bellow.
+        logality's. Read more [about Serializers bellow][serializers].
 -   `async` {boolean} Set to true to enable the asynchronous API for logging,
-    see more bellow.
--   `output` {Function(String:LogMessage)} Replace the output process of
-    logality with a custom one. By default Logality writes to the
-    `process.stdout` writeable stream.
--   `objectMode` {boolean} Set to true to have logality pass the LogContext
-    as a native Javascript Object to the `output` function, see more bellow.
+        see more bellow. Read more [on the async option bellow][async].
+-   `output` {Function(logMessage:Object, isPiped:boolean)} Replace the output 
+        process of logality with a custom one. Read more  
+        [on the custom output documentation bellow][output].
 
 ```js
 const Logality = require('logality');
@@ -118,28 +116,63 @@ async function createUser (userData) => {
 }
 ```
 
-### The "objectMode"
+### The custom "output" Function
 
-Enabling objectMode will force Logality to not JSON serialize the log payload
-and thus pass to the writable stream the logging context as a native Javascript
-Object.
+The custom output function will receive two arguments and is the final operation
+in the [execution flow][logality-flow]. The input arguments are
 
-**Important!** When `objectMode` is enabled, it is expected that `output` is
-also defined, if it isn't an error will be thrown to protect you from a bogus
-configuration.
+- `logContext` **Object|String** Typically the logContext will be a native
+    JS Object. The only exception is when you have 
+    [piped another Logality instance][pipe] and that upstream instance has
+    a custom output that returns a string instead of an object.
+- `isPiped` **boolean** This argument indicates if the inbound "logContext"
+    is the output of a piped instance or not.
 
-### The "output"
+#### Importance of Return Value for "output"
 
-The output function will receive a single argument and is the final operation
-in the [execution flow][logality-flow]. The input argument will be of type:
+Depending on what value is returned from your custom output function
+different actions are performed by Logality.
 
--   **Object** When `objectMode` is enabled and will be the entire LogContext
-    native javascript object.
--   **String** When `objectMode` is not enabled and will be the output of the
-    built-in LogContext serializers, which can be one of:
-    -   **JSON Serialized** A plain `JSON.stringify()` invocation on the
-        LogContext when `prettyPrint` is not enabled.
-    -   **Formatted String** when `prettyPrint` is enabled.
+#### Custom Output: Object Return
+
+This is what you would typically want to always return. When an object is 
+returned from your custom output function you pass the responsibility of
+serializing the Log Context into a string to Logality. 
+
+As per the [Logality Flow Diagram][logality-flow] there are a few more steps
+that are done after your custom output returns an Object value:
+
+1. Logality checks your `prettyPrint` setting and: 
+   1. If it's true will format your Log Context into a pretty formatted string
+        message.
+   2. If it's false will serialize using `JSON.stringify`.
+2. Logality will then output that serialized stream by writing to the
+    `process.stdout` stream.
+
+> **Note**: Libraries using logality should always return an Object if they 
+    have a custom output so that consumer logality instances downstream can
+    process the Library's output properly.
+
+#### Custom Output: String Return
+
+When you return a string, Logality will skip the serialization of your Log
+Message and will directly invoke the output by writing to the `process.stdout`
+stream.
+
+This technique gives you the freedom to implement your own output format and/or
+create your pretty output formats.
+
+#### Custom Output: No Return
+
+When your custom output does not return anything, Logality will assume that you
+have handled everything and will not perform any further action.
+
+In those cases your custom output function is responsible for serializing
+the Log Context and outputting it to the medium you see fit (stdout or a 
+database).
+
+> **Note**: This is the recommended way to apply filters on what messages you
+    want to be logged.
 
 ## Logality Instance Methods
 
@@ -195,17 +228,25 @@ Use `pipe()` to link multiple logality instances to the root instance:
 ```js
 const Logality = require('logality');
 
-const rootLogality = Logality();
+const parentLogality = Logality();
 const childLogality = Logality();
 
-rootLogality.pipe(childLogality);
+parentLogality.pipe(childLogality);
 ```
 
-What this does is pipe all output of the piped (child) logality instances to
-go through the root Logality. This is particularly useful if a library is
-using Logality and you want to pipe its output.
+What this does is pipe all the output of the piped (child) logality instances to
+the "parent" Logality. This is particularly useful if a library is
+using Logality and you want to pipe its output or you want to have multiple
+classes of log streams (i.e. for audit logging purposes).
 
--   `pipe()` Accepts a single Logality instance or an Array of Logality instances.
+-   `pipe()` Accepts a single Logality instance or an Array of Logality 
+    instances.
+
+> **Note**: The LogContext of the child instance, will go through all the
+    middleware and custom output functions defined in the parent instance.
+
+> **Note**: This is the case when the second argument `isPiped` will have
+    a `true` value.
 
 ### use() :: Add Middleware.
 
@@ -676,5 +717,5 @@ Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 [async]: #about_asynchronous_logging
 [logality-flow]: #logality_terminology_and_execution_flow
 [middleware]: #use_add_middleware
-[output]: #the_output
+[output]: #the_custom_output_function
 [pipe]: #pipe_compose_multiple_logality_instances
