@@ -49,16 +49,16 @@ You can configure Logality during instantiation, here are the available
 configuration options:
 
 -   `appName` {string} An arbitrary string to uniquely identify
-        the service (logger instance).
+    the service (logger instance).
 -   `prettyPrint` {boolean} If true will format and prettify the event and
-        context, default is `false`.
+    context, default is `false`.
 -   `serializers` {Object} You can define custom serializers or overwrite
-        logality's. Read more [about Serializers bellow][serializers].
+    logality's. Read more [about Serializers bellow][serializers].
 -   `async` {boolean} Set to true to enable the asynchronous API for logging,
-        see more bellow. Read more [on the async option bellow][async].
--   `output` {Function(logMessage:Object, isPiped:boolean)} Replace the output 
-        process of logality with a custom one. Read more  
-        [on the custom output documentation bellow][output].
+    see more bellow. Read more [on the async option bellow][async].
+-   `output` {Function(logContext:Object, isPiped:boolean)} Replace the output
+    process of logality with a custom one. Read more  
+    [on the custom output documentation bellow][output].
 
 ```js
 const Logality = require('logality');
@@ -66,9 +66,9 @@ const Logality = require('logality');
 const logality = Logality({
     appName: 'service-something',
     prettyPrint: false,
-    serializers: [logContext => {}],
+    serializers: [(logContext) => {}],
     async: false,
-    output: logMessage => {
+    output: (logMessage) => {
         process.stdout.write(logMessage);
     },
     objectMode: false,
@@ -123,11 +123,11 @@ async function createUser (userData) => {
 The custom output function will receive two arguments and is the final operation
 in the [execution flow][logality-flow]. The input arguments are
 
-- `logContext` **Object|String** Typically the logContext will be a native
-    JS Object. The only exception is when you have 
+-   `logContext` **Object|String** Typically the logContext will be a native
+    JS Object. The only exception is when you have
     [piped another Logality instance][pipe] and that upstream instance has
     a custom output that returns a string instead of an object.
-- `isPiped` **boolean** This argument indicates if the inbound "logContext"
+-   `isPiped` **boolean** This argument indicates if the inbound "logContext"
     is the output of a piped instance or not.
 
 #### Importance of Return Value for "output"
@@ -137,21 +137,22 @@ different actions are performed by Logality.
 
 #### Custom Output: Object Return
 
-This is what you would typically want to always return. When an object is 
+This is what you would typically want to always return. When an object is
 returned from your custom output function you pass the responsibility of
-serializing the Log Context into a string to Logality. 
+serializing the Log Context into a string to Logality.
 
 As per the [Logality Flow Diagram][logality-flow] there are a few more steps
 that are done after your custom output returns an Object value:
 
-1. Logality checks your `prettyPrint` setting and: 
-   1. If it's true will format your Log Context into a pretty formatted string
-        message.
-   2. If it's false will serialize using `JSON.stringify`.
+1. Logality checks your `prettyPrint` setting and:
+    1. If it's true will format your Log Context into a pretty formatted string
+       message.
+    2. If it's false will serialize using `JSON.stringify`.
 2. Logality will then output that serialized stream by writing to the
-    `process.stdout` stream.
+   `process.stdout` stream.
 
-> **Note**: Libraries using logality should always return an Object if they 
+> **Note**: Libraries using logality should always return an Object if they
+
     have a custom output so that consumer logality instances downstream can
     process the Library's output properly.
 
@@ -170,10 +171,11 @@ When your custom output does not return anything, Logality will assume that you
 have handled everything and will not perform any further action.
 
 In those cases your custom output function is responsible for serializing
-the Log Context and outputting it to the medium you see fit (stdout or a 
+the Log Context and outputting it to the medium you see fit (stdout or a
 database).
 
 > **Note**: This is the recommended way to apply filters on what messages you
+
     want to be logged.
 
 ## Logality Instance Methods
@@ -241,13 +243,15 @@ the "parent" Logality. This is particularly useful if a library is
 using Logality and you want to pipe its output or you want to have multiple
 classes of log streams (i.e. for audit logging purposes).
 
--   `pipe()` Accepts a single Logality instance or an Array of Logality 
+-   `pipe()` Accepts a single Logality instance or an Array of Logality
     instances.
 
 > **Note**: The LogContext of the child instance, will go through all the
+
     middleware and custom output functions defined in the parent instance.
 
 > **Note**: This is the case when the second argument `isPiped` will have
+
     a `true` value.
 
 ### use() :: Add Middleware.
@@ -269,7 +273,7 @@ const Logality = require('logality');
 
 const logality = Logality();
 
-logality.use(context => {
+logality.use((context) => {
     delete context.user;
 });
 ```
@@ -283,7 +287,7 @@ const logality = Logality({
     async: true,
 });
 
-logality.use(async context => {
+logality.use(async (context) => {
     await db.write(context);
 });
 ```
@@ -542,7 +546,7 @@ An Example:
 const Logality = require('logality');
 
 mySerializers = {
-    user: function(user) {
+    user: function (user) {
         return {
             path: 'context.user',
             value: {
@@ -552,7 +556,7 @@ mySerializers = {
             },
         };
     },
-    order: function(order) {
+    order: function (order) {
         return {
             path: 'context.order',
             value: {
@@ -580,7 +584,7 @@ To be able to do that, simply return an Array instead of an Object like so:
 const Logality = require('logality');
 
 mySerializers = {
-    user: function(user) {
+    user: function (user) {
         return [
             {
                 path: 'context.user',
@@ -630,7 +634,7 @@ logger.logality = null;
  * @param {WriteStream|null} bootOpts.wstream Optionally define a custom
  *   writable stream.
  */
-logger.init = function(bootOpts = {}) {
+logger.init = function (bootOpts = {}) {
     // check if already initialized.
     if (logger.logality) {
         return;
@@ -679,7 +683,7 @@ function register (userData) => {
 
 ## Release History
 
--   **v3.0.0**, _TBD_
+-   **v3.0.0**, _04 Apr 2020_
     -   Introduced [middleware][middleware] for pre-processing log messages.
     -   Introduced the [pipe()][pipe] method to link multiple Logality
         instances together, enables using logality in dependencies and libraries.
@@ -716,8 +720,8 @@ Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 [circle-url]: https://circleci.com/gh/thanpolas/logality
 [stream-docs]: https://nodejs.org/api/stream.html#stream_object_mode
 [serializers]: #logality-serializers
-[async]: #about_asynchronous_logging
-[logality-flow]: #logality_terminology_and_execution_flow
-[middleware]: #use_add_middleware
-[output]: #the_custom_output_function
-[pipe]: #pipe_compose_multiple_logality_instances
+[async]: #about-asynchronous-logging
+[logality-flow]: #logality-terminology-and-execution-flow
+[middleware]: #use--add-middleware
+[output]: #the-custom-output-function
+[pipe]: #pipe--compose-multiple-logality-instances
