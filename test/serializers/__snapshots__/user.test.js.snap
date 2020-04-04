@@ -1,18 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`objectMode Logging Will return the Logging object 1`] = `
+exports[`User Data Object Logging Will log UDO Properly by default 1`] = `
 Object {
   "context": Object {
     "runtime": Object {
       "application": "testLogality",
     },
     "source": Object {
-      "file_name": "/test/spec/objectmode.test.js",
+      "file_name": "/test/serializers/user.test.js",
     },
     "system": Object {
       "hostname": "localhost",
       "pid": 36255,
       "process_name": "node .",
+    },
+    "user": Object {
+      "email": "one@go.com",
+      "id": 10,
     },
   },
   "dt": "2018-05-18T16:25:57.815Z",

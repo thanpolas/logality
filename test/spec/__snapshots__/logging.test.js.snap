@@ -1,51 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Normal Logging Will log an object in context 1`] = `
-Object {
-  "context": Object {
-    "custom": Object {
-      "a": 1,
-      "b": 2,
-    },
-    "runtime": Object {
-      "application": "testLogality",
-    },
-    "source": Object {
-      "file_name": "/test/spec/logging.test.js",
-    },
-    "system": Object {
-      "hostname": "localhost",
-      "pid": 36255,
-      "process_name": "node .",
-    },
-  },
-  "dt": "2018-05-18T16:25:57.815Z",
-  "event": Object {},
-  "level": "info",
-  "message": "hello world",
-  "severity": 6,
-}
-`;
-
-exports[`Normal Logging Will log expected JSON properties 1`] = `
-Object {
-  "context": Object {
-    "runtime": Object {
-      "application": "testLogality",
-    },
-    "source": Object {
-      "file_name": "/test/spec/logging.test.js",
-    },
-    "system": Object {
-      "hostname": "localhost",
-      "pid": 36255,
-      "process_name": "node .",
-    },
-  },
-  "dt": "2018-05-18T16:25:57.815Z",
-  "event": Object {},
-  "level": "info",
-  "message": "hello world",
-  "severity": 6,
-}
+exports[`Normal Logging Will output to standard out 1`] = `
+"{\\"level\\":\\"info\\",\\"severity\\":6,\\"dt\\":\\"2018-05-18T16:25:57.815Z\\",\\"message\\":\\"Good sleep now...\\",\\"context\\":{\\"runtime\\":{\\"application\\":\\"testLogality\\"},\\"source\\":{\\"file_name\\":\\"/test/spec/logging.test.js\\"},\\"system\\":{\\"hostname\\":\\"localhost\\",\\"pid\\":36255,\\"process_name\\":\\"node .\\"}},\\"event\\":{}}
+"
 `;

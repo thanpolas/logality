@@ -1,7 +1,7 @@
 {
   "name": "logality",
   "version": "2.1.2",
-  "main": "./app/logality",
+  "main": "./app/export-wrapper",
   "description": "Extensible JSON Logger",
   "homepage": "https://github.com/thanpolas/logality",
   "bugs": "https://github.com/thanpolas/logality/issues",
@@ -10,15 +10,15 @@
     "email": "thanpolas@gmail.com"
   },
   "contributors": [
-    ""
+    "Marius Balaj"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/thanpolas/logality"
   },
-  "license": "MIT",
+  "license": "ISC",
   "engines": {
-    "node": ">=8.1.x"
+    "node": ">=10.1.x"
   },
   "scripts": {
     "test": "jest",
@@ -32,27 +32,45 @@
       "release": false
     }
   },
+  "jest": {
+    "coverageReporters": [
+      "html",
+      "text-summary"
+    ],
+    "roots": [
+      "./test/spec",
+      "./test/serializers"
+    ],
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "jest-extended"
+    ]
+  },
   "dependencies": {
     "chalk": "^3.0.0",
     "figures": "^3.2.0",
     "json-format": "^1.0.1",
-    "lodash.assign": "^4.2.0"
+    "lodash.assign": "^4.2.0",
+    "middlewarify": "^2.0.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "@types/jest": "^25.1.4",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "23.8.0",
-    "eslint-plugin-jsdoc": "21.0.0",
+    "eslint-plugin-jest": "23.8.2",
+    "eslint-plugin-jsdoc": "22.1.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-security": "1.4.0",
-    "flush-write-stream": "^2.0.0",
     "jest": "^25.1.0",
-    "prettier": "^1.19.1",
-    "release-it": "^12.6.1",
-    "sinon": "^9.0.0",
-    "split2": "^3.1.1"
+    "jest-extended": "^0.11.5",
+    "prettier": "^2.0.1",
+    "release-it": "^13.1.2",
+    "sinon": "^9.0.1"
   }
 }

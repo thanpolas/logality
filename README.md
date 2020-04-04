@@ -5,7 +5,18 @@
 [![NPM Version][npm-image]][npm-url]
 [![CircleCI][circle-image]][circle-url]
 
-![Logality](https://i.imgur.com/xru6Q7O.png)
+![Logality](/assets/logality_preview.png)
+
+## Why Logality
+
+-   JSON log messages with a strict schema.
+-   Extend the logging schema to fit your needs.
+-   Customize built-in serializers by overwriting them to create your
+    own logging schema.
+-   Use at libraries and compose multiple Logality instances on the root
+    project.
+-   Automatically detects the module filename and path and includes in the log.
+-   Schema based on the [Simple Log Schema][log-schema].
 
 # Install
 
@@ -14,19 +25,6 @@ Install the module using NPM:
 ```
 npm install logality --save
 ```
-
-# What Logality can do for you
-
-## Key Features
-
--   JSON log messages with a strict schema.
--   Extend the logging schema to fit your needs.
--   Customize built-in serializers by overwriting them to create your
-    own logging schema.
--   Use Logality in your NPM Libraries and expose a writable stream so that the
-    upstream consumer applications can manage the logging stream of your
-    library.
--   Schema based on the [Simple Log Schema][log-schema].
 
 # Documentation
 
@@ -44,33 +42,60 @@ log.info('Hello World!');
 
 ## Initial Configuration
 
-**Important!** Logality requires to be initialized and configured once, then use the instance
-throughout your application. You can configure Logality during instantiation,
-find the configuration options bellow:
+Logality requires to be initialized and configured once,
+then use the instance throughout your application.
+
+You can configure Logality during instantiation, here are the available
+configuration options:
 
 -   `appName` {string} An arbitrary string to uniquely identify
-    the service.
--   `wstream` {Stream} A writeable stream to output logging, default is stdout.
+    the service (logger instance).
 -   `prettyPrint` {boolean} If true will format and prettify the event and
     context, default is `false`.
 -   `serializers` {Object} You can define custom serializers or overwrite
-    logality's, see more about Serializers bellow.
+    logality's. Read more [about Serializers bellow][serializers].
 -   `async` {boolean} Set to true to enable the asynchronous API for logging,
-    see more bellow.
--   `objectMode` {boolean} Set to true to have logality pass the object context
-    as a native Javascript Object, see more bellow.
+    see more bellow. Read more [on the async option bellow][async].
+-   `output` {Function(logContext:Object, isPiped:boolean)} Replace the output
+    process of logality with a custom one. Read more  
+    [on the custom output documentation bellow][output].
 
 ```js
 const Logality = require('logality');
 
 const logality = Logality({
     appName: 'service-something',
+    prettyPrint: false,
+    serializers: [(logContext) => {}],
+    async: false,
+    output: (logMessage) => {
+        process.stdout.write(logMessage);
+    },
+    objectMode: false,
 });
 ```
+
+### Logality Terminology and Execution Flow
+
+-   **Message {string}** The Log message input from the user.
+-   **Context {Object}** The Context input from the user.
+-   **LogContext {Object}** Log Context used internally by logality for
+    processing and ultimately output.
+-   **LogMessage {String}** The serialized `LogContext` into a string for output.
+
+#### Click to View the Flow Chart in Full Resolution
+
+[![Logality Flow Chart](/assets/logality_flow_chart_preview.png)](/assets/logality_flow_chart.png)
 
 ### About Asynchronous Logging
 
 When logging has a transactional requirement, such as audit logs, you can
+enable asynchronous mode.
+
+When Async is enabled both the [middleware defined through `use()`][middleware]
+and the [output function if defined][output] will be expected to execute
+asynchronously.
+
 use an asynchronous writable stream that performs any type of I/O
 (database writes, queue pushing, etc). To enable the async API all you have to
 do is set the option `async` to true. All logging methods will now return
@@ -82,7 +107,6 @@ const Logality = require('logality');
 const logality = Logality({
     appName: 'service-audit',
     async: true,
-    wstream: someAsyncWritableStream,
 });
 
 /** ... */
@@ -94,21 +118,183 @@ async function createUser (userData) => {
 }
 ```
 
-### The "objectMode"
+### The custom "output" Function
 
-Enabling objectMode will force Logality to not JSON serialize the log payload
-and thus pass to the writable stream the logging context as a native Javascript
-Object.
+The custom output function will receive two arguments and is the final operation
+in the [execution flow][logality-flow]. The input arguments are
 
-**Important!**: For the writable stream to support the native JS Object it has
-to have the `objectMode` property turned on,
-[learn more about stream's "objectMode" at Node.js Stream Documentation][stream-docs].
+-   `logContext` **Object|String** Typically the logContext will be a native
+    JS Object. The only exception is when you have
+    [piped another Logality instance][pipe] and that upstream instance has
+    a custom output that returns a string instead of an object.
+-   `isPiped` **boolean** This argument indicates if the inbound "logContext"
+    is the output of a piped instance or not.
 
-When Logality has `objectMode` enabled, the `prettyPrint` option is ignored.
+#### Importance of Return Value for "output"
+
+Depending on what value is returned from your custom output function
+different actions are performed by Logality.
+
+#### Custom Output: Object Return
+
+This is what you would typically want to always return. When an object is
+returned from your custom output function you pass the responsibility of
+serializing the Log Context into a string to Logality.
+
+As per the [Logality Flow Diagram][logality-flow] there are a few more steps
+that are done after your custom output returns an Object value:
+
+1. Logality checks your `prettyPrint` setting and:
+    1. If it's true will format your Log Context into a pretty formatted string
+       message.
+    2. If it's false will serialize using `JSON.stringify`.
+2. Logality will then output that serialized stream by writing to the
+   `process.stdout` stream.
+
+> **Note**: Libraries using logality should always return an Object if they
+
+    have a custom output so that consumer logality instances downstream can
+    process the Library's output properly.
+
+#### Custom Output: String Return
+
+When you return a string, Logality will skip the serialization of your Log
+Message and will directly invoke the output by writing to the `process.stdout`
+stream.
+
+This technique gives you the freedom to implement your own output format and/or
+create your pretty output formats.
+
+#### Custom Output: No Return
+
+When your custom output does not return anything, Logality will assume that you
+have handled everything and will not perform any further action.
+
+In those cases your custom output function is responsible for serializing
+the Log Context and outputting it to the medium you see fit (stdout or a
+database).
+
+> **Note**: This is the recommended way to apply filters on what messages you
+
+    want to be logged.
+
+## Logality Instance Methods
+
+### get() :: Getting a Logger
+
+To get a logger you have to invoke the `get()` method. That method will detect
+and use the module filename that it was invoked from so it is advised
+that you use the `get()` method only once per module to have proper log
+messages.
+
+The `get()` method will return the `log()` method partialed with arguments.
+The full argument requirements of `log()`, are:
+
+```js
+logality.log(filename, level, message, context);`
+```
+
+With using `get()` you will get the same logger function but with the
+`filename` argument already filled out, so the partialed logger argument
+requirements are:
+
+```js
+const log = logality.get();
+
+log(level, message, context);
+```
+
+The partialed and returned `log` function will also have level helpers as
+illustrated in ["Log Levels"](#log-levels) section.
+
+#### Logging Messages
+
+Using the level functions (e.g. `log.info()`) your first argument is the
+"message" which is any arbitrary string to describe what has happened.
+It is the second argument, "context" that you will need to put any and
+all data you also want to attach with the logging message.
+
+```js
+log.info(message, context);
+```
+
+The `context` argument is parsed by what are called "Serializers". Serializers
+will take your data as input and format them in an appropriate, logging schema
+compliant output.
+
+You may extend logality with new [serializers][serializers] or you may
+overwrite the existing ones.
+
+### pipe() :: Compose Multiple Logality Instances
+
+Use `pipe()` to link multiple logality instances to the root instance:
+
+```js
+const Logality = require('logality');
+
+const parentLogality = Logality();
+const childLogality = Logality();
+
+parentLogality.pipe(childLogality);
+```
+
+What this does is pipe all the output of the piped (child) logality instances to
+the "parent" Logality. This is particularly useful if a library is
+using Logality and you want to pipe its output or you want to have multiple
+classes of log streams (i.e. for audit logging purposes).
+
+-   `pipe()` Accepts a single Logality instance or an Array of Logality
+    instances.
+
+> **Note**: The LogContext of the child instance, will go through all the
+
+    middleware and custom output functions defined in the parent instance.
+
+> **Note**: This is the case when the second argument `isPiped` will have
+
+    a `true` value.
+
+### use() :: Add Middleware.
+
+You can add Middleware that will be invoked after all the
+[serializers][serializers] are applied (built-in and custom defined) and before
+the "Write to output" method is called.
+
+The middleware will receive the "Log Message" as a native Javascript Object and
+you can mutate or process it.
+
+All middleware with `use()` are synchronous. To support async middleware you
+have to enable the [`async` mode][async] when instantiating.
+
+#### use() Synchronous Example
+
+```js
+const Logality = require('logality');
+
+const logality = Logality();
+
+logality.use((context) => {
+    delete context.user;
+});
+```
+
+#### use() Asynchronous Example
+
+```js
+const Logality = require('logality');
+
+const logality = Logality({
+    async: true,
+});
+
+logality.use(async (context) => {
+    await db.write(context);
+});
+```
 
 ## The Logging Schema
 
-Logallity automatically calculates and formats a series of system information
+Logality automatically calculates and formats a series of system information
 which is then included in the output. When you log using:
 
 ```js
@@ -157,7 +343,7 @@ Logality, when on production, will output the following (expanded) JSON string:
 -   `context.system.pid` **{string}** The local process id.
 -   `context.system.process_name` **{string}** The local process name.
 
-## Logging Levels
+## Log Levels
 
 As per the [Log Schema](log-schema), the logging levels map to those of Syslog
 RFC 5424:
@@ -189,51 +375,6 @@ log.critical('This is message of level: Critical');
 log.alert('This is message of level: Alert');
 log.emergency('This is message of level: Emergency');
 ```
-
-## Getting a Logger
-
-To get a logger you have to invoke the `get()` method. That method will detect
-and use the module filename that it was invoked from so it is advised
-that you use the `get()` method only once per module to have proper log
-messages.
-
-The `get()` method will return the `log()` method partialed with arguments.
-The full argument requirements of `log()`, are:
-
-```js
-logality.log(filename, level, message, context);`
-```
-
-With using `get()` you will get the same logger function but with the
-`filename` argument already filled out, so the partialed logger argument
-requirements are:
-
-```js
-const log = logality.get();
-
-log(level, message, context);
-```
-
-The partialed and returned `log` function will also have level helpers as
-illustrated in ["Logging Levels"](#logging-levels) above.
-
-### Logging Messages
-
-Using the level functions (e.g. `log.info()`) your first argument is the
-"message" which is any arbitrary string to describe what has happened.
-It is the second argument, "context" that you will need to put any and
-all data you also want to attach with the logging message.
-
-```js
-log.info(message, context);
-```
-
-The `context` argument is parsed by what are called "Serializers". Serializers
-will take your data as input and format them in an appropriate, logging schema
-compliant output.
-
-You may extend logality with new serializers or you may overwrite the existing
-ones.
 
 ## Logality Serializers
 
@@ -405,7 +546,7 @@ An Example:
 const Logality = require('logality');
 
 mySerializers = {
-    user: function(user) {
+    user: function (user) {
         return {
             path: 'context.user',
             value: {
@@ -415,7 +556,7 @@ mySerializers = {
             },
         };
     },
-    order: function(order) {
+    order: function (order) {
         return {
             path: 'context.order',
             value: {
@@ -443,7 +584,7 @@ To be able to do that, simply return an Array instead of an Object like so:
 const Logality = require('logality');
 
 mySerializers = {
-    user: function(user) {
+    user: function (user) {
         return [
             {
                 path: 'context.user',
@@ -493,7 +634,7 @@ logger.logality = null;
  * @param {WriteStream|null} bootOpts.wstream Optionally define a custom
  *   writable stream.
  */
-logger.init = function(bootOpts = {}) {
+logger.init = function (bootOpts = {}) {
     // check if already initialized.
     if (logger.logality) {
         return;
@@ -542,11 +683,17 @@ function register (userData) => {
 
 ## Release History
 
+-   **v3.0.0**, _04 Apr 2020_
+    -   Introduced [middleware][middleware] for pre-processing log messages.
+    -   Introduced the [pipe()][pipe] method to link multiple Logality
+        instances together, enables using logality in dependencies and libraries.
+    -   **Breaking Change** Replaced "wstream" with ["output"][output] to
+        customize logality's output.
 -   **v2.1.2**, _24 Feb 2020_
     -   Removed http serializer when pretty print is enabled.
     -   Replaced aged grunt with "release-it" for automated releasing.
 -   **v2.1.1**, _19 Feb 2020_
-    -   Added the "objectMode" feature.
+    -   Added the "objectMode" configuration.
     -   Implemented multi-key serializers feature.
     -   Fixed async logging issues and tests.
 -   **v2.1.0**, _18 Feb 2020_
@@ -563,7 +710,7 @@ function register (userData) => {
 
 ## License
 
-Copyright Thanasis Polychronakis [Licensed under the MIT license](/LICENSE)
+Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 
 [log-schema]: https://github.com/timberio/log-event-json-schema
 [iso8601]: https://en.wikipedia.org/wiki/ISO_8601
@@ -572,3 +719,9 @@ Copyright Thanasis Polychronakis [Licensed under the MIT license](/LICENSE)
 [circle-image]: https://img.shields.io/circleci/build/gh/thanpolas/logality/master?label=Tests
 [circle-url]: https://circleci.com/gh/thanpolas/logality
 [stream-docs]: https://nodejs.org/api/stream.html#stream_object_mode
+[serializers]: #logality-serializers
+[async]: #about-asynchronous-logging
+[logality-flow]: #logality-terminology-and-execution-flow
+[middleware]: #use--add-middleware
+[output]: #the-custom-output-function
+[pipe]: #pipe--compose-multiple-logality-instances
