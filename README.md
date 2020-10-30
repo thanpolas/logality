@@ -683,6 +683,8 @@ function register (userData) => {
 
 ## Release History
 
+-   **v3.0.2**, _30 Oct 2020_
+    -   Updated all dependencies to latest.
 -   **v3.0.1**, _03 Jul 2020_
     -   Updated all dependencies to latest.
 -   **v3.0.0**, _04 Apr 2020_
