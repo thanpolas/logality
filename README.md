@@ -1,6 +1,6 @@
 # Logality
 
-> Extensible JSON Logger.
+> Versatile JSON Logger.
 
 [![NPM Version][npm-image]][npm-url]
 [![CircleCI][circle-image]][circle-url]
@@ -9,14 +9,17 @@
 
 ## Why Logality
 
--   JSON log messages with a strict schema.
--   Extend the logging schema to fit your needs.
+-   JSON and Pretty Print log messages.
+-   Extend or alter logging schema to fit your needs.
 -   Customize built-in serializers by overwriting them to create your
     own logging schema.
--   Use at libraries and compose multiple Logality instances on the root
+-   Middleware support.
+-   Allows full manipulation of output.
+-   Use in libraries and compose multiple Logality instances on the root
     project.
 -   Automatically detects the module filename and path and includes in the log.
--   Schema based on the [Simple Log Schema][log-schema].
+
+[👉 See how Logality compares to other popular loggers.][comparison].
 
 # Install
 
@@ -57,8 +60,7 @@ configuration options:
 -   `async` {boolean} Set to true to enable the asynchronous API for logging,
     see more bellow. Read more [on the async option bellow][async].
 -   `output` {Function(logContext:Object, isPiped:boolean)} Replace the output
-    process of logality with a custom one. Read more  
-    [on the custom output documentation bellow][output].
+    process of logality with a custom one. Read more [on the custom output documentation bellow][output].
 
 ```js
 const Logality = require('logality');
@@ -71,35 +73,36 @@ const logality = Logality({
     output: (logMessage) => {
         process.stdout.write(logMessage);
     },
-    objectMode: false,
 });
 ```
 
-### Logality Terminology and Execution Flow
+### Logality Terminology
 
--   **Message {string}** The Log message input from the user.
--   **Context {Object}** The Context input from the user.
--   **LogContext {Object}** Log Context used internally by logality for
+-   **Message {string}** The text (string) Log message input from the user.
+-   **Context {Object}** The Context (or bindings) input from the user.
+-   **LogContext {Object}** Log Context (the schema) used internally by logality for
     processing and ultimately output.
 -   **LogMessage {String}** The serialized `LogContext` into a string for output.
 
-#### Click to View the Flow Chart in Full Resolution
+### Logality Execution Flow
+
+[👉 Click here or on the Flow Chart for Full Resolution](/assets/logality_flow_chart.png).
 
 [![Logality Flow Chart](/assets/logality_flow_chart_preview.png)](/assets/logality_flow_chart.png)
 
-### About Asynchronous Logging
+### Logality Can be Asynchronous
 
-When logging has a transactional requirement, such as audit logs, you can
+When logging has a transactional requirement, such as storing logs to a database or sending through an API, you can
 enable asynchronous mode.
 
-When Async is enabled both the [middleware defined through `use()`][middleware]
+When Async is enabled all logs should be prefixed with the `await` keyword.
+
+Both the [middleware defined through `use()`][middleware]
 and the [output function if defined][output] will be expected to execute
 asynchronously.
 
-use an asynchronous writable stream that performs any type of I/O
-(database writes, queue pushing, etc). To enable the async API all you have to
-do is set the option `async` to true. All logging methods will now return
-a promise for you to handle.
+To enable the async API all you have to do is set the option `async` to true. All logging methods will now return
+a promise for you to handle:
 
 ```js
 const Logality = require('logality');
@@ -120,20 +123,15 @@ async function createUser (userData) => {
 
 ### The custom "output" Function
 
-The custom output function will receive two arguments and is the final operation
-in the [execution flow][logality-flow]. The input arguments are
+The custom output function will receive two arguments and is the final operation in the [execution flow][logality-flow]. The input arguments are:
 
--   `logContext` **Object|String** Typically the logContext will be a native
-    JS Object. The only exception is when you have
-    [piped another Logality instance][pipe] and that upstream instance has
-    a custom output that returns a string instead of an object.
--   `isPiped` **boolean** This argument indicates if the inbound "logContext"
-    is the output of a piped instance or not.
+-   `logContext` **Object** logContext is a native
+    JS Object representing the entire log message.
+-   `isPiped` **boolean** This argument indicates if the inbound "logContext" is the output of a piped instance or not (comes from a library).
 
 #### Importance of Return Value for "output"
 
-Depending on what value is returned from your custom output function
-different actions are performed by Logality.
+Depending on what value is returned by your custom output function different actions are performed by Logality.
 
 #### Custom Output: Object Return
 
@@ -668,8 +666,9 @@ function register (userData) => {
         userData
     });
 }
-
 ```
+
+## How Logality Compares to Other Loggers
 
 # Project Meta
 
@@ -725,7 +724,8 @@ Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 [stream-docs]: https://nodejs.org/api/stream.html#stream_object_mode
 [serializers]: #logality-serializers
 [async]: #about-asynchronous-logging
-[logality-flow]: #logality-terminology-and-execution-flow
+[logality-flow]: #logality-execution-flow
 [middleware]: #use--add-middleware
 [output]: #the-custom-output-function
 [pipe]: #pipe--compose-multiple-logality-instances
+[comparison]: #how-logality-compares-to-other-loggers
