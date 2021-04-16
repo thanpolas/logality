@@ -633,6 +633,23 @@ function register (userData) => {
 
 ## How Logality Compares to Other Loggers
 
+Comparison table as of 16th of April 2021.
+
+|                    | Logality | [Winston][winston] | Bunyan[bunyan] | [Pino][pino] |
+| ------------------ | -------- | ------------------ | -------------- | ------------ |
+| JSON Output        | ✅       | ✅                 | ✅             | ✅           |
+| Pretty Print       | ✅       | ✅                 | ❌             | ✅           |
+| Custom Log Levels  | ❌       | ✅                 | ✅             | ✅           |
+| Serializers        | ✅       | ❌                 | ✅             | ✅           |
+| Middleware         | ✅       | ✅                 | ❌             | ✅           |
+| Mutate JSON Schema | ✅       | ✅                 | ❌             | ❌           |
+| Output Destination | ✅       | ✅                 | ✅             | ✅           |
+| Mutate Output      | ✅       | ✅                 | ❌             | ❌           |
+| Async Operation    | ✅       | ❌                 | ❌             | ❌           |
+| Filename Detection | ✅       | ❌                 | ❌             | ❌           |
+| Speed Optimised    | ❌       | ❌                 | ❌             | ✅           |
+| Used in Libraries  | ✅       | ❌                 | ❌             | ❌           |
+
 # Project Meta
 
 ## Releasing
