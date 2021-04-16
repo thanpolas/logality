@@ -308,8 +308,6 @@ class Logality {
   /**
    * Determines the kind of output to be send downstream to the writable stream.
    *
-   * If objectMode is enabled the log context is returned as is, otherwise
-   * it gets serialized.
    *
    * @param {Object} logContext The log context to serialize to string.
    * @return {string} Log Message to be output.

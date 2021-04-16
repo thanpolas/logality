@@ -1,6 +1,6 @@
 # Logality
 
-> Extensible JSON Logger.
+> Versatile JSON Logger.
 
 [![NPM Version][npm-image]][npm-url]
 [![CircleCI][circle-image]][circle-url]
@@ -9,14 +9,17 @@
 
 ## Why Logality
 
--   JSON log messages with a strict schema.
--   Extend the logging schema to fit your needs.
+-   JSON and Pretty Print log messages.
+-   Extend or alter logging schema to fit your needs.
 -   Customize built-in serializers by overwriting them to create your
     own logging schema.
--   Use at libraries and compose multiple Logality instances on the root
+-   Middleware support.
+-   Allows full manipulation of output.
+-   Use in libraries and compose multiple Logality instances on the root
     project.
 -   Automatically detects the module filename and path and includes in the log.
--   Schema based on the [Simple Log Schema][log-schema].
+
+[👉 See how Logality compares to other popular loggers.][comparison].
 
 # Install
 
@@ -57,8 +60,7 @@ configuration options:
 -   `async` {boolean} Set to true to enable the asynchronous API for logging,
     see more bellow. Read more [on the async option bellow][async].
 -   `output` {Function(logContext:Object, isPiped:boolean)} Replace the output
-    process of logality with a custom one. Read more  
-    [on the custom output documentation bellow][output].
+    process of logality with a custom one. Read more [on the custom output documentation bellow][output].
 
 ```js
 const Logality = require('logality');
@@ -71,35 +73,36 @@ const logality = Logality({
     output: (logMessage) => {
         process.stdout.write(logMessage);
     },
-    objectMode: false,
 });
 ```
 
-### Logality Terminology and Execution Flow
+### Logality Terminology
 
--   **Message {string}** The Log message input from the user.
--   **Context {Object}** The Context input from the user.
--   **LogContext {Object}** Log Context used internally by logality for
+-   **Message {string}** The text (string) Log message input from the user.
+-   **Context {Object}** The Context (or bindings) input from the user.
+-   **LogContext {Object}** Log Context (the schema) used internally by logality for
     processing and ultimately output.
 -   **LogMessage {String}** The serialized `LogContext` into a string for output.
 
-#### Click to View the Flow Chart in Full Resolution
+### Logality Execution Flow
+
+[👉 Click here or on the Flow Chart for Full Resolution](/assets/logality_flow_chart.png).
 
 [![Logality Flow Chart](/assets/logality_flow_chart_preview.png)](/assets/logality_flow_chart.png)
 
-### About Asynchronous Logging
+### Logality Can be Asynchronous
 
-When logging has a transactional requirement, such as audit logs, you can
+When logging has a transactional requirement, such as storing logs to a database or sending through an API, you can
 enable asynchronous mode.
 
-When Async is enabled both the [middleware defined through `use()`][middleware]
+When Async is enabled all logs should be prefixed with the `await` keyword.
+
+Both the [middleware defined through `use()`][middleware]
 and the [output function if defined][output] will be expected to execute
 asynchronously.
 
-use an asynchronous writable stream that performs any type of I/O
-(database writes, queue pushing, etc). To enable the async API all you have to
-do is set the option `async` to true. All logging methods will now return
-a promise for you to handle.
+To enable the async API all you have to do is set the option `async` to true. All logging methods will now return
+a promise for you to handle:
 
 ```js
 const Logality = require('logality');
@@ -120,20 +123,15 @@ async function createUser (userData) => {
 
 ### The custom "output" Function
 
-The custom output function will receive two arguments and is the final operation
-in the [execution flow][logality-flow]. The input arguments are
+The custom output function will receive two arguments and is the final operation in the [execution flow][logality-flow]. The input arguments are:
 
--   `logContext` **Object|String** Typically the logContext will be a native
-    JS Object. The only exception is when you have
-    [piped another Logality instance][pipe] and that upstream instance has
-    a custom output that returns a string instead of an object.
--   `isPiped` **boolean** This argument indicates if the inbound "logContext"
-    is the output of a piped instance or not.
+-   `logContext` **Object** logContext is a native
+    JS Object representing the entire log message.
+-   `isPiped` **boolean** This argument indicates if the inbound "logContext" is the output of a piped instance or not (comes from a library).
 
 #### Importance of Return Value for "output"
 
-Depending on what value is returned from your custom output function
-different actions are performed by Logality.
+Depending on what value is returned by your custom output function different actions are performed by Logality.
 
 #### Custom Output: Object Return
 
@@ -141,20 +139,14 @@ This is what you would typically want to always return. When an object is
 returned from your custom output function you pass the responsibility of
 serializing the Log Context into a string to Logality.
 
-As per the [Logality Flow Diagram][logality-flow] there are a few more steps
+As per the [Logality Flow Diagram][logality-flow], there are a few more steps
 that are done after your custom output returns an Object value:
 
 1. Logality checks your `prettyPrint` setting and:
     1. If it's true will format your Log Context into a pretty formatted string
        message.
     2. If it's false will serialize using `JSON.stringify`.
-2. Logality will then output that serialized stream by writing to the
-   `process.stdout` stream.
-
-> **Note**: Libraries using logality should always return an Object if they
-
-    have a custom output so that consumer logality instances downstream can
-    process the Library's output properly.
+2. Logality will then output that serialized stream by writing to the `process.stdout` stream.
 
 #### Custom Output: String Return
 
@@ -168,24 +160,25 @@ create your pretty output formats.
 #### Custom Output: No Return
 
 When your custom output does not return anything, Logality will assume that you
-have handled everything and will not perform any further action.
+have handled everything and will not perform any further actions.
 
 In those cases your custom output function is responsible for serializing
 the Log Context and outputting it to the medium you see fit (stdout or a
 database).
 
-> **Note**: This is the recommended way to apply filters on what messages you
-
-    want to be logged.
+> **ℹ️ Note**: This is the recommended way to apply filters on what messages you want to be logged.
 
 ## Logality Instance Methods
 
 ### get() :: Getting a Logger
 
-To get a logger you have to invoke the `get()` method. That method will detect
-and use the module filename that it was invoked from so it is advised
-that you use the `get()` method only once per module to have proper log
-messages.
+To get a logger you have to invoke the `get()` method. That method will detect and use the module filename that it was invoked from so it is advised that you use the `get()` method in each module to have proper log messages.
+
+```js
+const log = logality.get();
+
+log(level, message, context);
+```
 
 The `get()` method will return the `log()` method partialed with arguments.
 The full argument requirements of `log()`, are:
@@ -194,31 +187,20 @@ The full argument requirements of `log()`, are:
 logality.log(filename, level, message, context);`
 ```
 
-With using `get()` you will get the same logger function but with the
-`filename` argument already filled out, so the partialed logger argument
-requirements are:
-
-```js
-const log = logality.get();
-
-log(level, message, context);
-```
+When using `get()` you will receive the logger function with the `filename` argument already filled out. That is why you don't need to input the `filename` argument when you are using `logality.get()`.
 
 The partialed and returned `log` function will also have level helpers as
 illustrated in ["Log Levels"](#log-levels) section.
 
-#### Logging Messages
+### Logging Messages
 
-Using the level functions (e.g. `log.info()`) your first argument is the
-"message" which is any arbitrary string to describe what has happened.
-It is the second argument, "context" that you will need to put any and
-all data you also want to attach with the logging message.
+Using any log level function (e.g. `log.info()`), your first argument is the "message". This is any arbitrary string to describe what has happened. It is the second argument, "context" that you will need to put any and all data you also want to attach with the logging message.
 
 ```js
 log.info(message, context);
 ```
 
-The `context` argument is parsed by what are called "Serializers". Serializers
+The `context` argument is an object literal, parsed by what are called "Serializers". Serializers
 will take your data as input and format them in an appropriate, logging schema
 compliant output.
 
@@ -238,33 +220,21 @@ const childLogality = Logality();
 parentLogality.pipe(childLogality);
 ```
 
-What this does is pipe all the output of the piped (child) logality instances to
-the "parent" Logality. This is particularly useful if a library is
-using Logality and you want to pipe its output or you want to have multiple
-classes of log streams (i.e. for audit logging purposes).
+What this does is pipe all the output of the piped (child) logality instances to the "parent" Logality. This is particularly useful if a library is using Logality and you want to pipe its output or you want to have multiple classes of log streams (i.e. for audit logging purposes).
 
--   `pipe()` Accepts a single Logality instance or an Array of Logality
-    instances.
+-   `pipe()` Accepts a single Logality instance or an Array of Logality instances.
 
-> **Note**: The LogContext of the child instance, will go through all the
+> **ℹ️ Note**: The LogContext of the child instance, will go through all the middleware and custom output functions defined in the parent instance.
 
-    middleware and custom output functions defined in the parent instance.
-
-> **Note**: This is the case when the second argument `isPiped` will have
-
-    a `true` value.
+> **ℹ️ Note**: This is the case when the second argument `isPiped` will have a `true` value.
 
 ### use() :: Add Middleware.
 
-You can add Middleware that will be invoked after all the
-[serializers][serializers] are applied (built-in and custom defined) and before
-the "Write to output" method is called.
+You can add multiple Middleware that will be invoked after all the [serializers][serializers] are applied (built-in and custom defined) and before the "Write to output" method is called.
 
-The middleware will receive the "Log Message" as a native Javascript Object and
-you can mutate or process it.
+The middleware will receive the "Log Message" as a native Javascript Object and you can mutate or process it.
 
-All middleware with `use()` are synchronous. To support async middleware you
-have to enable the [`async` mode][async] when instantiating.
+All middleware with `use()` are synchronous. To support async middleware you have to enable the [`async` mode][async] when instantiating.
 
 #### use() Synchronous Example
 
@@ -431,8 +401,11 @@ log.error('Something broke', { error: err });
 
 #### Expects
 
--   `name` Name of the error.
--   `message` The error's message.
+A native JS Error Object, or similar:
+
+-   `name` **{string}** Name of the error.
+-   `message` **{string}** The error's message.
+-   `stack` **{string}** The stack trace. Logality will automatically parse the stack trace to a JSON object.
 
 #### Outputs
 
@@ -445,12 +418,6 @@ log.error('Something broke', { error: err });
         }
     }
 ```
-
--   `event.error` **{Object}** When an error occures this is where it is
-    logged. The `event.error` Object contains three keys:
--   `event.error.name` **{string}** The name of the error.
--   `event.error.message` **{string}** The message of the error.
--   `event.error.backtrace` **{string}** The stack trace.
 
 ### The Request Serializer
 
@@ -481,14 +448,12 @@ Express JS Request Object.
     }
 ```
 
--   `event.http_request` **{Object}** When the request object is passed
-    the following additional data are stored:
--   `event.http_request.headers` **{Object}** Key-value pairs of all
-    the HTTP headers, excluding sensitive headers.
+-   `event.http_request` **{Object}** When the request object is passed the following additional data are stored:
+-   `event.http_request.headers` **{Object}** Key-value pairs of all the HTTP headers, excluding sensitive headers.
 -   `event.http_request.host` **{string}** The hostname.
 -   `event.http_request.method` **{string}** HTTP method used.
 -   `event.http_request.path` **{string}** The request path.
--   `event.http_request.query_string` **{string}** Query string used.
+-   `event.http_request.query_string` **{string}** Quer string used.
 -   `event.http_request.scheme` **{string}** One of "http" or "https".
 
 ### The Custom Serializer
@@ -520,19 +485,13 @@ Anything
 
 ## Custom Serializers
 
-You can define your own serializers or overwrite the existing ones when
-you first instantiate Logality. There are three parameters when creating a
-serializer:
+You can define your own serializers or overwrite the existing ones when you first instantiate Logality. There are three parameters when creating a serializer:
 
--   **Context Name** The name on your `context` object that will trigger the
-    serializer.
--   **Output Path** The path in the JSON output where you want the serializer's
-    value to be stored. Use dot notation to signify the exact path.
+-   **Context Name** The name on your `context` object that will trigger the serializer.
+-   **Output Path** The path in the JSON output where you want the serializer's value to be stored. Use dot notation to signify the exact path.
 -   **Value** The serialized value to output on the log message.
 
-The _Context Name_ is the key on which you define your serializer. So for
-instance when you set a serializer on the user key like so
-`mySerializers.user = userSerializer` the keyword `user` will be used.
+The _Context Name_ is the key on which you define your serializer. So for instance when you set a serializer on the user key like so `mySerializers.user = userSerializer` the keyword `user` will be used.
 
 Output Path and Value are the output of your serializer function and are
 expected as separate keys in the object you must return:
@@ -668,8 +627,28 @@ function register (userData) => {
         userData
     });
 }
-
 ```
+
+> **ℹ️ Note**: You can view a real-world example of Logality being used in production [in this Discord Bot Project](https://github1s.com/skgtech/skgbot/blob/HEAD/app/services/log.service.js).
+
+## How Logality Compares to Other Loggers
+
+Comparison table as of 16th of April 2021.
+
+|                    | Logality | [Winston][winston] | [Bunyan][bunyan] | [Pino][pino] |
+| ------------------ | -------- | ------------------ | ---------------- | ------------ |
+| JSON Output        | ✅       | ✅                 | ✅               | ✅           |
+| Pretty Print       | ✅       | ✅                 | ❌               | ✅           |
+| Custom Log Levels  | ❌       | ✅                 | ✅               | ✅           |
+| Serializers        | ✅       | ❌                 | ✅               | ✅           |
+| Middleware         | ✅       | ✅                 | ❌               | ✅           |
+| Mutate JSON Schema | ✅       | ✅                 | ❌               | ❌           |
+| Output Destination | ✅       | ✅                 | ✅               | ✅           |
+| Mutate Output      | ✅       | ✅                 | ❌               | ❌           |
+| Async Operation    | ✅       | ❌                 | ❌               | ❌           |
+| Filename Detection | ✅       | ❌                 | ❌               | ❌           |
+| Speed Optimised    | ❌       | ❌                 | ❌               | ✅           |
+| Used in Libraries  | ✅       | ❌                 | ❌               | ❌           |
 
 # Project Meta
 
@@ -683,6 +662,9 @@ function register (userData) => {
 
 ## Release History
 
+-   **v3.0.3**, _16 Apr 2021_
+    -   Updated all dependencies to latest.
+    -   Tweaked, fixed and updated README, added comparison chart with popular loggers.
 -   **v3.0.2**, _30 Oct 2020_
     -   Updated all dependencies to latest.
 -   **v3.0.1**, _03 Jul 2020_
@@ -725,7 +707,11 @@ Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 [stream-docs]: https://nodejs.org/api/stream.html#stream_object_mode
 [serializers]: #logality-serializers
 [async]: #about-asynchronous-logging
-[logality-flow]: #logality-terminology-and-execution-flow
+[logality-flow]: #logality-execution-flow
 [middleware]: #use--add-middleware
 [output]: #the-custom-output-function
 [pipe]: #pipe--compose-multiple-logality-instances
+[comparison]: #how-logality-compares-to-other-loggers
+[winston]: https://github.com/winstonjs/winston
+[bunyan]: https://github.com/trentm/node-bunyan
+[pino]: https://github.com/pinojs/pino
