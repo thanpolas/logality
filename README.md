@@ -139,20 +139,14 @@ This is what you would typically want to always return. When an object is
 returned from your custom output function you pass the responsibility of
 serializing the Log Context into a string to Logality.
 
-As per the [Logality Flow Diagram][logality-flow] there are a few more steps
+As per the [Logality Flow Diagram][logality-flow], there are a few more steps
 that are done after your custom output returns an Object value:
 
 1. Logality checks your `prettyPrint` setting and:
     1. If it's true will format your Log Context into a pretty formatted string
        message.
     2. If it's false will serialize using `JSON.stringify`.
-2. Logality will then output that serialized stream by writing to the
-   `process.stdout` stream.
-
-> **Note**: Libraries using logality should always return an Object if they
-
-    have a custom output so that consumer logality instances downstream can
-    process the Library's output properly.
+2. Logality will then output that serialized stream by writing to the `process.stdout` stream.
 
 #### Custom Output: String Return
 
@@ -166,24 +160,25 @@ create your pretty output formats.
 #### Custom Output: No Return
 
 When your custom output does not return anything, Logality will assume that you
-have handled everything and will not perform any further action.
+have handled everything and will not perform any further actions.
 
 In those cases your custom output function is responsible for serializing
 the Log Context and outputting it to the medium you see fit (stdout or a
 database).
 
-> **Note**: This is the recommended way to apply filters on what messages you
-
-    want to be logged.
+> **ℹ️ Note**: This is the recommended way to apply filters on what messages you want to be logged.
 
 ## Logality Instance Methods
 
 ### get() :: Getting a Logger
 
-To get a logger you have to invoke the `get()` method. That method will detect
-and use the module filename that it was invoked from so it is advised
-that you use the `get()` method only once per module to have proper log
-messages.
+To get a logger you have to invoke the `get()` method. That method will detect and use the module filename that it was invoked from so it is advised that you use the `get()` method in each module to have proper log messages.
+
+```js
+const log = logality.get();
+
+log(level, message, context);
+```
 
 The `get()` method will return the `log()` method partialed with arguments.
 The full argument requirements of `log()`, are:
@@ -192,31 +187,20 @@ The full argument requirements of `log()`, are:
 logality.log(filename, level, message, context);`
 ```
 
-With using `get()` you will get the same logger function but with the
-`filename` argument already filled out, so the partialed logger argument
-requirements are:
-
-```js
-const log = logality.get();
-
-log(level, message, context);
-```
+When using `get()` you will receive the logger function with the `filename` argument already filled out. That is why you don't need to input the `filename` argument when you are using `logality.get()`.
 
 The partialed and returned `log` function will also have level helpers as
 illustrated in ["Log Levels"](#log-levels) section.
 
-#### Logging Messages
+### Logging Messages
 
-Using the level functions (e.g. `log.info()`) your first argument is the
-"message" which is any arbitrary string to describe what has happened.
-It is the second argument, "context" that you will need to put any and
-all data you also want to attach with the logging message.
+Using any log level function (e.g. `log.info()`), your first argument is the "message". This is any arbitrary string to describe what has happened. It is the second argument, "context" that you will need to put any and all data you also want to attach with the logging message.
 
 ```js
 log.info(message, context);
 ```
 
-The `context` argument is parsed by what are called "Serializers". Serializers
+The `context` argument is an object literal, parsed by what are called "Serializers". Serializers
 will take your data as input and format them in an appropriate, logging schema
 compliant output.
 
@@ -236,33 +220,21 @@ const childLogality = Logality();
 parentLogality.pipe(childLogality);
 ```
 
-What this does is pipe all the output of the piped (child) logality instances to
-the "parent" Logality. This is particularly useful if a library is
-using Logality and you want to pipe its output or you want to have multiple
-classes of log streams (i.e. for audit logging purposes).
+What this does is pipe all the output of the piped (child) logality instances to the "parent" Logality. This is particularly useful if a library is using Logality and you want to pipe its output or you want to have multiple classes of log streams (i.e. for audit logging purposes).
 
--   `pipe()` Accepts a single Logality instance or an Array of Logality
-    instances.
+-   `pipe()` Accepts a single Logality instance or an Array of Logality instances.
 
-> **Note**: The LogContext of the child instance, will go through all the
+> **ℹ️ Note**: The LogContext of the child instance, will go through all the middleware and custom output functions defined in the parent instance.
 
-    middleware and custom output functions defined in the parent instance.
-
-> **Note**: This is the case when the second argument `isPiped` will have
-
-    a `true` value.
+> **ℹ️ Note**: This is the case when the second argument `isPiped` will have a `true` value.
 
 ### use() :: Add Middleware.
 
-You can add Middleware that will be invoked after all the
-[serializers][serializers] are applied (built-in and custom defined) and before
-the "Write to output" method is called.
+You can add multiple Middleware that will be invoked after all the [serializers][serializers] are applied (built-in and custom defined) and before the "Write to output" method is called.
 
-The middleware will receive the "Log Message" as a native Javascript Object and
-you can mutate or process it.
+The middleware will receive the "Log Message" as a native Javascript Object and you can mutate or process it.
 
-All middleware with `use()` are synchronous. To support async middleware you
-have to enable the [`async` mode][async] when instantiating.
+All middleware with `use()` are synchronous. To support async middleware you have to enable the [`async` mode][async] when instantiating.
 
 #### use() Synchronous Example
 
