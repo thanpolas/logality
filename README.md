@@ -401,8 +401,11 @@ log.error('Something broke', { error: err });
 
 #### Expects
 
--   `name` Name of the error.
--   `message` The error's message.
+A native JS Error Object, or similar:
+
+-   `name` **{string}** Name of the error.
+-   `message` **{string}** The error's message.
+-   `stack` **{string}** The stack trace. Logality will automatically parse the stack trace to a JSON object.
 
 #### Outputs
 
@@ -415,12 +418,6 @@ log.error('Something broke', { error: err });
         }
     }
 ```
-
--   `event.error` **{Object}** When an error occures this is where it is
-    logged. The `event.error` Object contains three keys:
--   `event.error.name` **{string}** The name of the error.
--   `event.error.message` **{string}** The message of the error.
--   `event.error.backtrace` **{string}** The stack trace.
 
 ### The Request Serializer
 
@@ -451,14 +448,12 @@ Express JS Request Object.
     }
 ```
 
--   `event.http_request` **{Object}** When the request object is passed
-    the following additional data are stored:
--   `event.http_request.headers` **{Object}** Key-value pairs of all
-    the HTTP headers, excluding sensitive headers.
+-   `event.http_request` **{Object}** When the request object is passed the following additional data are stored:
+-   `event.http_request.headers` **{Object}** Key-value pairs of all the HTTP headers, excluding sensitive headers.
 -   `event.http_request.host` **{string}** The hostname.
 -   `event.http_request.method` **{string}** HTTP method used.
 -   `event.http_request.path` **{string}** The request path.
--   `event.http_request.query_string` **{string}** Query string used.
+-   `event.http_request.query_string` **{string}** Quer string used.
 -   `event.http_request.scheme` **{string}** One of "http" or "https".
 
 ### The Custom Serializer
@@ -490,19 +485,13 @@ Anything
 
 ## Custom Serializers
 
-You can define your own serializers or overwrite the existing ones when
-you first instantiate Logality. There are three parameters when creating a
-serializer:
+You can define your own serializers or overwrite the existing ones when you first instantiate Logality. There are three parameters when creating a serializer:
 
--   **Context Name** The name on your `context` object that will trigger the
-    serializer.
--   **Output Path** The path in the JSON output where you want the serializer's
-    value to be stored. Use dot notation to signify the exact path.
+-   **Context Name** The name on your `context` object that will trigger the serializer.
+-   **Output Path** The path in the JSON output where you want the serializer's value to be stored. Use dot notation to signify the exact path.
 -   **Value** The serialized value to output on the log message.
 
-The _Context Name_ is the key on which you define your serializer. So for
-instance when you set a serializer on the user key like so
-`mySerializers.user = userSerializer` the keyword `user` will be used.
+The _Context Name_ is the key on which you define your serializer. So for instance when you set a serializer on the user key like so `mySerializers.user = userSerializer` the keyword `user` will be used.
 
 Output Path and Value are the output of your serializer function and are
 expected as separate keys in the object you must return:
@@ -640,6 +629,8 @@ function register (userData) => {
 }
 ```
 
+> **ℹ️ Note**: You can view a real-world example of Logality being used in production [in this Discord Bot Project](https://github1s.com/skgtech/skgbot/blob/HEAD/app/services/log.service.js).
+
 ## How Logality Compares to Other Loggers
 
 # Project Meta
@@ -701,3 +692,6 @@ Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 [output]: #the-custom-output-function
 [pipe]: #pipe--compose-multiple-logality-instances
 [comparison]: #how-logality-compares-to-other-loggers
+[winston]: https://github.com/winstonjs/winston
+[bunyan]: https://github.com/trentm/node-bunyan
+[pino]: https://github.com/pinojs/pino
