@@ -21,7 +21,7 @@
     "node": ">=10.1.x"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest && eslint app test",
     "release": "release-it --ci",
     "release:minor": "release-it minor --ci",
     "release:major": "release-it major --ci",
@@ -55,7 +55,8 @@
   },
   "prettier": {
     "singleQuote": true,
-    "trailingComma": "all"
+    "trailingComma": "all",
+    "printWidth": 80
   },
   "devDependencies": {
     "@types/jest": "26.0.23",
