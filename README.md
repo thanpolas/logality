@@ -662,6 +662,8 @@ Comparison table as of 16th of April 2021.
 
 ## Release History
 
+-   **v3.0.4**, _31 May 2021_
+    -   Updated all dependencies to latest.
 -   **v3.0.3**, _16 Apr 2021_
     -   Updated all dependencies to latest.
     -   Tweaked, fixed and updated README, added comparison chart with popular loggers.
