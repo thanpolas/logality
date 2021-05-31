@@ -1,6 +1,7 @@
 /**
  * @fileoverview Wraps and exports the Logality class.
  */
+
 const Logality = require('./logality');
 
 /**
