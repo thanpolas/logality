@@ -16,7 +16,7 @@ tester.PID_VAL = 36255;
 /**
  * Have a Cooldown period between tests.
  *
- * @param {number=} seconds cooldown in seconds.
+ * @param {number} seconds cooldown in seconds.
  * @return {function} use is beforeEach().
  */
 tester.cooldown = function (seconds = 0) {
@@ -52,7 +52,3 @@ tester.stubLogality = function () {
     processStub.restore();
   });
 };
-
-/** @type {RegExp} Regex to test ISO 8601 Dates */
-// eslint-disable-next-line security/detect-unsafe-regex
-tester.reISO8601 = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i;

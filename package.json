@@ -21,7 +21,7 @@
     "node": ">=10.1.x"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest && eslint app test",
     "release": "release-it --ci",
     "release:minor": "release-it minor --ci",
     "release:major": "release-it major --ci",
@@ -47,30 +47,31 @@
     ]
   },
   "dependencies": {
-    "chalk": "4.1.0",
+    "chalk": "4.1.1",
     "figures": "3.2.0",
     "json-format": "1.0.1",
     "lodash.assign": "4.2.0",
-    "middlewarify": "2.1.1"
+    "middlewarify": "2.1.2"
   },
   "prettier": {
     "singleQuote": true,
-    "trailingComma": "all"
+    "trailingComma": "all",
+    "printWidth": 80
   },
   "devDependencies": {
-    "@types/jest": "26.0.22",
-    "eslint": "7.24.0",
+    "@types/jest": "26.0.23",
+    "eslint": "7.27.0",
     "eslint-config-airbnb-base": "14.2.1",
-    "eslint-config-prettier": "8.2.0",
-    "eslint-plugin-import": "2.22.1",
-    "eslint-plugin-jest": "24.3.5",
-    "eslint-plugin-jsdoc": "32.3.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.23.4",
+    "eslint-plugin-jest": "24.3.6",
+    "eslint-plugin-jsdoc": "35.1.1",
     "eslint-plugin-prettier": "3.4.0",
     "eslint-plugin-security": "1.4.0",
-    "jest": "26.6.3",
+    "jest": "27.0.3",
     "jest-extended": "0.11.5",
-    "prettier": "2.2.1",
-    "release-it": "14.6.1",
-    "sinon": "10.0.0"
+    "prettier": "2.3.0",
+    "release-it": "14.7.0",
+    "sinon": "11.1.1"
   }
 }
