@@ -33,9 +33,15 @@
     }
   },
   "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "./app/*.js",
+      "./app/**/*.js"
+    ],
     "coverageReporters": [
       "html",
-      "text-summary"
+      "json"
     ],
     "roots": [
       "./test/spec",
