@@ -53,3 +53,28 @@ Object {
   "severity": 6,
 }
 `;
+
+exports[`Asynchronous Logging Test API helpers with Async Logging 1`] = `
+"[37m[2018-05-18T16:25:57.815Z] [39m[32m★ debug[39m [4m[32m/test/spec/async-log.test.js[39m[24m - [32mThis is message of level: Debug[39m
+"
+`;
+
+exports[`Asynchronous Logging Test prettyPrint all with Async Logging 1`] = `
+"[32m★ debug[39m - [32mThis is message of level: Debug[39m
+"
+`;
+
+exports[`Asynchronous Logging Test prettyPrint noFilename with Async Logging 1`] = `
+"[37m[2018-05-18T16:25:57.815Z] [39m[32m★ debug[39m - [32mThis is message of level: Debug[39m
+"
+`;
+
+exports[`Asynchronous Logging Test prettyPrint onlyMessage with Async Logging 1`] = `
+"[37m[2018-05-18T16:25:57.815Z] [39m[32m★ debug[39m [4m[32m/test/spec/async-log.test.js[39m[24m - [32mThis is message of level: Debug[39m
+"
+`;
+
+exports[`Asynchronous Logging Test prettyprint noTimestamp with Async Logging 1`] = `
+"[32m★ debug[39m [4m[32m/test/spec/async-log.test.js[39m[24m - [32mThis is message of level: Debug[39m
+"
+`;

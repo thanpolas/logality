@@ -14,35 +14,35 @@ const pretty = (module.exports = {});
 const LEVELS_CONFIG = {
   emergency: {
     color: chalk.red.underline,
-    icon: '🆘',
+    icon: '●',
   },
   alert: {
     color: chalk.red.underline,
-    icon: '⚠️ ',
+    icon: '◆',
   },
   critical: {
     color: chalk.red,
-    icon: '📛',
+    icon: '✖',
   },
   error: {
     color: chalk.red,
-    icon: '⛔',
+    icon: '■',
   },
   warn: {
     color: chalk.yellow,
-    icon: '🟡',
+    icon: '⚠',
   },
   notice: {
     color: chalk.cyan,
-    icon: '❕',
+    icon: '▶',
   },
   info: {
     color: chalk.blue,
-    icon: 'ℹ️ ',
+    icon: 'ℹ',
   },
   debug: {
     color: chalk.green,
-    icon: '🔧',
+    icon: '★',
   },
 };
 
@@ -64,9 +64,9 @@ pretty.writePretty = function (logContext, prettyOpts) {
 
   const file = noFilename
     ? ''
-    : chalk.underline.green(logContext.context.source.file_name);
+    : ` ${chalk.underline.green(logContext.context.source.file_name)}`;
   const date = noTimestamp ? '' : chalk.white(`[${logContext.dt}] `);
-  const level = config.color(`${config.icon} ${logContext.level} `);
+  const level = config.color(`${config.icon} ${logContext.level}`);
   const message = config.color(logContext.message);
   const logs = onlyMessage ? '' : pretty._getLogs(logContext);
 
