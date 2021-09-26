@@ -68,4 +68,36 @@ describe('Normal Logging', () => {
 
     spy.mockRestore();
   });
+  describe('Filter Logging', () => {
+    test('Will filter out debug level with string key', () => {
+      const spy = jest.spyOn(process.stdout, 'write');
+
+      const logality = new Logality({
+        appName: 'testLogality',
+        minLevel: 'info',
+      });
+      const log = logality.get();
+
+      log('debug', 'Good sleep now...');
+
+      expect(spy).toHaveBeenCalledTimes(0);
+
+      spy.mockRestore();
+    });
+    test('Will filter out debug level with nunber', () => {
+      const spy = jest.spyOn(process.stdout, 'write');
+
+      const logality = new Logality({
+        appName: 'testLogality',
+        minLevel: 6,
+      });
+      const log = logality.get();
+
+      log('debug', 'Good sleep now...');
+
+      expect(spy).toHaveBeenCalledTimes(0);
+
+      spy.mockRestore();
+    });
+  });
 });
