@@ -47,6 +47,7 @@ describe('Asynchronous Logging', () => {
     });
 
     const log = logality.get();
+    const spy = jest.spyOn(process.stdout, 'write');
 
     await log.debug('This is message of level: Debug');
     await log.info('This is message of level: Info');
@@ -55,7 +56,111 @@ describe('Asynchronous Logging', () => {
     await log.error('This is message of level: Error');
     await log.critical('This is message of level: Critical');
     await log.alert('This is message of level: Alert');
-    await log.emergency('This is message of level: Emergency');
+    await log.emergency('This is message of level: Emergency\n\n');
+
+    expect(spy.mock.calls[0][0]).toMatchSnapshot();
+
+    spy.mockRestore();
+  });
+
+  test('Test prettyprint noTimestamp with Async Logging', async () => {
+    const logality = new Logality({
+      appName: 'testLogality',
+      async: true,
+      prettyPrint: { noTimestamp: true },
+    });
+
+    const log = logality.get();
+    const spy = jest.spyOn(process.stdout, 'write');
+
+    await log.debug('This is message of level: Debug');
+    await log.info('This is message of level: Info');
+    await log.notice('This is message of level: Notice');
+    await log.warn('This is message of level: warning');
+    await log.error('This is message of level: Error');
+    await log.critical('This is message of level: Critical');
+    await log.alert('This is message of level: Alert');
+    await log.emergency('This is message of level: Emergency\n\n');
+
+    expect(spy.mock.calls[0][0]).toMatchSnapshot();
+
+    spy.mockRestore();
+  });
+
+  test('Test prettyPrint noFilename with Async Logging', async () => {
+    const logality = new Logality({
+      appName: 'testLogality',
+      async: true,
+      prettyPrint: { noFilename: true },
+    });
+
+    const log = logality.get();
+    const spy = jest.spyOn(process.stdout, 'write');
+
+    await log.debug('This is message of level: Debug');
+    await log.info('This is message of level: Info');
+    await log.notice('This is message of level: Notice');
+    await log.warn('This is message of level: warning');
+    await log.error('This is message of level: Error');
+    await log.critical('This is message of level: Critical');
+    await log.alert('This is message of level: Alert');
+    await log.emergency('This is message of level: Emergency\n\n');
+
+    expect(spy.mock.calls[0][0]).toMatchSnapshot();
+
+    spy.mockRestore();
+  });
+
+  test('Test prettyPrint onlyMessage with Async Logging', async () => {
+    const logality = new Logality({
+      appName: 'testLogality',
+      async: true,
+      prettyPrint: { onlyMessage: true },
+    });
+
+    const log = logality.get();
+    const spy = jest.spyOn(process.stdout, 'write');
+
+    await log.debug('This is message of level: Debug');
+    await log.info('This is message of level: Info');
+    await log.notice('This is message of level: Notice');
+    await log.warn('This is message of level: warning');
+    await log.error('This is message of level: Error');
+    await log.critical('This is message of level: Critical');
+    await log.alert('This is message of level: Alert');
+    await log.emergency('This is message of level: Emergency\n\n');
+
+    expect(spy.mock.calls[0][0]).toMatchSnapshot();
+
+    spy.mockRestore();
+  });
+
+  test('Test prettyPrint all with Async Logging', async () => {
+    const logality = new Logality({
+      appName: 'testLogality',
+      async: true,
+      prettyPrint: {
+        noTimestamp: true,
+        noFilename: true,
+        onlyMessage: true,
+      },
+    });
+
+    const log = logality.get();
+    const spy = jest.spyOn(process.stdout, 'write');
+
+    await log.debug('This is message of level: Debug');
+    await log.info('This is message of level: Info');
+    await log.notice('This is message of level: Notice');
+    await log.warn('This is message of level: warning');
+    await log.error('This is message of level: Error');
+    await log.critical('This is message of level: Critical');
+    await log.alert('This is message of level: Alert');
+    await log.emergency('This is message of level: Emergency\n\n');
+
+    expect(spy.mock.calls[0][0]).toMatchSnapshot();
+
+    spy.mockRestore();
   });
 
   test('Async Logging output Error Propagates', async () => {
