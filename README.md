@@ -674,6 +674,7 @@ Comparison table as of 16th of April 2021.
     -   Added new options for pretty print (noTimestamp, noFilename, onlyMessage).
     -   Added log level filtering.
     -   Added codecoverage report.
+    -   Replaced figures package with emojis.
     -   Updated all dependencies to latest.
 -   **v3.0.4**, _31 May 2021_
     -   Updated all dependencies to latest.
