@@ -55,7 +55,6 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "codecov": "^3.8.3",
-    "figures": "^4.0.0",
     "json-format": "^1.0.1",
     "lodash.assign": "^4.2.0",
     "middlewarify": "^2.2.0"
