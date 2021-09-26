@@ -43,6 +43,7 @@ describe('Asynchronous Logging', () => {
     const logality = new Logality({
       appName: 'testLogality',
       async: true,
+      prettyPrint: true,
     });
 
     const log = logality.get();
