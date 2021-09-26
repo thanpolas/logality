@@ -5,7 +5,6 @@
  */
 const chalk = require('chalk');
 const format = require('json-format');
-const figures = require('figures');
 
 const { isObjectEmpty } = require('./utils');
 
@@ -15,35 +14,35 @@ const pretty = (module.exports = {});
 const LEVELS_CONFIG = {
   emergency: {
     color: chalk.red.underline,
-    icon: figures.bullet,
+    icon: '🆘',
   },
   alert: {
     color: chalk.red.underline,
-    icon: figures.warning,
+    icon: '⚠️',
   },
   critical: {
     color: chalk.red,
-    icon: figures.cross,
+    icon: '📛',
   },
   error: {
     color: chalk.red,
-    icon: figures.square,
+    icon: '⛔',
   },
   warn: {
     color: chalk.yellow,
-    icon: figures.checkboxCircleOn,
+    icon: '🟡',
   },
   notice: {
     color: chalk.cyan,
-    icon: figures.play,
+    icon: '❕',
   },
   info: {
     color: chalk.blue,
-    icon: figures.info,
+    icon: 'ℹ️',
   },
   debug: {
     color: chalk.green,
-    icon: figures.star,
+    icon: '🔧',
   },
 };
 
