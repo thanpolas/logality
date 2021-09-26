@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Pretty Logging Will pretty log an object in context 1`] = `
-"[37m[2018-05-18T16:25:57.815Z][39m [34mℹ info[39m [4m[32m/test/spec/pretty.test.js[39m[24m - [34mhello prettier world[39m
+"[37m[2018-05-18T16:25:57.815Z] [39m[34mℹ info [39m[4m[32m/test/spec/pretty.test.js[39m[24m - [34mhello prettier world[39m
 {
   \\"context\\": {
     \\"custom\\": {
@@ -13,7 +13,51 @@ exports[`Pretty Logging Will pretty log an object in context 1`] = `
 "
 `;
 
+exports[`Pretty Logging Will pretty log an object with noFilename 1`] = `
+"[37m[2018-05-18T16:25:57.815Z] [39m[34mℹ info [39m - [34mhello prettier world[39m
+{
+  \\"context\\": {
+    \\"custom\\": {
+      \\"a\\": 1,
+      \\"b\\": 2
+    }
+  }
+}
+"
+`;
+
+exports[`Pretty Logging Will pretty log an object with noTimestamp 1`] = `
+"[34mℹ info [39m[4m[32m/test/spec/pretty.test.js[39m[24m - [34mhello prettier world[39m
+{
+  \\"context\\": {
+    \\"custom\\": {
+      \\"a\\": 1,
+      \\"b\\": 2
+    }
+  }
+}
+"
+`;
+
+exports[`Pretty Logging Will pretty log an object with noTimestamp and noFilename 1`] = `
+"[34mℹ info [39m - [34mhello prettier world[39m
+{
+  \\"context\\": {
+    \\"custom\\": {
+      \\"a\\": 1,
+      \\"b\\": 2
+    }
+  }
+}
+"
+`;
+
+exports[`Pretty Logging Will pretty log an object with noTimestamp, noFilename and onlyMessage 1`] = `
+"[34mℹ info [39m - [34mhello prettier world[39m
+"
+`;
+
 exports[`Pretty Logging Will pretty log expected JSON properties 1`] = `
-"[37m[2018-05-18T16:25:57.815Z][39m [34mℹ info[39m [4m[32m/test/spec/pretty.test.js[39m[24m - [34mhello pretty world[39m
+"[37m[2018-05-18T16:25:57.815Z] [39m[34mℹ info [39m[4m[32m/test/spec/pretty.test.js[39m[24m - [34mhello pretty world[39m
 "
 `;
