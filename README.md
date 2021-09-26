@@ -670,6 +670,8 @@ Comparison table as of 16th of April 2021.
 
 ## Release History
 
+-   **v3.1.1**, _26 Sep 2021_
+    -   Removed emojis for UTF-8 chars and corrected formating of pretty print.
 -   **v3.1.0**, _26 Sep 2021_
     -   Added new options for pretty print (noTimestamp, noFilename, onlyMessage).
     -   Added log level filtering.
