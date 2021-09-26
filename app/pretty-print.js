@@ -5,7 +5,6 @@
  */
 const chalk = require('chalk');
 const format = require('json-format');
-const figures = require('figures');
 
 const { isObjectEmpty } = require('./utils');
 
@@ -15,35 +14,35 @@ const pretty = (module.exports = {});
 const LEVELS_CONFIG = {
   emergency: {
     color: chalk.red.underline,
-    icon: figures.bullet,
+    icon: '🆘',
   },
   alert: {
     color: chalk.red.underline,
-    icon: figures.warning,
+    icon: '⚠️ ',
   },
   critical: {
     color: chalk.red,
-    icon: figures.cross,
+    icon: '📛',
   },
   error: {
     color: chalk.red,
-    icon: figures.square,
+    icon: '⛔',
   },
   warn: {
     color: chalk.yellow,
-    icon: figures.checkboxCircleOn,
+    icon: '🟡',
   },
   notice: {
     color: chalk.cyan,
-    icon: figures.play,
+    icon: '❕',
   },
   info: {
     color: chalk.blue,
-    icon: figures.info,
+    icon: 'ℹ️ ',
   },
   debug: {
     color: chalk.green,
-    icon: figures.star,
+    icon: '🔧',
   },
 };
 
@@ -51,20 +50,27 @@ const LEVELS_CONFIG = {
  * Write prettified log to selected output.
  *
  * @param {Object} logContext The log context to write.
+ * @param {boolean|Object} prettyOpts Possible pretty print options.
  * @return {string} Formatted output.
  * @private
  */
-pretty.writePretty = function (logContext) {
+pretty.writePretty = function (logContext, prettyOpts) {
   // current level icon and color
   const config = LEVELS_CONFIG[logContext.level];
 
-  const file = chalk.underline.green(logContext.context.source.file_name);
-  const date = chalk.white(`[${logContext.dt}]`);
-  const level = config.color(`${config.icon} ${logContext.level}`);
-  const message = config.color(logContext.message);
-  const logs = pretty._getLogs(logContext);
+  const noTimestamp = !!prettyOpts?.noTimestamp;
+  const noFilename = !!prettyOpts?.noFilename;
+  const onlyMessage = !!prettyOpts?.onlyMessage;
 
-  const output = `${date} ${level} ${file} - ${message}\n${logs}`;
+  const file = noFilename
+    ? ''
+    : chalk.underline.green(logContext.context.source.file_name);
+  const date = noTimestamp ? '' : chalk.white(`[${logContext.dt}] `);
+  const level = config.color(`${config.icon} ${logContext.level} `);
+  const message = config.color(logContext.message);
+  const logs = onlyMessage ? '' : pretty._getLogs(logContext);
+
+  const output = `${date}${level}${file} - ${message}\n${logs}`;
 
   return output;
 };

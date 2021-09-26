@@ -4,6 +4,9 @@
 
 [![NPM Version][npm-image]][npm-url]
 [![CircleCI][circle-image]][circle-url]
+[![codecov](https://codecov.io/gh/thanpolas/logality/branch/master/graph/badge.svg?token=UvpkiCwJHj)](https://codecov.io/gh/thanpolas/logality)
+[![Discord](https://img.shields.io/discord/847075821276758096?label=discord&color=CBE9F0)](https://discord.gg/GkyEqzJWEY)
+[![Twitter Follow](https://img.shields.io/twitter/follow/thanpolas.svg?label=thanpolas&style=social)](https://twitter.com/thanpolas)
 
 ![Logality](/assets/logality_preview.png)
 
@@ -53,8 +56,13 @@ configuration options:
 
 -   `appName` {string} An arbitrary string to uniquely identify
     the service (logger instance).
--   `prettyPrint` {boolean} If true will format and prettify the event and
-    context, default is `false`.
+-   `prettyPrint` {boolean|Object} If true will format and prettify the event and
+    context, default is `false`. You may define additional options to configure
+    pretty printing, they can be combined:
+    -   `prettyPrint.noTimestamp` {boolean} Do not print timestamp.
+    -   `prettyPrint.noFilename` {boolean} Do not print Log filename source.
+    -   `prettyPrint.onlyMessage` {boolean} Only print the log message (no context).
+-   `minLevel` {number|string} Define the minimum level to be logged and ignore lower log levels. [See log levels for input values][log-levels], accepts both the string or numeric representations of the levels.
 -   `serializers` {Object} You can define custom serializers or overwrite
     logality's. Read more [about Serializers bellow][serializers].
 -   `async` {boolean} Set to true to enable the asynchronous API for logging,
@@ -662,6 +670,12 @@ Comparison table as of 16th of April 2021.
 
 ## Release History
 
+-   **v3.1.0**, _26 Sep 2021_
+    -   Added new options for pretty print (noTimestamp, noFilename, onlyMessage).
+    -   Added log level filtering.
+    -   Added codecoverage report.
+    -   Replaced figures package with emojis.
+    -   Updated all dependencies to latest.
 -   **v3.0.4**, _31 May 2021_
     -   Updated all dependencies to latest.
     -   Tweaked eslint and prettier configurations.
@@ -718,3 +732,4 @@ Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 [winston]: https://github.com/winstonjs/winston
 [bunyan]: https://github.com/trentm/node-bunyan
 [pino]: https://github.com/pinojs/pino
+[log-levels]: #log-levels

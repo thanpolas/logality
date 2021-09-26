@@ -21,7 +21,7 @@
     "node": ">=10.1.x"
   },
   "scripts": {
-    "test": "jest && eslint app test",
+    "test": "jest && eslint app test && codecov",
     "release": "release-it --ci",
     "release:minor": "release-it minor --ci",
     "release:major": "release-it major --ci",
@@ -33,9 +33,15 @@
     }
   },
   "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "./app/*.js",
+      "./app/**/*.js"
+    ],
     "coverageReporters": [
       "html",
-      "text-summary"
+      "json"
     ],
     "roots": [
       "./test/spec",
@@ -47,11 +53,11 @@
     ]
   },
   "dependencies": {
-    "chalk": "4.1.1",
-    "figures": "3.2.0",
-    "json-format": "1.0.1",
-    "lodash.assign": "4.2.0",
-    "middlewarify": "2.1.2"
+    "chalk": "^4.1.2",
+    "codecov": "^3.8.3",
+    "json-format": "^1.0.1",
+    "lodash.assign": "^4.2.0",
+    "middlewarify": "^2.2.0"
   },
   "prettier": {
     "singleQuote": true,
@@ -59,19 +65,19 @@
     "printWidth": 80
   },
   "devDependencies": {
-    "@types/jest": "26.0.23",
-    "eslint": "7.27.0",
+    "@types/jest": "27.0.2",
+    "eslint": "7.32.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-config-prettier": "8.3.0",
-    "eslint-plugin-import": "2.23.4",
-    "eslint-plugin-jest": "24.3.6",
-    "eslint-plugin-jsdoc": "35.1.1",
-    "eslint-plugin-prettier": "3.4.0",
+    "eslint-plugin-import": "2.24.2",
+    "eslint-plugin-jest": "24.4.2",
+    "eslint-plugin-jsdoc": "36.1.0",
+    "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-security": "1.4.0",
-    "jest": "27.0.3",
+    "jest": "27.2.2",
     "jest-extended": "0.11.5",
-    "prettier": "2.3.0",
-    "release-it": "14.7.0",
-    "sinon": "11.1.1"
+    "prettier": "2.4.1",
+    "release-it": "14.11.6",
+    "sinon": "11.1.2"
   }
 }
