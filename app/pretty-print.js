@@ -18,7 +18,7 @@ const LEVELS_CONFIG = {
   },
   alert: {
     color: chalk.red.underline,
-    icon: '⚠️',
+    icon: '⚠️ ',
   },
   critical: {
     color: chalk.red,
@@ -38,7 +38,7 @@ const LEVELS_CONFIG = {
   },
   info: {
     color: chalk.blue,
-    icon: 'ℹ️',
+    icon: 'ℹ️ ',
   },
   debug: {
     color: chalk.green,
