@@ -71,8 +71,9 @@ class Logality {
    * @param {function=} opts.output Overwrite the final output operation.
    * @param {boolean=} opts.async Use Asynchronous API returning a promise
    *    on writes.
-   * @param {boolean=} opts.prettyPrint Enable pretty print to stdout,
-   *    default false.
+   * @param {boolean|Object=} opts.prettyPrint Enable and configure pretty print
+   *    to stdout, default false.
+   * @param {number|string=} opts.minLevel Define the minimum log level.
    * @return {Logality} Logality instance.
    */
   constructor(opts = {}) {
@@ -92,11 +93,22 @@ class Logality {
 
     const outputHandler = opts.output || fn.returnArg;
 
+    let minLevel = 7;
+    if (typeof opts.minLevel === 'number') {
+      minLevel = opts.minLevel;
+    } else if (typeof opts.minLevel === 'string') {
+      const level = ALLOWED_LEVELS.indexOf(opts.minLevel.toLowerCase());
+      if (level !== -1) {
+        minLevel = level;
+      }
+    }
+
     /** @type {Object} Logality configuration */
     this._opts = {
       appName: opts.appName || 'Logality',
       prettyPrint: opts.prettyPrint || false,
       async: opts.async || false,
+      minLevel,
     };
 
     // Create Middleware functionality
@@ -157,6 +169,11 @@ class Logality {
     const levelSeverity = ALLOWED_LEVELS.indexOf(level);
     if (levelSeverity === -1) {
       throw new Error('Invalid log level');
+    }
+
+    // Check for level filtering
+    if (levelSeverity > this._opts.minLevel) {
+      return;
     }
 
     const logContext = fn.getContext(
