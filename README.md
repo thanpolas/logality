@@ -56,8 +56,13 @@ configuration options:
 
 -   `appName` {string} An arbitrary string to uniquely identify
     the service (logger instance).
--   `prettyPrint` {boolean} If true will format and prettify the event and
-    context, default is `false`.
+-   `prettyPrint` {boolean|Object} If true will format and prettify the event and
+    context, default is `false`. You may define additional options to configure
+    pretty printing, they can be combined:
+    -   `prettyPrint.noTimestamp` {boolean} Do not print timestamp.
+    -   `prettyPrint.noFilename` {boolean} Do not print Log filename source.
+    -   `prettyPrint.onlyMessage` {boolean} Only print the log message (no context).
+-   `minLevel` {number|string} Define the minimum level to be logged and ignore lower log levels. [See log levels for input values][log-levels], accepts both the string or numeric representations of the levels.
 -   `serializers` {Object} You can define custom serializers or overwrite
     logality's. Read more [about Serializers bellow][serializers].
 -   `async` {boolean} Set to true to enable the asynchronous API for logging,
@@ -721,3 +726,4 @@ Copyright Thanasis Polychronakis [Licensed under the ISC license](/LICENSE)
 [winston]: https://github.com/winstonjs/winston
 [bunyan]: https://github.com/trentm/node-bunyan
 [pino]: https://github.com/pinojs/pino
+[log-levels]: #log-levels
