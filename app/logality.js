@@ -4,8 +4,8 @@
  * Extensible JSON Logger.
  * https://github.com/thanpolas/logality
  *
- * Copyright © Thanasis Polychronakis
- * All rights reserved. Licensed under the ISC license.
+ * Copyright © Thanos Polychronakis
+ * Licensed under the ISC license.
  */
 
 /**
