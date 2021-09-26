@@ -4,7 +4,7 @@
 
 [![NPM Version][npm-image]][npm-url]
 [![CircleCI][circle-image]][circle-url]
-[![codecov](https://codecov.io/gh/thanpolas/univ3prices/branch/main/graph/badge.svg?token=XKLZG037MA)](https://codecov.io/gh/thanpolas/univ3prices)
+[![codecov](https://codecov.io/gh/thanpolas/logality/branch/master/graph/badge.svg?token=UvpkiCwJHj)](https://codecov.io/gh/thanpolas/logality)
 [![Discord](https://img.shields.io/discord/847075821276758096?label=discord&color=CBE9F0)](https://discord.gg/GkyEqzJWEY)
 [![Twitter Follow](https://img.shields.io/twitter/follow/thanpolas.svg?label=thanpolas&style=social)](https://twitter.com/thanpolas)
 
