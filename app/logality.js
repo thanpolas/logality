@@ -316,7 +316,10 @@ class Logality {
   _getLogMessage(logContext) {
     let stringOutput = '';
     if (this._opts.prettyPrint) {
-      stringOutput = prettyPrint.writePretty(logContext);
+      stringOutput = prettyPrint.writePretty(
+        logContext,
+        this._opts.prettyPrint,
+      );
     } else {
       stringOutput = fn.masterSerialize(logContext);
     }
