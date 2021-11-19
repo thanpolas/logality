@@ -6,7 +6,7 @@
 const chalk = require('chalk');
 const format = require('json-format');
 
-const { isObjectEmpty } = require('./utils');
+const { isObjectEmpty, safeStringify } = require('./utils');
 
 const pretty = (module.exports = {});
 
@@ -108,7 +108,15 @@ pretty._getLogs = function (logContext) {
     return '';
   }
 
-  const prettyLogs = format(logs, { type: 'space', size: 2 });
+  // Perform a safe serialization so that any BigInt values are safely serialized
+  // into strings, and then deserialize back to object.
+  //
+  // The performance hit can be afforded when pretty printing as it is only
+  // used on development.
+  const logsSerialized = safeStringify(logs);
+  const logsSafe = JSON.parse(logsSerialized);
+
+  const prettyLogs = format(logsSafe, { type: 'space', size: 2 });
 
   return `${prettyLogs}\n`;
 };
