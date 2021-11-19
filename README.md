@@ -670,7 +670,7 @@ Comparison table as of 16th of April 2021.
 
 ## Release History
 
--   **v3.1.2**, _19 Nov 2021_
+-   **v3.1.3**, _19 Nov 2021_
     -   Will now safely JSON serialize BitInt values. Handles also edge case on pretty print.
     -   Updated all dependencies to latest.
 -   **v3.1.1**, _26 Sep 2021_
