@@ -1,4 +1,4 @@
-const { sanitizeHttpHeaders } = require('../utils');
+const { sanitizeHttpHeaders, safeStringify } = require('../utils');
 
 /**
  * Express Request Object Serializer.
@@ -14,7 +14,7 @@ module.exports = function (req) {
       host: req.hostname,
       method: req.method,
       path: req.path,
-      query_string: JSON.stringify(req.query),
+      query_string: safeStringify(req.query),
       scheme: req.secure ? 'https' : 'http',
     },
   };

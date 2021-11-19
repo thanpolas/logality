@@ -63,3 +63,4 @@ globals:
   fdescribe: true
   expect: true
   jest: true
+  BigInt: true

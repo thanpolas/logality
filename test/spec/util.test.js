@@ -71,4 +71,15 @@ describe('Utility Functions', () => {
       expect(target.one.second).toEqual('two');
     });
   });
+  describe('safeStringify()', () => {
+    test('Should safely JSON serialize an object containing BigInt', () => {
+      const obj = {
+        a: 1,
+        b: BigInt(1),
+        c: 2,
+      };
+
+      util.safeStringify(obj);
+    });
+  });
 });
