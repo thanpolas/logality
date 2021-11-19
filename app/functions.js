@@ -73,7 +73,7 @@ fn.assignSystem = (logContext, hostname) => {
  * @return {string} Serialized message to output.
  */
 fn.masterSerialize = (logContext) => {
-  let strLogContext = JSON.stringify(logContext);
+  let strLogContext = utils.safeStringify(logContext);
   strLogContext += '\n';
 
   return strLogContext;
