@@ -1,6 +1,5 @@
 /**
  * @fileoverview Main testing helper lib.
- *
  */
 const os = require('os');
 

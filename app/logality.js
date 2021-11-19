@@ -79,6 +79,7 @@ class Logality {
   constructor(opts = {}) {
     // Force instantiation
     if (!(this instanceof Logality)) {
+      // eslint-disable-next-line no-constructor-return
       return new Logality(opts);
     }
 
