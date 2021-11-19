@@ -89,3 +89,15 @@ utils.getDt = function () {
   const dt = new Date();
   return dt.toISOString();
 };
+
+/**
+ * Will safely JSON serialize any value to JSON, accounting for BigInt.
+ *
+ * @param {*} obj Any value to serialize.
+ * @return {string}
+ */
+utils.safeStringify = (obj) => {
+  return JSON.stringify(obj, (key, value) =>
+    typeof value === 'bigint' ? value.toString() : value,
+  );
+};
