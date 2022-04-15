@@ -10,6 +10,7 @@ describe('API Surface', () => {
   });
   test('Logality instantiates properly', () => {
     const logality = new Logality();
+    expect(logality.writePretty).toBeFunction();
     expect(logality.get).toBeFunction();
   });
   test('Logality instance has expected methods exported', () => {
