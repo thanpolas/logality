@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`writePretty function Will convert log to pretty for error type 1`] = `
+"[37m[2018-05-18T16:25:57.815Z] [39m[31m■ error[39m [4m[32m/test/spec/writepretty.test.js[39m[24m - [31mError log[39m
+{
+  \\"event\\": {
+    \\"error\\": {
+      \\"name\\": \\"Error\\",
+      \\"message\\": \\"an error occured\\",
+      \\"backtrace\\": \\"Error: an error occured\\\\n    at Object.<anonymous> (/Users/thanpolas/Projects/libs/logality/test/spec/writepretty.test.js:23:17)\\\\n    at Promise.then.completed (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/utils.js:333:28)\\\\n    at new Promise (<anonymous>)\\\\n    at callAsyncCircusFn (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/utils.js:259:10)\\\\n    at _callCircusTest (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:276:40)\\\\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)\\\\n    at _runTest (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:208:3)\\\\n    at _runTestsForDescribeBlock (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:96:9)\\\\n    at _runTestsForDescribeBlock (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:90:9)\\\\n    at run (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:31:3)\\"
+    }
+  }
+}
+"
+`;
+
+exports[`writePretty function Will convert log to pretty for error type without colors 1`] = `
+"[2018-05-18T16:25:57.815Z] ■ error /test/spec/writepretty.test.js - Error log
+{
+  \\"event\\": {
+    \\"error\\": {
+      \\"name\\": \\"Error\\",
+      \\"message\\": \\"an error occured\\",
+      \\"backtrace\\": \\"Error: an error occured\\\\n    at Object.<anonymous> (/Users/thanpolas/Projects/libs/logality/test/spec/writepretty.test.js:23:17)\\\\n    at Promise.then.completed (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/utils.js:333:28)\\\\n    at new Promise (<anonymous>)\\\\n    at callAsyncCircusFn (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/utils.js:259:10)\\\\n    at _callCircusTest (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:276:40)\\\\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)\\\\n    at _runTest (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:208:3)\\\\n    at _runTestsForDescribeBlock (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:96:9)\\\\n    at _runTestsForDescribeBlock (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:90:9)\\\\n    at run (/Users/thanpolas/.nvm/versions/node/v16.15.0/lib/node_modules/jest/node_modules/jest-circus/build/run.js:31:3)\\"
+    }
+  }
+}
+"
+`;
+
+exports[`writePretty function Will convert log to pretty for into type 1`] = `
+"[37m[2018-05-18T16:25:57.815Z] [39m[34mℹ info[39m [4m[32m/test/spec/writepretty.test.js[39m[24m - [34mhello pretty world[39m
+"
+`;
+
+exports[`writePretty function Will convert log to pretty for into type without colors 1`] = `
+"[2018-05-18T16:25:57.815Z] ℹ info /test/spec/writepretty.test.js - hello pretty world
+"
+`;

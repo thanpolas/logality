@@ -3,6 +3,7 @@
  */
 
 const Logality = require('./logality');
+const { writePretty } = require('./pretty-print');
 
 /**
  * Wraps and returns a new instance of Logality.
@@ -12,6 +13,8 @@ const Logality = require('./logality');
  */
 function LogalityWrapper(...args) {
   const logality = new Logality(...args);
+
+  logality.writePretty = writePretty;
 
   return logality;
 }

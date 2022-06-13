@@ -8,8 +8,6 @@ const format = require('json-format');
 
 const { isObjectEmpty, safeStringify } = require('./utils');
 
-const pretty = (module.exports = {});
-
 /** @const {Object} LEVELS_CONFIG Levels colors and icons */
 const LEVELS_CONFIG = {
   emergency: {
@@ -47,32 +45,83 @@ const LEVELS_CONFIG = {
 };
 
 /**
+ * Keys to ignore on context object when pretty printing
+ *
+ * @const {Array<string>} CONTEXT_IGNORE_KEYS
+ */
+const CONTEXT_IGNORE_KEYS = ['runtime', 'source', 'system'];
+
+/**
+ * Keys to ignore on context object when pretty printing
+ *
+ * @const {Array<string>} EVENT_IGNORE_KEYS
+ */
+const EVENT_IGNORE_KEYS = ['http_request'];
+
+/**
  * Write prettified log to selected output.
  *
  * @param {Object} logContext The log context to write.
- * @param {boolean|Object} prettyOpts Possible pretty print options.
+ * @param {Object=} prettyOpts Rendering options.
+ * @param {boolean=} prettyOpts.noTimestamp Set to true to not log timestamps.
+ * @param {boolean=} prettyOpts.noFilename Set to true to not log filename.
+ * @param {boolean=} prettyOpts.onlyMessage Set to true to only log the message
+ *    and not the context.
+ * @param {boolean=} prettyOpts.noColor Do not color the logs.
  * @return {string} Formatted output.
  * @private
  */
-pretty.writePretty = function (logContext, prettyOpts) {
-  // current level icon and color
-  const config = LEVELS_CONFIG[logContext.level];
+exports.writePretty = function (logContext, prettyOpts = {}) {
+  const { noTimestamp, noFilename, onlyMessage, noColor } = prettyOpts;
 
-  const noTimestamp = !!prettyOpts?.noTimestamp;
-  const noFilename = !!prettyOpts?.noFilename;
-  const onlyMessage = !!prettyOpts?.onlyMessage;
+  // current level icon and color
+  const levelsConfig = LEVELS_CONFIG[logContext.level];
 
   const file = noFilename
     ? ''
-    : ` ${chalk.underline.green(logContext.context.source.file_name)}`;
-  const date = noTimestamp ? '' : chalk.white(`[${logContext.dt}] `);
-  const level = config.color(`${config.icon} ${logContext.level}`);
-  const message = config.color(logContext.message);
-  const logs = onlyMessage ? '' : pretty._getLogs(logContext);
+    : ` ${exports._applyColor(
+        chalk.underline.green,
+        logContext.context.source.file_name,
+        noColor,
+      )}`;
+
+  const date = noTimestamp
+    ? ''
+    : exports._applyColor(chalk.white, `[${logContext.dt}] `, noColor);
+
+  const level = exports._applyColor(
+    levelsConfig.color,
+    `${levelsConfig.icon} ${logContext.level}`,
+    noColor,
+  );
+  const message = exports._applyColor(
+    levelsConfig.color,
+    logContext.message,
+    noColor,
+  );
+
+  const logs = onlyMessage ? '' : exports._getLogs(logContext);
 
   const output = `${date}${level}${file} - ${message}\n${logs}`;
 
   return output;
+};
+
+/**
+ * Will apply the color conditionally upon the provided noColor argument/
+ *
+ * @param {function} colorFn The color function.
+ * @param {string} string The string to color or not.
+ * @param {boolean} noColor Set to true to not apply color.
+ * @return {string} formatted string.
+ * @private
+ */
+exports._applyColor = (colorFn, string, noColor) => {
+  if (noColor) {
+    return string;
+  }
+
+  return colorFn(string);
 };
 
 /**
@@ -82,26 +131,41 @@ pretty.writePretty = function (logContext, prettyOpts) {
  * @return {string} Log output.
  * @private
  */
-pretty._getLogs = function (logContext) {
+exports._getLogs = function (logContext) {
   const logs = {};
-  const blacklist = ['runtime', 'source', 'system'];
+
   const { event, context } = logContext;
 
-  // remove unnecessary keys
-  blacklist.forEach((key) => {
-    delete context[key];
+  const eventKeys = Object.keys(event);
+  const contextKeys = Object.keys(context);
+
+  contextKeys.forEach((key) => {
+    if (CONTEXT_IGNORE_KEYS.includes(key)) {
+      return;
+    }
+
+    if (logs.context) {
+      logs.context[key] = context[key];
+    } else {
+      logs.context = {
+        [key]: context[key],
+      };
+    }
   });
-  delete event.http_request;
 
-  // set event if exists
-  if (!isObjectEmpty(event)) {
-    logs.event = event;
-  }
+  eventKeys.forEach((eventKey) => {
+    if (EVENT_IGNORE_KEYS.includes(eventKey)) {
+      return;
+    }
 
-  // set context
-  if (!isObjectEmpty(context)) {
-    logs.context = context;
-  }
+    if (logs.event) {
+      logs.event[eventKey] = event[eventKey];
+    } else {
+      logs.event = {
+        [eventKey]: event[eventKey],
+      };
+    }
+  });
 
   // empty string if the logs are emtpy
   if (isObjectEmpty(logs)) {
